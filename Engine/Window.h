@@ -13,12 +13,18 @@ private:
 
 public:
 	Input* input;
+	bool isfocused;
 	bool running;
+
 public:
 	Window(const char* name, int width, int height);
 	~Window();
+	GLFWwindow* getContext() { return window; };
 	bool init();
+	bool init(Window* parent);
 	void clear();
 	void update();
+	void setCurrent();
+	void focus();
 	void close();
 };

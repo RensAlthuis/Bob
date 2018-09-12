@@ -2,7 +2,9 @@
 
 Input* Input::instance;
 
-Input::Input()
+Input::Input():
+	mouseX(0),
+	mouseY(0)
 {
 	for (int i = 0; i < GLFW_KEY_LAST; i++) {
 		keysPressed[i] = false;
@@ -12,21 +14,10 @@ Input::Input()
 	instance = this;
 }
 
-void Input::press(int key)
+void Input::setMouse(double x, double y)
 {
-	keysPressed[key] = true;
-	keysDown[key] = true;
-}
-void Input::release(int key)
-{
-	keysReleased[key] = true;
-	keysDown[key] = false;
-}
-
-void Input::repeat(int key)
-{
-	// std::cout << "repeat: " << key << std::endl;
-	// keysPressed[key] = true;
+	mouseX = x;
+	mouseY = y;
 }
 
 void Input::update()
@@ -66,6 +57,11 @@ bool Input::isKeyDown(int key){
 
 bool Input::isKeyReleased(int key){
 	return Input::instance->keyReleased(key);
+}
+
+void Input::mousePos(double& x, double& y){
+	x = Input::instance->mouseX;
+	y = Input::instance->mouseY;
 }
 
 Input::~Input()
