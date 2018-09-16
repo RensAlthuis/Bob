@@ -89,6 +89,8 @@ bool Window::init(Window* parent) {
 	glfwSetCursorPosCallback(window, mouseMoved);
 	glfwSetWindowFocusCallback(window, windowFocusChange);
 	glfwSetErrorCallback(errorCallback);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
 	std::cout << "Intialized with openGL version: " << glGetString(GL_VERSION) << std::endl;
 	return true;
 }
@@ -101,7 +103,7 @@ void Window::focus() {
 		glfwFocusWindow(window);
 }
 void Window::clear() {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Window::update() {

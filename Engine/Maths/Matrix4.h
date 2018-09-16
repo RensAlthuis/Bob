@@ -17,7 +17,6 @@ class Matrix4
 	static Matrix4 rotate(float angle, float x, float y, float z);
 	static Matrix4 ortho(float left,float right,float top,float bottom,float near, float far);
 	static Matrix4 perspective(float fov, float aspect, float near, float far);
-	static Matrix4 projection(float angle, float x, float y, float z);
 
 public:
 	float operator[](unsigned int index) const;

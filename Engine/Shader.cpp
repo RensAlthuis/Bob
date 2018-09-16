@@ -59,7 +59,9 @@ void Shader::setVec3(const char* str, const Maths::Vector3& vec){
 void Shader::setVec4(const char* str, const Maths::Vector4& vec){
 	glUniform4f(glGetUniformLocation(ID, str), vec.x, vec.y, vec.z, vec.w);
 }
-
+void Shader::setInt1(const char* str, int i) {
+	glUniform1i(glGetUniformLocation(ID, str), i);
+}
 void Shader::use(){
     glUseProgram(ID);
 }
