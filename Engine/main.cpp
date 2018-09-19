@@ -86,6 +86,7 @@ int main(void)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	int t = 0;
+	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	while (window.running)
 	{
 		checkGLError();
@@ -94,7 +95,7 @@ int main(void)
 		//stuff here
 
 		Maths::Matrix4 offset = Maths::Matrix4::translate(0, 0, 0);
-		Maths::Matrix4 rot = Maths::Matrix4::rotate(t, 0, 1, 0) * Maths::Matrix4::rotate(0, 1, 0, 0);
+		Maths::Matrix4 rot = Maths::Matrix4::rotate(0, 0, 1, 0) * Maths::Matrix4::rotate(0, 1, 0, 0);
 		Maths::Matrix4 scale = Maths::Matrix4::scale(2,2,2);
 		Maths::Matrix4 transform = offset * rot * scale;
 
@@ -103,7 +104,7 @@ int main(void)
 		shader.setMat4("view_matrix", view);
 		shader.setMat4("model_matrix", transform * Maths::Matrix4::translate(0, 0, 0.0));
 		shader.setVec4("lightCol", Maths::Vector4(1, 1, 1, 1));
-		shader.setVec3("lightPos", Maths::Vector3(0, 1, -1.0f));
+		shader.setVec3("lightPos", Maths::Vector3(0, 0, -1.0f ) * Maths::Matrix4::rotate(-t, 0, 1, 0) );
 		shader.setInt1("tex", 0);
 
 		vao->bind();

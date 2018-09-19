@@ -13,5 +13,5 @@ void main()
 {
 	texCoord = uvCoord;
     gl_Position = projection_matrix * view_matrix * model_matrix * pos;
-    fragPos = (projection_matrix * model_matrix * pos).xyz;
+    fragPos = (model_matrix * pos).xyz;
 }
