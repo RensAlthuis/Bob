@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
-#include "Maths/maths.h"
+#include "Maths/Maths.h"
 #include "FileReader.h"
 
 class Shader

@@ -1,7 +1,5 @@
 #include "VertexBuffer.h"
 
-
-
 VertexBuffer::VertexBuffer(GLfloat* data, unsigned int length, unsigned int elementCount):
     elementCount(elementCount)
 {

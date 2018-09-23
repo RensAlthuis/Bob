@@ -9,12 +9,14 @@
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f 
 
-void checkGLError() {
+bool checkGLError() {
 		// check OpenGL error
 		GLenum err;
-		while ((err = glGetError()) != GL_NO_ERROR) {
+		if ((err = glGetError()) != GL_NO_ERROR) {
 			std::cout << "OpenGL error: " << err << std::endl;
+			return true;
 		}
+		return false;
 }
 
 void GenCube(VertexArray*& vao, ElementBuffer*& ebo) {
@@ -65,14 +67,16 @@ int main(void)
 	ElementBuffer* ebo;
 	GenCube(vao, ebo);
 
-	Shader shader("Shader/vertex.glsl", "Shader/fragment.glsl");
+	Shader shader("Engine/Shader/vertex.glsl", "Engine/Shader/fragment.glsl");
 
-	 //Maths::Matrix4 project = Maths::Matrix4::ortho(0, 16, 0, 9, -10, 20);
+	//Maths::Matrix4 project = Maths::Matrix4::ortho(0, 16, 0, 9, -10, 20);
 	Maths::Matrix4 project = Maths::Matrix4::perspective(90, WIDTH/HEIGHT, 0.1f, 10.0f);
 	Maths::Matrix4 view = Maths::Matrix4::translate(0,0, -3.0f);
 
-	FREE_IMAGE_FORMAT formatobj = FreeImage_GetFileType("leather.jpg", 0);
-	FIBITMAP* image = FreeImage_Load(formatobj, "leather.jpg");
+	const char* texPath = "Engine/leather.jpg";
+
+	FREE_IMAGE_FORMAT formatobj = FreeImage_GetFileType(texPath, 0);
+	FIBITMAP* image = FreeImage_Load(formatobj, texPath);
 	FIBITMAP * temp = image;
 	image = FreeImage_ConvertTo32Bits(image);
 	FreeImage_Unload(temp);
@@ -89,7 +93,7 @@ int main(void)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 	while (window.running)
 	{
-		checkGLError();
+		if (checkGLError()) return -1;
 		window.clear();
 
 		//stuff here
@@ -126,7 +130,7 @@ int main(void)
 			view = view * Maths::Matrix4::translate(0,0.1f,0);
 
 		t++;
-		if (t > 360) t == 0;
+		if (t > 360) t = 0;
 
 		//end of stuff
 		if(window.isfocused){

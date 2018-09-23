@@ -5,7 +5,7 @@
 namespace FileReader {
 	static const char* readFile(const char* path) {
 		FILE* fp;
-		fopen_s(&fp, path, "rb");
+		fp = fopen(path, "rb");
 		if (!fp) {
 			std::cout << "ERROR: Failed to read file" << std::endl;
 			return "";
