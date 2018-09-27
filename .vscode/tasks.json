@@ -2,32 +2,33 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceRoot}/build"
+    },
+    "type": "shell",
     "tasks": [
         {
-            "label": "build",
-            "type": "shell",
-            "command": "make",
-            "args": [],
+            "label": "cmake",
+            "command": "cmake ..",
+            "group": "build"
+        },
+        {
+            "label": "make",
+            "command": "make -j 8",
+            "group": "build",
             "problemMatcher": [
                 "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            }
+            ]
         },
         {
             "label": "clean",
-            "type": "shell",
-            "command": "make clean",
-            "args": [],
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": false
-            }
+            "command": "rm -r *",
+            "group": "build"
+        },
+        {
+            "label": "run",
+            "command": "./Bob",
+            "group" : "test"
         }
     ]
 }
