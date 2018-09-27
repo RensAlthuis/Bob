@@ -7,7 +7,7 @@ namespace FileReader {
 		FILE* fp;
 		fp = fopen(path, "rb");
 		if (!fp) {
-			std::cout << "ERROR: Failed to read file" << std::endl;
+			std::cout << "ERROR: Failed to open file" << std::endl;
 			return "";
 		}
 
@@ -15,7 +15,11 @@ namespace FileReader {
 		long length = ftell(fp);
 		fseek(fp, 0, SEEK_SET);
 		char* str = (char*)malloc((length + 1) * sizeof(char));
-		fread(str, 1, length, fp);
+		size_t nRead = fread(str, 1, length, fp);
+		if(nRead == 0){
+			std::cout << "ERROR: Failed to read file" << std::endl;
+			return "";
+		}
 		fclose(fp);
 		str[length] = '\0';
 		return str;
