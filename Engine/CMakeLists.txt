@@ -23,23 +23,34 @@ include_directories(
 
 find_library(
     GLFW glfw3
-    HINTS "Libraries/lib/"
+    HINTS Libraries/lib/${OS}
 )
 find_library(
     FREEIMAGE freeimage
-    HINTS "Libraries/lib/"
+    HINTS Libraries/lib/${OS}
 )
+
+message("Found Library" ${GLFW})
+message("Found Library" ${FREEIMAGE})
+
 set(COMMONLIBS Maths ${FREEIMAGE} ${GLFW})
 
-target_link_libraries(Engine 
+if(WIN32)
+    target_link_libraries(Engine
     ${COMMONLIBS}
-    GL 
-    dl 
-    pthread 
-    X11 
-    Xi 
-    Xrandr 
-    Xxf86vm 
-    Xinerama 
-    Xcursor
-)
+    ws2_32
+    )
+else()
+    target_link_libraries(Engine
+        ${COMMONLIBS}
+        GL
+        dl
+        pthread
+        X11
+        Xi
+        Xrandr
+        Xxf86vm
+        Xinerama
+        Xcursor
+    )
+endif()

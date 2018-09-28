@@ -1,3 +1,4 @@
+#define FREEIMAGE_LIB
 #include "Window.h"
 #include "Shader.h"
 #include "Maths/Maths.h"
@@ -5,6 +6,7 @@
 #include "ElementBuffer.h"
 #include "VertexArray.h"
 #include "Texture.h"
+#include "FreeImage.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -76,6 +78,8 @@ void setUpShader(Shader *shader,
 int main(void)
 {
 
+	FreeImage_Initialise();
+
 	Window window("something", WIDTH, HEIGHT);
 	if (!window.init())
 		return -1;
@@ -136,6 +140,6 @@ int main(void)
 		}
 		window.update();
 	}
-
+	FreeImage_DeInitialise();
 	return 0;
 }

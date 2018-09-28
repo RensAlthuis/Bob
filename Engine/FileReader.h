@@ -17,7 +17,7 @@ static const char *readFile(const char *path)
 	fseek(fp, 0, SEEK_END);
 	long length = ftell(fp);
 	fseek(fp, 0, SEEK_SET);
-	char *str = (char *)malloc((length + 1) * sizeof(char));
+	char *str = new char[length + 1];
 	size_t nRead = fread(str, 1, length, fp);
 	if (nRead == 0)
 	{

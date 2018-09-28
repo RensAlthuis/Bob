@@ -6,10 +6,17 @@ add_executable(Bob main.cpp)
 
 find_package(OpenGL REQUIRED)
 
-subdirs(Engine)
+if(WIN32)
+    set(OS Windows)
+else()
+    set(OS Linux)
+endif()
+
 include_directories(
     ${PROJECT_SOURCE_DIR}/Engine
     ${PROJECT_SOURCE_DIR}/Engine/Libraries/include
 )
+
+subdirs(Engine)
 
 target_link_libraries(Bob Engine)

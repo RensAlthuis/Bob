@@ -1,7 +1,8 @@
 #pragma once
+#include "Window.h"
+#define FREEIMAGE_LIB
 #include <FreeImage.h>
 #include <iostream>
-#include <GLFW/glfw3.h>
 
 class Texture
 {

@@ -15,7 +15,7 @@
         },
         {
             "label": "make",
-            "command": "make -j 8",
+            "command": "make",
             "group": "build",
             "problemMatcher": [
                 "$gcc"
@@ -29,10 +29,14 @@
         {
             "label": "run",
             "command": "./Bob",
-            "group": "test",
+            "group": "build",
             "options": {
                 "cwd": "${workspaceRoot}"
             },
+            "dependsOn": [
+                "make"
+            ],
+            "problemMatcher": []
         }
     ]
 }
