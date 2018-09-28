@@ -3,9 +3,8 @@
 namespace Maths
 {
 
-Vector2::Vector2(float x, float y) :
-    x(x),
-    y(y)
+Vector2::Vector2(float x, float y) : x(x),
+                                     y(y)
 {
 }
 

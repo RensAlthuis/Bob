@@ -4,24 +4,25 @@
 #include <GLFW/glfw3.h>
 #include "Input.h"
 
-class Window {
-private:
-	GLFWwindow* window;
-	const char* name;
+class Window
+{
+  private:
+	GLFWwindow *window;
+	const char *name;
 	int width;
 	int height;
 
-public:
-	Input* input;
+  public:
+	Input *input;
 	bool isfocused;
 	bool running;
 
-public:
-	Window(const char* name, int width, int height);
+  public:
+	Window(const char *name, int width, int height);
 	~Window();
-	GLFWwindow* getContext() { return window; };
+	GLFWwindow *getContext() { return window; };
 	bool init();
-	bool init(Window* parent);
+	bool init(Window *parent);
 	void clear();
 	void update();
 	void setCurrent();

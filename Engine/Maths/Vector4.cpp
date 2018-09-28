@@ -3,11 +3,10 @@
 namespace Maths
 {
 
-Vector4::Vector4(float x, float y, float z, float w) :
-    x(x),
-    y(y),
-    z(z),
-    w(w)
+Vector4::Vector4(float x, float y, float z, float w) : x(x),
+                                                       y(y),
+                                                       z(z),
+                                                       w(w)
 {
 }
 
@@ -80,8 +79,7 @@ Vector4 operator*(const Vector4 &l, const Matrix4 &r)
         r[0] * l.x + r[4] * l.y + r[8] * l.z + r[12] * l.x,
         r[1] * l.x + r[5] * l.y + r[9] * l.z + r[13] * l.x,
         r[2] * l.x + r[6] * l.y + r[10] * l.z + r[14] * l.x,
-        r[3] * l.x + r[7] * l.y + r[11] * l.z + r[15] * l.x
-    );
+        r[3] * l.x + r[7] * l.y + r[11] * l.z + r[15] * l.x);
 }
 
 std::ostream &operator<<(std::ostream &out, const Vector4 &r)
@@ -91,7 +89,7 @@ std::ostream &operator<<(std::ostream &out, const Vector4 &r)
 
 float Vector4::dot(const Vector4 &other)
 {
-    return (x * other.x + y * other.y + z * other.z + w  * other.w);
+    return (x * other.x + y * other.y + z * other.z + w * other.w);
 }
 
 // length

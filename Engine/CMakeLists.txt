@@ -13,6 +13,7 @@ Shader.cpp
 VertexArray.cpp
 VertexBuffer.cpp
 Window.cpp
+Texture.cpp
 )
 
 
@@ -20,10 +21,19 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/Libraries/include
 )
 
+find_library(
+    GLFW glfw3
+    HINTS "Libraries/lib/"
+)
+find_library(
+    FREEIMAGE freeimage
+    HINTS "Libraries/lib/"
+)
+set(COMMONLIBS Maths ${FREEIMAGE} ${GLFW})
+
 target_link_libraries(Engine 
-    Maths 
+    ${COMMONLIBS}
     GL 
-    glfw3 
     dl 
     pthread 
     X11 

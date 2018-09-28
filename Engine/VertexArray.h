@@ -5,14 +5,12 @@
 
 class VertexArray
 {
-public:
-
+  public:
 	GLuint ID;
 	VertexArray();
 	~VertexArray();
-	void addBuffer(VertexBuffer* vbo, int index);
-	void setEBO(ElementBuffer* ebo);
+	void addBuffer(VertexBuffer *vbo, int index);
+	void setEBO(ElementBuffer *ebo);
 	void bind();
 	void unbind();
 };
-

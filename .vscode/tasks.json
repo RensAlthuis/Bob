@@ -10,7 +10,8 @@
         {
             "label": "cmake",
             "command": "cmake ..",
-            "group": "build"
+            "group": "build",
+            "problemMatcher": []
         },
         {
             "label": "make",
@@ -28,7 +29,10 @@
         {
             "label": "run",
             "command": "./Bob",
-            "group" : "test"
+            "group": "test",
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
         }
     ]
 }

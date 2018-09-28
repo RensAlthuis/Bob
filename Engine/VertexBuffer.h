@@ -3,13 +3,12 @@
 
 class VertexBuffer
 {
-public:
+  public:
 	GLuint ID;
 	unsigned int elementCount;
-	VertexBuffer(GLfloat* data, unsigned int length, unsigned int elementCount);
+	VertexBuffer(GLfloat *data, unsigned int length, unsigned int elementCount);
 	~VertexBuffer();
 
 	void bind();
 	void unbind();
 };
-

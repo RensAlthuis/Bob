@@ -1,22 +1,24 @@
 #include "Window.h"
 
-Window::Window(const char* name, int width, int height):
-	name(name),
-	width(width),
-	height(height),
-	input(new Input())
+Window::Window(const char *name, int width, int height) : name(name),
+														  width(width),
+														  height(height),
+														  input(new Input())
 {
 }
 
 // WINDOW CALLBACKS
-void errorCallback(int code , const char * description){
+void errorCallback(int code, const char *description)
+{
 	std::cout << "GLFW ERROR: " << code << " - " << description;
 }
-void windowKeyChange(GLFWwindow* win, int key, int scancode, int action, int mods) {
+void windowKeyChange(GLFWwindow *win, int key, int scancode, int action, int mods)
+{
 
-	Window* window = (Window*)glfwGetWindowUserPointer(win);
-	Input* input = window->input;
-	switch (action) {
+	Window *window = (Window *)glfwGetWindowUserPointer(win);
+	Input *input = window->input;
+	switch (action)
+	{
 	case GLFW_PRESS:
 		input->keysPressed[key] = true;
 		input->keysDown[key] = true;
@@ -30,30 +32,37 @@ void windowKeyChange(GLFWwindow* win, int key, int scancode, int action, int mod
 	}
 }
 
-void mouseMoved(GLFWwindow* win, double x, double y){
-	Window* window = (Window*)glfwGetWindowUserPointer(win);
+void mouseMoved(GLFWwindow *win, double x, double y)
+{
+	Window *window = (Window *)glfwGetWindowUserPointer(win);
 	window->input->setMouse(x, y);
 }
 
-
-void windowResized(GLFWwindow* win, int w, int h) {
+void windowResized(GLFWwindow *win, int w, int h)
+{
 	glViewport(0, 0, w, h);
 }
 
-void windowFocusChange(GLFWwindow* win, int focused){
-	Window* window = (Window*)glfwGetWindowUserPointer(win);
-	if(focused == GLFW_TRUE){
+void windowFocusChange(GLFWwindow *win, int focused)
+{
+	Window *window = (Window *)glfwGetWindowUserPointer(win);
+	if (focused == GLFW_TRUE)
+	{
 		window->isfocused = true;
 		window->input->focus();
-	}else{
+	}
+	else
+	{
 		window->isfocused = false;
 	}
 }
 
-bool Window::init() {
+bool Window::init()
+{
 	return init(NULL);
 }
-bool Window::init(Window* parent) {
+bool Window::init(Window *parent)
+{
 	/* Initialize the library */
 	if (!glfwInit())
 		std::cout << "ERROR: Failed to initialize glfw" << std::endl;
@@ -62,8 +71,9 @@ bool Window::init(Window* parent) {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	// glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	/* Create a windowed mode window and its OpenGL context */
-	GLFWwindow* p = NULL;
-	if (parent != NULL) {
+	GLFWwindow *p = NULL;
+	if (parent != NULL)
+	{
 		p = parent->getContext();
 	}
 	window = glfwCreateWindow(width, height, name, NULL, p);
@@ -95,33 +105,39 @@ bool Window::init(Window* parent) {
 	return true;
 }
 
-void Window::setCurrent() {
-		glfwMakeContextCurrent(window);
+void Window::setCurrent()
+{
+	glfwMakeContextCurrent(window);
 }
 
-void Window::focus() {
-		glfwFocusWindow(window);
+void Window::focus()
+{
+	glfwFocusWindow(window);
 }
-void Window::clear() {
+void Window::clear()
+{
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void Window::update() {
+void Window::update()
+{
 
-		input->update();
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
+	input->update();
+	/* Swap front and back buffers */
+	glfwSwapBuffers(window);
 
-		/* Poll for and process events */
-		glfwPollEvents();
+	/* Poll for and process events */
+	glfwPollEvents();
 
-		running = !glfwWindowShouldClose(window);
+	running = !glfwWindowShouldClose(window);
 }
 
-void Window::close() {
+void Window::close()
+{
 	glfwSetWindowShouldClose(window, true);
 }
 
-Window::~Window() {
+Window::~Window()
+{
 	glfwTerminate();
 }

@@ -7,11 +7,11 @@ namespace Maths
 
 class Vector2
 {
-  public:
+public:
 	float x;
 	float y;
 
-  public:
+public:
 	Vector2(float x, float y);
 	~Vector2();
 

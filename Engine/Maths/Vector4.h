@@ -7,13 +7,13 @@ namespace Maths
 
 class Vector4
 {
-  public:
+public:
 	float x;
 	float y;
 	float z;
 	float w;
 
-  public:
+public:
 	Vector4(float x, float y, float z, float w);
 	~Vector4();
 

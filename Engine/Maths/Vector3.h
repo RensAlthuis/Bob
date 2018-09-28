@@ -7,12 +7,12 @@ namespace Maths
 
 class Vector3
 {
-  public:
+public:
 	float x;
 	float y;
 	float z;
 
-  public:
+public:
 	Vector3(float x, float y, float z);
 	~Vector3();
 

@@ -2,30 +2,31 @@
 
 VertexArray::VertexArray()
 {
-	glGenVertexArrays(1, &ID);
+    glGenVertexArrays(1, &ID);
 }
 
 void VertexArray::bind()
 {
-	glBindVertexArray(ID);
+    glBindVertexArray(ID);
 }
 
 void VertexArray::unbind()
 {
-	glBindVertexArray(ID);
+    glBindVertexArray(ID);
 }
 
-void VertexArray::addBuffer(VertexBuffer* vbo, int index)
+void VertexArray::addBuffer(VertexBuffer *vbo, int index)
 {
     bind();
     vbo->bind();
-	glEnableVertexAttribArray(index);
-	glVertexAttribPointer(index, vbo->elementCount, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * vbo->elementCount, (void *)0);
+    glEnableVertexAttribArray(index);
+    glVertexAttribPointer(index, vbo->elementCount, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * vbo->elementCount, (void *)0);
     vbo->unbind();
     unbind();
 }
 
-void VertexArray::setEBO(ElementBuffer* ebo){
+void VertexArray::setEBO(ElementBuffer *ebo)
+{
     bind();
     ebo->bind();
     unbind();

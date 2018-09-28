@@ -1,7 +1,6 @@
 #include "ElementBuffer.h"
 
-ElementBuffer::ElementBuffer(GLuint *data, int length):
-    elementCount(length)
+ElementBuffer::ElementBuffer(GLuint *data, int length) : elementCount(length)
 {
     glGenBuffers(1, &ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);

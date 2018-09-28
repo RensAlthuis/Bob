@@ -4,13 +4,11 @@
 
 class ElementBuffer
 {
-public:
-
-    GLuint ID;
+  public:
+	GLuint ID;
 	unsigned int elementCount;
-	ElementBuffer(GLuint* data, int length);
+	ElementBuffer(GLuint *data, int length);
 	~ElementBuffer();
 	void bind();
 	void unbind();
 };
-

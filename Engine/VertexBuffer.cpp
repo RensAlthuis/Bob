@@ -1,7 +1,6 @@
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer(GLfloat* data, unsigned int length, unsigned int elementCount):
-    elementCount(elementCount)
+VertexBuffer::VertexBuffer(GLfloat *data, unsigned int length, unsigned int elementCount) : elementCount(elementCount)
 {
 	glGenBuffers(1, &ID);
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
@@ -9,12 +8,14 @@ VertexBuffer::VertexBuffer(GLfloat* data, unsigned int length, unsigned int elem
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VertexBuffer::bind(){
-    glBindBuffer(GL_ARRAY_BUFFER, ID);
+void VertexBuffer::bind()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, ID);
 }
 
-void VertexBuffer::unbind(){
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+void VertexBuffer::unbind()
+{
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 VertexBuffer::~VertexBuffer()
