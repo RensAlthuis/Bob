@@ -24,7 +24,8 @@
         {
             "label": "clean",
             "command": "rm -r *",
-            "group": "build"
+            "group": "build",
+            "problemMatcher": []
         },
         {
             "label": "run",
