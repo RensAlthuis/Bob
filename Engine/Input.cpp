@@ -2,8 +2,12 @@
 
 Input *Input::instance;
 
-Input::Input() : mouseX(0),
-				 mouseY(0)
+Input::Input() : mPosX(0),
+				 mPosY(0),
+				 mDragX(0),
+				 mDragY(0),
+				 oldMouseX(0),
+				 oldMouseY(0)
 {
 	for (int i = 0; i < GLFW_KEY_LAST; i++)
 	{
@@ -16,20 +20,29 @@ Input::Input() : mouseX(0),
 
 void Input::setMouse(double x, double y)
 {
-	mouseX = x;
-	mouseY = y;
+	mPosX = x;
+	mPosY = y;
 }
 
 void Input::update()
 {
 
+	mDragX = mPosX - oldMouseX;
+	mDragY = -(mPosY - oldMouseY);
+	isMouseDragged = (int)mDragX != 0 || (int)mDragY != 0;
 	for (int i = 0; i < GLFW_KEY_LAST; i++)
 	{
 		keysReleased[i] = false;
 		keysPressed[i] = false;
 	}
+	oldMouseX = mPosX;
+	oldMouseY = mPosY;
 }
 
+bool Input::mouseDragged()
+{
+	return Input::instance->isMouseDragged;
+}
 bool Input::keyPressed(int key)
 {
 	return keysPressed[key];
@@ -61,10 +74,23 @@ bool Input::isKeyReleased(int key)
 	return Input::instance->keyReleased(key);
 }
 
-void Input::mousePos(double &x, double &y)
+double Input::mouseX()
 {
-	x = Input::instance->mouseX;
-	y = Input::instance->mouseY;
+	return Input::instance->mPosX;
+}
+
+double Input::mouseY()
+{
+	return Input::instance->mPosY;
+}
+
+double Input::mouseDragX()
+{
+	return Input::instance->mDragX;
+}
+double Input::mouseDragY()
+{
+	return Input::instance->mDragY;
 }
 
 Input::~Input()
