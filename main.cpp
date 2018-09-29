@@ -9,8 +9,8 @@
 #include "FreeImage.h"
 #include "Model.h"
 
-#define WIDTH 1280.0f
-#define HEIGHT 720.0f
+#define WIDTH 800.0f
+#define HEIGHT 600.0f
 
 bool checkGLError()
 {
@@ -81,7 +81,6 @@ int main(void)
 {
 
 	FreeImage_Initialise();
-
 	Window window("something", WIDTH, HEIGHT);
 	if (!window.init())
 		return -1;
@@ -90,12 +89,12 @@ int main(void)
 	ElementBuffer *ebo;
 	// GenCube(vao, ebo);
 
-	Model m("Assets/Model/monkey.obj");
+	Model monkey("Assets/Model/Monkey.obj");
 	int nverts, nnorms, nindices;
 	float *verts;
 	unsigned int *indices;
-	m.Vertices(verts, nverts);
-	m.Indices(indices, nindices);
+	monkey.Vertices(verts, nverts);
+	monkey.Indices(indices, nindices);
 	ebo = new ElementBuffer(indices, nindices);
 	VertexBuffer *vbo = new VertexBuffer(verts, nverts, 3);
 	vao = new VertexArray();
@@ -132,7 +131,12 @@ int main(void)
 		Maths::Matrix4 scale = Maths::Matrix4::scale(2, 2, 2);
 		Maths::Matrix4 transform = offset * rot * scale;
 		Maths::Matrix4 viewoffset = Maths::Matrix4::translate(camPos.x, camPos. y, camPos.z);
-		Maths::Matrix4 viewRotate = Maths::Matrix4::rotate(rotx, 0, 1, 0 ) * Maths::Matrix4::rotate(-roty, 1, 0, 0);
+
+		float angle = rotx * ((float)M_PI / 180.0f);
+		float xangle = cosf(angle);
+		float zangle = sinf(angle);
+
+		Maths::Matrix4 viewRotate = Maths::Matrix4::rotate(rotx, 0, 1, 0 ) * Maths::Matrix4::rotate(-roty, xangle, 0, zangle);
 		Maths::Matrix4 invviewRotate = Maths::Matrix4::rotate(-rotx, 0, 1, 0 ) * Maths::Matrix4::rotate(roty, 1, 0, 0);
 		Maths::Matrix4 camtransform = viewRotate * viewoffset;
 
@@ -158,9 +162,13 @@ int main(void)
 		if (Input::isKeyDown(GLFW_KEY_LEFT_SHIFT))
 			camPos = Maths::Matrix4::translate(0, 0.1f, 0) * camPos;
 		rotx += mousex - oldmousex;
+		while (rotx >= 360) rotx -= 360;
+		while (rotx < 0) rotx += 360;
 		roty += oldmousey - mousey;
+		while (roty >= 360) roty -= 360;
+		while (roty < 0) roty += 360;
 
-		t++;
+		// t++;
 		if (t > 360)
 			t = 0;
 
