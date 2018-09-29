@@ -101,6 +101,7 @@ bool Window::init(Window *parent)
 	glfwSetErrorCallback(errorCallback);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	std::cout << "Intialized with openGL version: " << glGetString(GL_VERSION) << std::endl;
 	return true;
 }

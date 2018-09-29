@@ -9,7 +9,11 @@
     "tasks": [
         {
             "label": "cmake",
-            "command": "cmake ..",
+            "command": "cmake ",
+            "args": [
+                "-DCMAKE_BUILD_TYPE=Debug",
+                ".."
+            ],
             "group": "build",
             "problemMatcher": []
         },

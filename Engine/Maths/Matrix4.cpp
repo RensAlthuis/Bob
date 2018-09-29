@@ -175,4 +175,12 @@ std::ostream &operator<<(std::ostream &out, const Matrix4 &mat)
     return out;
 }
 
+Vector3 operator*(const Matrix4 &r, const Vector3 &l)
+{
+    return Vector3(
+        r[0] * l.x + r[4] * l.y + r[8] * l.z + r[12],
+        r[1] * l.x + r[5] * l.y + r[9] * l.z + r[13],
+        r[2] * l.x + r[6] * l.y + r[10] * l.z + r[14]);
+}
+
 } // namespace Maths

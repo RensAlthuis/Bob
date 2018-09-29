@@ -14,6 +14,7 @@ VertexArray.cpp
 VertexBuffer.cpp
 Window.cpp
 Texture.cpp
+Model.cpp
 )
 
 
