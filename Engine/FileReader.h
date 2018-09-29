@@ -4,14 +4,14 @@
 
 namespace FileReader
 {
-static const char *readFile(const char *path)
+static bool readFile(const char *path, char *&buf, long &len)
 {
 	FILE *fp;
 	fp = fopen(path, "rb");
 	if (!fp)
 	{
 		std::cout << "ERROR: Failed to open file" << std::endl;
-		return "";
+		return false;
 	}
 
 	fseek(fp, 0, SEEK_END);
@@ -26,6 +26,8 @@ static const char *readFile(const char *path)
 	}
 	fclose(fp);
 	str[length] = '\0';
-	return str;
+	buf = str;
+	len = length;
+	return true;
 }
 }; // namespace FileReader

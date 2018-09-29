@@ -3,6 +3,7 @@
 #include <string.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "Vector3.h"
 
 namespace Maths
 {
@@ -27,6 +28,7 @@ class Matrix4
 	friend Matrix4 operator+(const Matrix4 &l, const Matrix4 &r);
 	friend Matrix4 operator-(const Matrix4 &l, const Matrix4 &r);
 	friend Matrix4 operator*(const Matrix4 &l, const Matrix4 &r);
+	friend Vector3 operator*(const Matrix4 &r, const Vector3 &l);
 	friend std::ostream &operator<<(std::ostream &out, const Matrix4 &r);
 };
 

@@ -3,6 +3,8 @@
 namespace Maths
 {
 
+const Vector3 Vector3::Up(0,1,0);
+
 Vector3::Vector3(float x, float y, float z) : x(x),
                                               y(y),
                                               z(z)
@@ -65,13 +67,7 @@ Vector3 operator-(const Vector3 &l, const Vector3 &r)
         l.z - r.z);
 }
 
-Vector3 operator*(const Vector3 &l, const Matrix4 &r)
-{
-    return Vector3(
-        r[0] * l.x + r[4] * l.y + r[8] * l.z + r[12],
-        r[1] * l.x + r[5] * l.y + r[9] * l.z + r[13],
-        r[2] * l.x + r[6] * l.y + r[10] * l.z + r[14]);
-}
+
 
 std::ostream &operator<<(std::ostream &out, const Vector3 &r)
 {

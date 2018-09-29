@@ -7,15 +7,15 @@
 class Texture
 {
 
-  private:
-    int width;
-    int height;
-    BYTE *bits;
-    GLuint ID;
+private:
+  int width;
+  int height;
+  BYTE *bits;
+  GLuint ID;
 
-  public:
-    Texture(const char *path);
-    ~Texture();
-    void bind();
-    void unbind();
+public:
+  Texture(const char *path);
+  ~Texture();
+  void bind();
+  void unbind();
 };

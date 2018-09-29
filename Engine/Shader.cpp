@@ -4,10 +4,11 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
 	int success;
 	char infoLog[512];
-
 	GLuint vertexShader;
 	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	const char *vertexShaderSource = FileReader::readFile(vertexPath);
+	char *vertexShaderSource;
+	long len;
+	FileReader::readFile(vertexPath, vertexShaderSource, len);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
@@ -20,7 +21,8 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath)
 
 	GLuint fragmentShader;
 	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	const char *fragmentShaderSource = FileReader::readFile(fragmentPath);
+	char *fragmentShaderSource;
+	FileReader::readFile(fragmentPath, fragmentShaderSource, len);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
 
@@ -66,7 +68,8 @@ void Shader::setVec3(const char *str, const Maths::Vector3 &vec)
 }
 void Shader::setVec4(const char *str, const Maths::Vector4 &vec)
 {
-	glUniform4f(glGetUniformLocation(ID, str), vec.x, vec.y, vec.z, vec.w);
+	GLuint loc = glGetUniformLocation(ID, str);
+	glUniform4f(loc, vec.x, vec.y, vec.z, vec.w);
 }
 void Shader::setInt1(const char *str, int i)
 {

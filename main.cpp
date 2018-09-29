@@ -7,6 +7,7 @@
 #include "VertexArray.h"
 #include "Texture.h"
 #include "FreeImage.h"
+#include "Model.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -52,12 +53,12 @@ void GenCube(VertexArray *&vao, ElementBuffer *&ebo)
 
 	};
 	ebo = new ElementBuffer(indices, 3 * 12);
-	VertexBuffer *vbo = new VertexBuffer(vertices, 3 * 24, 3);
-	VertexBuffer *ubo = new VertexBuffer(uvs, 2 * 24, 2);
+	VertexBuffer *vbo = new VertexBuffer(vertices, 24, 3);
+	// VertexBuffer *ubo = new VertexBuffer(uvs, 24, 2);
 	vao = new VertexArray();
 	vao->setEBO(ebo);
 	vao->addBuffer(vbo, 0);
-	vao->addBuffer(ubo, 1);
+	// vao->addBuffer(ubo, 1);
 }
 
 void setUpShader(Shader *shader,
@@ -71,8 +72,9 @@ void setUpShader(Shader *shader,
 	shader->setMat4("view_matrix", view);
 	shader->setMat4("model_matrix", transform * Maths::Matrix4::translate(0, 0, 0.0));
 	shader->setVec4("lightCol", Maths::Vector4(1, 1, 1, 1));
-	shader->setVec3("lightPos", Maths::Vector3(0, 0, -1.0f) * Maths::Matrix4::rotate(-t, 0, 1, 0));
-	shader->setInt1("tex", 0);
+	shader->setVec3("lightPos", Maths::Matrix4::rotate(0, 0, 1, 0) * Maths::Vector3(0, 0, -1.3f));
+	shader->setVec4("colour", Maths::Vector4(1, 1, 1, 1));
+	// shader->setInt1("tex", 0);
 }
 
 int main(void)
@@ -86,48 +88,77 @@ int main(void)
 
 	VertexArray *vao;
 	ElementBuffer *ebo;
-	GenCube(vao, ebo);
+	// GenCube(vao, ebo);
 
-	Shader shader("Assets/Shader/vertex.glsl", "Assets/Shader/fragment.glsl");
+	Model m("Assets/Model/monkey.obj");
+	int nverts, nnorms, nindices;
+	float *verts;
+	unsigned int *indices;
+	m.Vertices(verts, nverts);
+	m.Indices(indices, nindices);
+	ebo = new ElementBuffer(indices, nindices);
+	VertexBuffer *vbo = new VertexBuffer(verts, nverts, 3);
+	vao = new VertexArray();
+	vao->setEBO(ebo);
+	vao->addBuffer(vbo, 0);
+
+	Shader shader("Assets/Shader/vertexCol.glsl", "Assets/Shader/fragmentCol.glsl");
+	// Shader shader("Assets/Shader/vertex.glsl", "Assets/Shader/fragment.glsl");
+
 	Texture texture("Assets/Img/leather.jpg");
 
 	//Maths::Matrix4 project = Maths::Matrix4::ortho(0, 16, 0, 9, -10, 20);
-	Maths::Matrix4 project = Maths::Matrix4::perspective(90, WIDTH / HEIGHT, 0.1f, 10.0f);
+	Maths::Matrix4 project = Maths::Matrix4::perspective(90, WIDTH / HEIGHT, 0.1f, 100.0f);
 	Maths::Matrix4 view = Maths::Matrix4::translate(0, 0, -3.0f);
 
 	int t = 0;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	double mousex, mousey;
+	Input::mousePos(mousex, mousey);
+	double oldmousex = mousex;
+	double oldmousey = mousey;
+	double rotx, roty = 0;
+	Maths::Vector3 camPos(0, 0 ,-3.0f);
 	while (window.running)
 	{
+		Input::mousePos(mousex, mousey);
 		if (checkGLError())
 			return -1;
 
 		window.clear();
 
 		Maths::Matrix4 offset = Maths::Matrix4::translate(0, 0, 0);
-		Maths::Matrix4 rot = Maths::Matrix4::rotate(0, 0, 1, 0) * Maths::Matrix4::rotate(0, 1, 0, 0);
+		Maths::Matrix4 rot = Maths::Matrix4::rotate(t, 0, 1, 0) * Maths::Matrix4::rotate(0, 1, 0, 0);
 		Maths::Matrix4 scale = Maths::Matrix4::scale(2, 2, 2);
 		Maths::Matrix4 transform = offset * rot * scale;
+		Maths::Matrix4 viewoffset = Maths::Matrix4::translate(camPos.x, camPos. y, camPos.z);
+		Maths::Matrix4 viewRotate = Maths::Matrix4::rotate(rotx, 0, 1, 0 ) * Maths::Matrix4::rotate(-roty, 1, 0, 0);
+		Maths::Matrix4 invviewRotate = Maths::Matrix4::rotate(-rotx, 0, 1, 0 ) * Maths::Matrix4::rotate(roty, 1, 0, 0);
+		Maths::Matrix4 camtransform = viewRotate * viewoffset;
 
-		setUpShader(&shader, transform, view, project, t);
+		setUpShader(&shader, transform, camtransform, project, t);
 		texture.bind();
 		vao->bind();
 		glDrawElements(GL_TRIANGLES, ebo->elementCount, GL_UNSIGNED_INT, 0);
-
+		Maths::Vector3 front = Maths::Vector3(0, 0, 1.0f);
+		front = invviewRotate * front;
+		front = front/front.length();
 		if (Input::isKeyPressed(GLFW_KEY_ESCAPE))
 			window.close();
 		if (Input::isKeyDown(GLFW_KEY_W))
-			view = view * Maths::Matrix4::translate(0, 0, 0.1f);
+			camPos = camPos + front*0.1f;
 		if (Input::isKeyDown(GLFW_KEY_A))
-			view = view * Maths::Matrix4::translate(0.1f, 0, 0);
+			camPos = camPos - front.cross(Maths::Vector3::Up)*0.1f;
 		if (Input::isKeyDown(GLFW_KEY_S))
-			view = view * Maths::Matrix4::translate(0, 0, -0.1f);
+			camPos = camPos - front*0.1f;
 		if (Input::isKeyDown(GLFW_KEY_D))
-			view = view * Maths::Matrix4::translate(-0.1f, 0, 0);
+			camPos = camPos + front.cross(Maths::Vector3::Up)*0.1f;
 		if (Input::isKeyDown(GLFW_KEY_SPACE))
-			view = view * Maths::Matrix4::translate(0, -0.1f, 0);
+			camPos = Maths::Matrix4::translate(0, -0.1f, 0) * camPos;
 		if (Input::isKeyDown(GLFW_KEY_LEFT_SHIFT))
-			view = view * Maths::Matrix4::translate(0, 0.1f, 0);
+			camPos = Maths::Matrix4::translate(0, 0.1f, 0) * camPos;
+		rotx += mousex - oldmousex;
+		roty += oldmousey - mousey;
 
 		t++;
 		if (t > 360)
@@ -139,6 +170,8 @@ int main(void)
 			window.setCurrent();
 		}
 		window.update();
+		oldmousex = mousex;
+		oldmousey = mousey;
 	}
 	FreeImage_DeInitialise();
 	return 0;

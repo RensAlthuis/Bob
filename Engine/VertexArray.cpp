@@ -1,5 +1,5 @@
 #include "VertexArray.h"
-
+#include <iostream>
 VertexArray::VertexArray()
 {
     glGenVertexArrays(1, &ID);
@@ -20,7 +20,7 @@ void VertexArray::addBuffer(VertexBuffer *vbo, int index)
     bind();
     vbo->bind();
     glEnableVertexAttribArray(index);
-    glVertexAttribPointer(index, vbo->elementCount, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * vbo->elementCount, (void *)0);
+    glVertexAttribPointer(index, vbo->elementLength, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * vbo->elementLength, (void *)0);
     vbo->unbind();
     unbind();
 }
