@@ -3,9 +3,7 @@
 #include "Window.h"
 #include "Shader.h"
 #include "Maths/Maths.h"
-#include "VertexBuffer.h"
-#include "ElementBuffer.h"
-#include "VertexArray.h"
+
 #include "Texture.h"
 #include "FreeImage.h"
 #include "Model.h"
@@ -26,59 +24,6 @@ bool checkGLError()
 	return false;
 }
 
-void GenCube(VertexArray *&vao, ElementBuffer *&ebo)
-{
-	float *vertices = new float[24 * 3]{
-		1, 1, 1, 1, -1, 1, -1, -1, 1, -1, 1, 1,		//front face
-		-1, 1, -1, -1, -1, -1, 1, -1, -1, 1, 1, -1, //back face
-		1, 1, -1, 1, -1, -1, 1, -1, 1, 1, 1, 1,		//right face
-		-1, 1, 1, -1, -1, 1, -1, -1, -1, -1, 1, -1, //left face
-		1, 1, -1, 1, 1, 1, -1, 1, 1, -1, 1, -1,		//top face
-		1, -1, 1, 1, -1, -1, -1, -1, -1, -1, -1, 1  //bottom face
-	};
-
-	float *uvs = new float[24 * 3]{
-		1, 1, 1, -1, -1, -1, -1, 1, //front
-		1, 1, 1, -1, -1, -1, -1, 1, //back
-		1, 1, 1, -1, -1, -1, -1, 1, //right
-		1, 1, 1, -1, -1, -1, -1, 1, //left
-		1, 1, 1, -1, -1, -1, -1, 1, //top
-		1, 1, 1, -1, -1, -1, -1, 1, //bottom
-	};
-
-	unsigned int *indices = new unsigned int[3 * 12]{
-		0, 3, 1, 2, 1, 3,		// front face
-		4, 7, 5, 6, 5, 7,		// back face
-		8, 11, 9, 10, 9, 11,	// right face
-		12, 15, 13, 14, 13, 15, // left face
-		16, 19, 17, 18, 17, 19, // top face
-		20, 23, 21, 22, 21, 23, // bottom face
-	};
-
-	ebo = new ElementBuffer(indices, 3 * 12);
-	VertexBuffer *vbo = new VertexBuffer(vertices, 24, 3);
-	// VertexBuffer *ubo = new VertexBuffer(uvs, 24, 2);
-	vao = new VertexArray();
-	vao->setEBO(ebo);
-	vao->addBuffer(vbo, 0);
-	// vao->addBuffer(ubo, 1);
-}
-
-void genMonkey(VertexArray *&vao, ElementBuffer *&ebo)
-{
-	Model monkey("Assets/Model/Monkey.obj");
-	int nverts, nnorms, nindices;
-	float *verts;
-	unsigned int *indices;
-	monkey.Vertices(verts, nverts);
-	monkey.Indices(indices, nindices);
-	ebo = new ElementBuffer(indices, nindices);
-	VertexBuffer *vbo = new VertexBuffer(verts, nverts, 3);
-	vao = new VertexArray();
-	vao->setEBO(ebo);
-	vao->addBuffer(vbo, 0);
-}
-
 int main(void)
 {
 
@@ -86,31 +31,26 @@ int main(void)
 	Window window("something", WIDTH, HEIGHT);
 	if (!window.init())
 		return -1;
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	VertexArray *vao;
-	ElementBuffer *ebo;
-	// GenCube(vao, ebo);
-	genMonkey(vao, ebo);
-
-	// Shader shader("Assets/Shader/vertex.glsl", "Assets/Shader/fragment.glsl");
+	Model monkey("Assets/Model/Cube.obj");
 	Shader shader("Assets/Shader/vertexCol.glsl", "Assets/Shader/fragmentCol.glsl");
-	Texture texture("Assets/Img/leather.jpg");
 	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
 	camera.translate(0, 0, 2, false);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	// float cols[300];
-	// for (int i = 0; i < 10; i++)
-	// {
-	// 	for (int j = 0; j < 10; j++)
-	// 	{
-	// 		cols[i* 10 + j + 0] = (float)(rand() % 255) / 255;
-	// 		cols[i* 10 + j + 1] = (float)(rand() % 255) / 255;
-	// 		cols[i* 10 + j + 2] = (float)(rand() % 255) / 255;
-	// 	}
-	// }
 
-	Maths::Matrix4 view = Maths::Matrix4::translate(0, 0, -3.0f);
+	float cols[300];
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			cols[i * 10 + j + 0] = (float)(rand() % 255) / 255;
+			cols[i * 10 + j + 1] = (float)(rand() % 255) / 255;
+			cols[i * 10 + j + 2] = (float)(rand() % 255) / 255;
+		}
+	}
+
 	int t = 0;
+
 	while (window.running)
 	{
 		if (checkGLError())
@@ -122,28 +62,26 @@ int main(void)
 		shader.setMat4("view_matrix", camera.Transform());
 		shader.setVec4("lightCol", Maths::Vector4(1, 1, 1, 1));
 		shader.setVec3("lightPos", Maths::Vector3(0, 0, 1.0f));
+		float dir = (sin(t/(float)80)+1)/2;
+		std::cout << dir << std::endl;
+		shader.setVec3("directionallight", Maths::Vector3(0, 0, dir));
 		t += 1;
-		if (t >= 360)
+		if (t >= 360*80)
 			t = 0;
-		// Maths::Quaternion q = Maths::Quaternion::fromAxisAngle(t, Maths::Vector3(1, 0, 0));
-		// Maths::Quaternion r = Maths::Quaternion::fromAxisAngle(t, Maths::Vector3(0, 0, 1));
-		// Maths::Quaternion s = Maths::Quaternion::fromAxisAngle(t, Maths::Vector3(0, 1, 0));
-		// Maths::Matrix4 model = Maths::Matrix4::rotate(q);
-		Maths::Matrix4 model = Maths::Matrix4::identity();
-		texture.bind();
-		vao->bind();
+
+		// texture.bind();
+		monkey.bind();
 		const int nMonkeys = 10;
-		// for (int i = 0; i < nMonkeys; i++)
-		// {
-		// 	for (int j = 0; j < nMonkeys; j++)
-		// 	{
-		// 		shader.setVec4("colour", Maths::Vector4(cols[i * nMonkeys + j + 0], cols[i * nMonkeys + j + 1], cols[i * nMonkeys + j + 2], 1));
-		// Maths::Matrix4 model = Maths::Matrix4::translate(2*i - nMonkeys + 1, 2*j - nMonkeys + 1, 0);
-		shader.setVec4("colour", Maths::Vector4(0.1f, 0.1f, 0, 1));
-		shader.setMat4("model_matrix", model);
-		glDrawElements(GL_TRIANGLES, ebo->elementCount, GL_UNSIGNED_INT, 0);
-		// 	}
-		// }
+		for (int i = 0; i < nMonkeys; i++)
+		{
+			for (int j = 0; j < nMonkeys; j++)
+			{
+				shader.setVec4("colour", Maths::Vector4(cols[i * nMonkeys + j + 0], cols[i * nMonkeys + j + 1], cols[i * nMonkeys + j + 2], 1));
+				Maths::Matrix4 model = Maths::Matrix4::translate(2 * i - nMonkeys + 1, 2 * j - nMonkeys + 1, 0);
+				shader.setMat4("model_matrix", model * Maths::Matrix4::scale(0.5f, 0.5f, 0.5f));
+				glDrawElements(GL_TRIANGLES, monkey.ElementCount(), GL_UNSIGNED_INT, 0);
+			}
+		}
 
 		// Maths::Vector3 front = camera.Front();
 		if (Input::isKeyPressed(GLFW_KEY_ESCAPE))

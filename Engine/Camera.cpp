@@ -32,8 +32,8 @@ void Camera::turn(int x, int y)
 {
     xangle += x;
     yangle += y;
-    // if(yangle > 70) yangle = 70;
-    // if(yangle < -70) yangle = -70;
+    if(yangle > 80) yangle = 80;
+    if(yangle < -80) yangle = -80;
     if( xangle > 360 ) xangle = 0;
     if( xangle < 0 ) xangle = 360;
 
