@@ -1,6 +1,8 @@
 #pragma once
 #include <math.h>
 #include <iostream>
+#include "Maths.h"
+
 namespace Maths
 {
 
@@ -13,6 +15,7 @@ public:
 	static const Vector3 Up;
 
 public:
+	Vector3():Vector3(0,0,0){};
 	Vector3(float x, float y, float z);
 	~Vector3();
 
@@ -24,8 +27,9 @@ public:
 	friend Vector3 operator+(const Vector3 &l, const Vector3 &r);
 	friend Vector3 operator-(const Vector3 &l, const Vector3 &r);
 	friend std::ostream &operator<<(std::ostream &out, const Vector3 &v);
-	float dot(const Vector3 &other);
-	Vector3 cross(const Vector3 &other);
-	float length();
+	float dot(const Vector3 &other) const;
+	Vector3 cross(const Vector3 &other) const;
+	float length() const;
+	Vector3 rotate(const Quaternion& q) const;
 };
 } // namespace Maths

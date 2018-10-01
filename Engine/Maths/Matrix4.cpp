@@ -1,4 +1,4 @@
-# include "Matrix4.h"
+#include "Matrix4.h"
 
 namespace Maths
 {
@@ -30,6 +30,12 @@ Matrix4 Matrix4::scale(float x, float y, float z)
     m.mat[15] = 1;
     return m;
 }
+
+Matrix4 Matrix4::translate(const Vector3 &v)
+{
+    return translate(v.x, v.y, v.z);
+}
+
 Matrix4 Matrix4::translate(float x, float y, float z)
 {
     Matrix4 m = identity();
@@ -39,7 +45,45 @@ Matrix4 Matrix4::translate(float x, float y, float z)
     m.mat[15] = 1;
     return m;
 }
-Matrix4 Matrix4::rotate(float angle, float x, float y, float z)
+
+Matrix4 Matrix4::rotate(const Quaternion &q)
+{
+    float s, xs, ys, zs, wx, wy, wz, xx, xy, xz, yy, yz, zz;
+
+    s = 2.0f;
+    xs = s * q.x;
+    wx = q.w * xs;
+    xx = q.x * xs;
+
+    ys = s * q.y;
+    wy = q.w * ys;
+    xy = q.x * ys;
+    yy = q.y * ys;
+
+    zs = s * q.z;
+    wz = q.w * zs;
+    xz = q.x * zs;
+    yz = q.y * zs;
+    zz = q.z * zs;
+
+    Matrix4 m;
+    m.mat[0] = 1.0f - (yy + zz);
+    m.mat[1] = xy + wz;
+    m.mat[2] = xz - wy;
+
+    m.mat[4] = xy - wz;
+    m.mat[5] = 1.0f - (xx + zz);
+    m.mat[6] = yz + wx;
+
+    m.mat[8] = xz + wy;
+    m.mat[9] = yz - wx;
+    m.mat[10] = 1.0f - (xx + yy);
+
+    m.mat[15] = 1;
+    return m;
+}
+
+Matrix4 Matrix4::rotateAxisAngle(float angle, float x, float y, float z)
 {
     Matrix4 m;
 
@@ -76,20 +120,49 @@ Matrix4 Matrix4::ortho(float left, float right, float bottom, float top, float n
 
 Matrix4 Matrix4::perspective(float fov, float aspect, float near, float far)
 {
-    float tfo2 = tan(((float)M_PI / 180.0f) * fov/2.0f);
+    float tfo2 = tan(((float)M_PI / 180.0f) * fov / 2.0f);
 
     Matrix4 m;
-    m.mat[0] = 1 / (aspect*tfo2);
+    m.mat[0] = 1 / (aspect * tfo2);
     m.mat[5] = 1 / tfo2;
-    m.mat[10] = -((far+near) / (far - near));
+    m.mat[10] = -((far + near) / (far - near));
     m.mat[11] = -1;
-    m.mat[14] = -((2*far*near) / (far - near));
+    m.mat[14] = -((2 * far * near) / (far - near));
     return m;
 }
 
 float Matrix4::operator[](unsigned int index) const
 {
     return mat[index];
+}
+
+void Matrix4::setRows(const Vector3 &a, const Vector3 &b, const Vector3 &c)
+{
+        mat[0] = a.x;
+        mat[1] = b.x;
+        mat[2] = c.x;
+        mat[3] = 0;
+        mat[4] = a.y;
+        mat[5] = b.y;
+        mat[6] = c.y;
+        mat[7] = 0;
+        mat[8] = a.z;
+        mat[9] = b.z;
+        mat[10] = c.z;
+        mat[11] = 0;
+        mat[12] = 0;
+        mat[13] = 0;
+        mat[14] = 0;
+        mat[15] = 1;
+}
+
+void Matrix4::setCol(int i, const Vector4 &v)
+{
+    if(i > 3) return;
+    mat[i*4 + 0] = v.x;
+    mat[i*4 + 1] = v.y;
+    mat[i*4 + 2] = v.z;
+    mat[i*4 + 3] = v.w;
 }
 
 Matrix4 operator+(const Matrix4 &l, float r)

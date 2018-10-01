@@ -7,4 +7,5 @@ add_library(Maths
     Vector2.cpp
     Vector3.cpp
     Vector4.cpp
+    Quaternion.cpp
 )

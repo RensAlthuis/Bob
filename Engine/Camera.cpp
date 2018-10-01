@@ -1,69 +1,81 @@
 #include "Camera.h"
 
-Camera::Camera(float fov, float ar, float near, float far) : pos(0, 0, 3.0f)
+Camera::Camera(float fov, float ar, float near, float far)
 {
-    rotX = 0;
-    rotY = 0;
     projection = Maths::Matrix4::perspective(fov, ar, near, far);
-    recalculate();
+    // recalculate();
 }
 
-Camera::Camera(float left, float right, float top, float bottom, float near, float far) : pos(0, 0, 0)
+Camera::Camera(float left, float right, float top, float bottom, float near, float far)
 {
-    rotX = 0;
-    rotY = 0;
     projection = Maths::Matrix4::ortho(left, right, top, bottom, near, far);
-    recalculate();
+    // recalculate();
+}
+
+void Camera::recalculate()
+{
+    transform = Maths::Matrix4::scale(scale, scale, scale) *
+                Maths::Matrix4::rotate(rotation.inverse()) *
+                Maths::Matrix4::translate(translation * -1);
 }
 
 Camera::~Camera()
 {
 }
 
-void Camera::recalculate()
-{
-    float angle = rotX * ((float)M_PI / 180.0f);
-    float xangle = cosf(angle);
-    float zangle = sinf(angle);
-    transform = Maths::Matrix4::rotate(rotX, 0, 1, 0) * Maths::Matrix4::rotate(-rotY, xangle, 0, zangle) * Maths::Matrix4::translate(-pos.x, -pos.y, -pos.z);
-}
-
-const Maths::Matrix4 &Camera::Transform()
-{
-    return transform;
-}
-
-const Maths::Vector3 Camera::Front()
-{
-    Maths::Vector3 front(0, 0, 1.0f);
-    front = Maths::Matrix4::rotate(-rotX, 0, 1, 0 ) * front;
-    front = front / front.length();
-    return front;
-}
 const Maths::Matrix4 &Camera::Projection()
 {
     return projection;
 }
 
-void Camera::move(float forward, float up, float right)
+void Camera::turn(int x, int y)
 {
+    xangle += x;
+    yangle += y;
+    // if(yangle > 70) yangle = 70;
+    // if(yangle < -70) yangle = -70;
+    if( xangle > 360 ) xangle = 0;
+    if( xangle < 0 ) xangle = 360;
+
     Maths::Vector3 front = Front();
-    pos = pos + (front * -forward) + (front.cross(Maths::Vector3::Up) * -right);
-    pos.y += up;
+    Maths::Vector3 up = Maths::Vector3::Up - (front * Maths::Vector3::Up.dot(Front()));
+    up = up/up.length();
+    Maths::Vector3 side = front.cross(up);
+
+    Maths::Quaternion q = Maths::Quaternion::fromAxisAngle(
+        -xangle,
+        Maths::Vector3::Up);
+
+    Maths::Quaternion r = Maths::Quaternion::fromAxisAngle(
+        yangle,
+        side);
+
+    rotation = r * q;
     recalculate();
 }
 
-void Camera::rotate(int x, int y)
+void Camera::lookAt(const Maths::Vector3 &v)
 {
-    rotX += x;
-    rotY += y;
-    while (rotX >= 360)
-        rotX -= 360;
-    while (rotX < 0)
-        rotX += 360;
-    if (rotY > 90)
-        rotY = 90;
-    while (rotY < -90)
-        rotY = -90;
+
+    Maths::Vector3 dir = v - translation;
+    dir = dir / dir.length();
+
+    // float dot = dir.dot(Maths::Vector3(0, 0, -1));
+    float dot = Maths::Vector3(0, 0, -1).dot(dir);
+    // if (fabs(dot - -1.0f) < 0.0001f)
+    // {
+    //     rotation = Maths::Quaternion((float)M_PI, 0, -1, 0);
+    //     recalculate();
+    //     return;
+    // }
+    // if (fabs(dot - 1.0f) < 0.0001f)
+    // {
+    //     return;
+    // }
+    float angle = acosf(dot) * (180.0f / (float)M_PI);
+
+    Maths::Vector3 axis = Maths::Vector3(0, 0, -1).cross(dir);
+    axis = axis / axis.length();
+    rotation = Maths::Quaternion::fromAxisAngle(angle, axis);
     recalculate();
 }

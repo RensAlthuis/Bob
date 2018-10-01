@@ -16,6 +16,7 @@ Window.cpp
 Texture.cpp
 Model.cpp
 Camera.cpp
+Object.cpp
 )
 
 
