@@ -96,7 +96,7 @@ float Vector3::length() const
 
 Vector3 Vector3::rotate(const Quaternion &q) const
 {
-    float vMult = 2.0f * (q.x * x + q.y * y, q.z * z);
+    float vMult = 2.0f * (q.x * x + q.y * y + q.z * z);
     float crossMult = 2.0f * q.w;
     float pMult = crossMult * q.w - 1.0f;
     return Vector3(

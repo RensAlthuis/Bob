@@ -27,6 +27,12 @@ bool checkGLError()
 int main(void)
 {
 
+	Maths::Vector3 v(0,1,0);
+	Maths::Quaternion q(0,0,1,0);
+	Maths::Matrix4 qm = Maths::Matrix4::rotate(q);
+	Maths::Matrix4 qmi = Maths::Matrix4::rotate(q.inverse());
+	std::cout << v << ", " << q << ", " << v.rotate(q) << std::endl;
+	std::cout << qm*v << std::endl;
 	FreeImage_Initialise();
 	Window window("something", WIDTH, HEIGHT);
 	if (!window.init())

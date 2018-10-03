@@ -34,14 +34,6 @@ void Camera::turn(int x, int y)
     xangle += x;
     yangle += y;
     xangle = xangle%360;
-    if (yangle >= 90.0f){
-        yangle = 90;
-        return;
-    }
-    if (yangle <= -90.0f){
-        yangle = -90;
-        return;
-    }
 
     Maths::Quaternion q(rotation.w, 0, rotation.y, 0);
     Maths::Vector3 side = Maths::Vector3::Right.rotate(q.normalize());
@@ -49,27 +41,14 @@ void Camera::turn(int x, int y)
     Maths::Quaternion tilt(Maths::Quaternion::fromAxisAngle(yangle, side));
     rotation = tilt*swing;
     recalculate();
-    // std::cout << side << std::endl;
 }
 
 void Camera::lookAt(const Maths::Vector3 &v)
 {
 
-    Maths::Vector3 dir = v - translation;
-    dir = dir / dir.length();
+    Maths::Vector3 dir = (v - translation).normalize();
 
-    // float dot = dir.dot(Maths::Vector3(0, 0, -1));
-    float dot = Maths::Vector3(0, 0, -1).dot(dir);
-    // if (fabs(dot - -1.0f) < 0.0001f)
-    // {
-    //     rotation = Maths::Quaternion((float)M_PI, 0, -1, 0);
-    //     recalculate();
-    //     return;
-    // }
-    // if (fabs(dot - 1.0f) < 0.0001f)
-    // {
-    //     return;
-    // }
+    float dot = Maths::Vector3::Forward.dot(dir);
     float angle = acosf(dot) * (180.0f / (float)M_PI);
 
     Maths::Vector3 axis = Maths::Vector3(0, 0, -1).cross(dir);

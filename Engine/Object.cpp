@@ -35,7 +35,7 @@ void Object::translate(Maths::Vector3 v, bool inWorldSpace)
     {
         Maths::Vector3 v2 = v.rotate(rotation);
         translation.x += v2.x;
-        translation.y += v.y;
+        translation.y += v2.y;
         translation.z += v2.z;
     }
     else
@@ -48,7 +48,6 @@ void Object::translate(Maths::Vector3 v, bool inWorldSpace)
 void Object::translate(float x, float y, float z, bool inWorldSpace)
 {
     translate(Maths::Vector3(x, y, z), inWorldSpace);
-    recalculate();
 }
 
 void Object::rotate(Maths::Quaternion q)
