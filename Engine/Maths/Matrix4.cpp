@@ -125,9 +125,30 @@ Matrix4 Matrix4::perspective(float fov, float aspect, float near, float far)
     Matrix4 m;
     m.mat[0] = 1 / (aspect * tfo2);
     m.mat[5] = 1 / tfo2;
-    m.mat[10] = -((far + near) / (far - near));
+    m.mat[10] = (far + near) / (near - far);
     m.mat[11] = -1;
-    m.mat[14] = -((2 * far * near) / (far - near));
+    m.mat[14] = (2 * far * near) / (near - far);
+    return m;
+}
+
+Matrix4 Matrix4::obliquePerspective(float left, float right, float bottom, float top, float near, float far)
+{
+
+    float rml = right - left;
+    float rpl = right + left;
+    float tmb = top - bottom;
+    float tpb = top + bottom;
+    float n2 = 2*near;
+    float nmf = near - far;
+    float npf = near + far;
+    Matrix4 m;
+    m.mat[0] = n2 / rml;
+    m.mat[5] = n2 / tmb;
+    m.mat[8] = rpl/rml;
+    m.mat[9] = tpb/tmb;
+    m.mat[10] = npf/nmf;
+    m.mat[11] = -1;
+    m.mat[14] = (n2*far)/nmf;
     return m;
 }
 

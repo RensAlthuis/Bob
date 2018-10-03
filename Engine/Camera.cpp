@@ -3,13 +3,13 @@
 Camera::Camera(float fov, float ar, float near, float far) :yangle(0), xangle(0)
 {
     projection = Maths::Matrix4::perspective(fov, ar, near, far);
-    // recalculate();
+    recalculate();
 }
 
 Camera::Camera(float left, float right, float top, float bottom, float near, float far) :yangle(0), xangle(0)
 {
     projection = Maths::Matrix4::ortho(left, right, top, bottom, near, far);
-    // recalculate();
+    recalculate();
 }
 
 void Camera::recalculate()
@@ -28,12 +28,15 @@ const Maths::Matrix4 &Camera::Projection()
     return projection;
 }
 
-void Camera::turn(int x, int y)
+void Camera::turn(float x, float y)
 {
 
     xangle += x;
     yangle += y;
-    xangle = xangle%360;
+    if (xangle >=360) xangle -= 360;
+    if (yangle >=360) yangle -= 360;
+    if (yangle < 0) yangle += 360;
+    if (yangle > 0) yangle += 360;
 
     Maths::Quaternion q(rotation.w, 0, rotation.y, 0);
     Maths::Vector3 side = Maths::Vector3::Right.rotate(q.normalize());

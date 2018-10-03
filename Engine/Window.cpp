@@ -1,9 +1,11 @@
 #include "Window.h"
 
-Window::Window(const char *name, int width, int height) : name(name),
-														  width(width),
-														  height(height),
-														  input(new Input())
+Window::Window(const char *name, int width, int height, bool isFullscreen) : name(name),
+																			 width(width),
+																			 height(height),
+																			 input(new Input()),
+																			 window(NULL),
+																			 _isFullscreen(isFullscreen)
 {
 }
 
@@ -61,31 +63,21 @@ bool Window::init()
 {
 	return init(NULL);
 }
-bool Window::init(Window *parent)
+
+bool Window::init(Window *_parent)
 {
+
+	parent = _parent;
 	/* Initialize the library */
 	if (!glfwInit())
 		std::cout << "ERROR: Failed to initialize glfw" << std::endl;
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	// glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	/* Create a windowed mode window and its OpenGL context */
-	GLFWwindow *p = NULL;
-	if (parent != NULL)
-	{
-		p = parent->getContext();
-	}
-	window = glfwCreateWindow(width, height, name, NULL, p);
-	if (!window)
-	{
-		std::cout << "ERROR: Failed to create OpenGl context" << std::endl;
-		glfwTerminate();
-		return false;
-	}
 
-	/* Make the window's context current */
-	glfwMakeContextCurrent(window);
+	if (!createWindow())
+		return false;
+
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
 		std::cout << "ERROR: Failed to initialize GLAD" << std::endl;
@@ -102,14 +94,51 @@ bool Window::init(Window *parent)
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetCursorPos(window, 0 , 0);
+	glfwSetCursorPos(window, 0, 0);
 	std::cout << "Intialized with openGL version: " << glGetString(GL_VERSION) << std::endl;
+	return true;
+}
+
+bool Window::createWindow()
+{
+	if (window != NULL)
+		glfwDestroyWindow(window);
+	GLFWwindow *p = NULL;
+	if (parent != NULL)
+	{
+		p = parent->getContext();
+	}
+	window = glfwCreateWindow(width, height, name, _isFullscreen ? glfwGetPrimaryMonitor() : NULL, p);
+	if (!window)
+	{
+		std::cout << "ERROR: Failed to create OpenGl context" << std::endl;
+		glfwTerminate();
+		return false;
+	}
+
+	/* Make the window's context current */
+	glfwMakeContextCurrent(window);
 	return true;
 }
 
 void Window::setCurrent()
 {
 	glfwMakeContextCurrent(window);
+}
+
+void Window::fullscreen(bool value)
+{
+	if (value == _isFullscreen) return;
+	if(value == true)
+	{
+		GLFWmonitor *mon = glfwGetPrimaryMonitor();
+		const GLFWvidmode *mode = glfwGetVideoMode(mon);
+		glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+	}
+	else{
+		glfwSetWindowMonitor(window, NULL, 0, 0, width, height, GLFW_DONT_CARE);
+	}
+	_isFullscreen = value;
 }
 
 void Window::focus()

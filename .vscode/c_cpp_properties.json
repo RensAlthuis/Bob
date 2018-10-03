@@ -10,6 +10,17 @@
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
             "cppStandard": "c++17"
+        },
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/Engine",
+                "${workspaceFolder}/Engine/Libraries/include"
+            ],
+            "defines": [],
+            "compilerPath": "/C:/MinGW/bin/g++.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
         }
     ],
     "version": 4

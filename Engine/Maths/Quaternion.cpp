@@ -16,7 +16,7 @@ Quaternion::~Quaternion()
 {
 }
 
-Quaternion Quaternion::fromAxisAngle(int angle, const Vector3 &axis)
+Quaternion Quaternion::fromAxisAngle(float angle, const Vector3 &axis)
 {
     float qAngle= 0.5f * angle * ((float)M_PI / 180.0f);
     float sinmult = sinf(qAngle);
