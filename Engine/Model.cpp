@@ -1,6 +1,7 @@
 #include "Model.h"
 
-Model::Model(const char *path)
+Model::Model(const char *path) : indexmap(),
+								 indexcount(0)
 {
 	char *file;
 	long len;
@@ -14,6 +15,10 @@ Model::Model(const char *path)
 		lines.push_back(new std::string(buf));
 	}
 
+	//assuming the values are placed in order! verts -> normals -> faces
+	//otherwise likely a silent error
+	std::vector<Maths::Vector3> vlist;
+	std::vector<Maths::Vector3> nlist;
 	for (auto line : lines)
 	{
 		if ((*line)[0] == '#')
@@ -22,88 +27,102 @@ Model::Model(const char *path)
 		}
 		else if ((*line)[0] == 'v' && (*line)[1] == ' ')
 		{
-			parseVert(*line);
+			parseVert(*line, vlist);
 		}
 		else if ((*line)[0] == 'v' && (*line)[1] == 'n' && (*line)[2] == ' ')
 		{
-			parseNormal(*line);
+			parseNormal(*line, nlist);
 		}
 		else if ((*line)[0] == 'f' && (*line)[1] == ' ')
 		{
-			parseFaceElement(*line);
+			parseFaceElement(*line, vlist, nlist);
 		}
 	}
 
-	for (int i = 0; i < lines.size(); i++)
-	{
-		delete lines[i];
-	}
-	delete file;
-
 	int nverts, nnorms, nindices;
-	float *verts;
-	float *normals;
-	unsigned int *indices;
-	Vertices(verts, nverts);
-	Indices(indices, nindices);
-	Normals(normals, nnorms);
-	ebo = new ElementBuffer(indices, nindices);
-	VertexBuffer *vbo = new VertexBuffer(verts, nverts, 3);
-	VertexBuffer *nbo = new VertexBuffer(normals, nnorms, 3);
+	float *fverts;
+	float *fnormals;
+	unsigned int *uiindices;
+	Vertices(fverts, nverts);
+	Indices(uiindices, nindices);
+	Normals(fnormals, nnorms);
+	ebo = new ElementBuffer(uiindices, nindices);
+	VertexBuffer *vbo = new VertexBuffer(fverts, nverts, 3);
+	VertexBuffer *nbo = new VertexBuffer(fnormals, nnorms, 3);
 	vao = new VertexArray();
 	vao->setEBO(ebo);
 	vao->addBuffer(vbo, 0);
 	vao->addBuffer(nbo, 1);
 }
 
-void Model::parseVert(std::string &line)
+void Model::parseVert(std::string &line, std::vector<Maths::Vector3> &list)
 {
 	float x, y, z;
 	sscanf(line.c_str(), "v %f %f %f", &x, &y, &z);
-	verts.push_back(x);
-	verts.push_back(y);
-	verts.push_back(z);
+	list.push_back(Maths::Vector3(x, y, z));
 }
 
-void Model::parseNormal(std::string &line)
+void Model::parseNormal(std::string &line, std::vector<Maths::Vector3> &list)
 {
 	float x, y, z;
 	sscanf(line.c_str(), "vn %f %f %f", &x, &y, &z);
-	normal.push_back(Maths::Vector3(x, y ,z));
+	list.push_back(Maths::Vector3(x, y, z));
 }
 
-void Model::parseFaceElement(std::string &line)
+void Model::parseFaceElement(std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
 {
 	int a, b, c, d, e, f;
 	sscanf(line.c_str(), "f %u//%u %u//%u %u//%u", &a, &b, &c, &d, &e, &f);
-	index.push_back(a - 1);
-	index.push_back(c - 1);
-	index.push_back(e - 1);
-	normindex.push_back(b - 1);
-	normindex.push_back(d - 1);
-	normindex.push_back(f - 1);
+	indexStruct ivn1{a - 1, b - 1};
+	indexStruct ivn2{c - 1, d - 1};
+	indexStruct ivn3{e - 1, f - 1};
+	insertElement(ivn1, vlist, nlist);
+	insertElement(ivn2, vlist, nlist);
+	insertElement(ivn3, vlist, nlist);
 }
 
-void Model::Vertices(float *&vertices, int &n)
+void Model::insertElement(indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
 {
-	vertices = verts.data();
-	n = verts.size() / 3;
-}
-
-void Model::Normals(float *&normals, int &n)
-{
-	float *f = new float[normindex.size()*3];
-	for (int i = 0; i < normindex.size(); i++)
+	//check if map already has key
+	if (indexmap.count(ivn) == 0)
 	{
-		f[i*3+0] = normal[normindex[i]].x;
-		f[i*3+1] = normal[normindex[i]].y;
-		f[i*3+2] = normal[normindex[i]].z;
+		//map doesn't have key -> add key to map, push vertex and normal on indexcount positions in their respective C-Vertexes
+		indexmap.insert(std::pair<indexStruct, int>(ivn, indexcount));
+		index.push_back(indexcount);
+		indexcount++;
+		vertices.push_back(vlist[ivn.v]);
+		normals.push_back(nlist[ivn.n]);
 	}
-	normals = f;
-	n = normindex.size();
-	for(int i = 0; i < normindex.size(); i++){
-		std::cout << i << ": " << normals[i*3] << ", " << normals[i*3+1] << ", " << normals[i*3+2] << ", " << normal[normindex[i]]<< std::endl;
+	else
+	{
+		index.push_back(indexmap.at(ivn));
 	}
+}
+
+void Model::Vertices(float *&array, int &n)
+{
+	float *f = new float[vertices.size() * 3];
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		f[i * 3 + 0] = vertices[i].x;
+		f[i * 3 + 1] = vertices[i].y;
+		f[i * 3 + 2] = vertices[i].z;
+	}
+	array = f;
+	n = vertices.size();
+}
+
+void Model::Normals(float *&array, int &n)
+{
+	float *f = new float[normals.size() * 3];
+	for (int i = 0; i < normals.size(); i++)
+	{
+		f[i * 3 + 0] = normals[i].x;
+		f[i * 3 + 1] = normals[i].y;
+		f[i * 3 + 2] = normals[i].z;
+	}
+	array = f;
+	n = normals.size();
 }
 
 void Model::Indices(unsigned int *&indices, int &n)
@@ -120,7 +139,8 @@ int Model::ElementCount()
 {
 	return ebo->elementCount;
 }
-void Model::unbind(){
+void Model::unbind()
+{
 	vao->unbind();
 }
 

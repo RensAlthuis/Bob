@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <map>
 #include "Maths/Maths.h"
 #include "VertexBuffer.h"
 #include "ElementBuffer.h"
@@ -11,9 +12,21 @@
 class Model
 {
   private:
-	std::vector<float> verts;
+	struct indexStruct{
+		int v;
+		int n;
+		bool operator ==(const indexStruct &o)const{
+			return v == o.v && n == o.n;
+		}
+		bool operator<(const indexStruct &o) const{
+			return v < o.v || (v == o.v && n < o.n);
+    }
+	};
+	std::map<indexStruct, int> indexmap;
+	int indexcount;
+	std::vector<Maths::Vector3> vertices;
 	std::vector<unsigned int> index;
-	std::vector<Maths::Vector3> normal;
+	std::vector<Maths::Vector3> normals;
 	std::vector<unsigned int> normindex;
 	std::vector<float> texcoord;
 
@@ -30,7 +43,9 @@ class Model
 	void unbind();
 	int ElementCount();
   private:
-	void parseVert(std::string &line);
-	void parseNormal(std::string &line);
-	void parseFaceElement(std::string &line);
+	void parseVert(std::string &line, std::vector<Maths::Vector3>& list);
+	void parseNormal(std::string &line, std::vector<Maths::Vector3>& list);
+	void parseFaceElement(std::string &line, std::vector<Maths::Vector3>& vlist, std::vector<Maths::Vector3>& nlist);
+	void insertElement(indexStruct ivn, std::vector<Maths::Vector3>& vlist, std::vector<Maths::Vector3>& nlist);
+
 };

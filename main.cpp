@@ -33,7 +33,8 @@ int main(void)
 		return -1;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	Model monkey("Assets/Model/Cube.obj");
+	Model monkey("Assets/Model/Monkey.obj");
+	Model ground("Assets/Model/Floor.obj");
 	Shader shader("Assets/Shader/vertexCol.glsl", "Assets/Shader/fragmentCol.glsl");
 	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
 	camera.translate(0, 0, 2, false);
@@ -49,7 +50,7 @@ int main(void)
 		}
 	}
 
-	int t = 0;
+	float t = 0;
 
 	while (window.running)
 	{
@@ -60,28 +61,37 @@ int main(void)
 		shader.use();
 		shader.setMat4("projection_matrix", camera.Projection());
 		shader.setMat4("view_matrix", camera.Transform());
-		shader.setVec4("lightCol", Maths::Vector4(1, 1, 1, 1));
+		// shader.setVec4("lightCol", Maths::Vector4(0.8f, 0.3f, 0.2f, 1));
+		shader.setVec4("lightCol", Maths::Vector4(1,1,1, 1));
 		shader.setVec3("lightPos", Maths::Vector3(0, 0, 1.0f));
-		float dir = (sin(t/(float)80)+1)/2;
-		std::cout << dir << std::endl;
-		shader.setVec3("directionallight", Maths::Vector3(0, 0, dir));
-		t += 1;
-		if (t >= 360*80)
+		Maths::Vector3 dir(cos(t), -0.3f, sin(t));
+		dir = dir / dir.length();
+		shader.setVec3("directionallight", dir);
+		t += 0.01;
+		if (t >= 360)
 			t = 0;
 
 		// texture.bind();
 		monkey.bind();
+		// vao->bind();
 		const int nMonkeys = 10;
 		for (int i = 0; i < nMonkeys; i++)
 		{
 			for (int j = 0; j < nMonkeys; j++)
 			{
 				shader.setVec4("colour", Maths::Vector4(cols[i * nMonkeys + j + 0], cols[i * nMonkeys + j + 1], cols[i * nMonkeys + j + 2], 1));
-				Maths::Matrix4 model = Maths::Matrix4::translate(2 * i - nMonkeys + 1, 2 * j - nMonkeys + 1, 0);
-				shader.setMat4("model_matrix", model * Maths::Matrix4::scale(0.5f, 0.5f, 0.5f));
+				Maths::Matrix4 model = Maths::Matrix4::translate(2 * i - nMonkeys + 1, 2 * j + 1, 0);
+				shader.setMat4("model_matrix", model * Maths::Matrix4::scale(0.8f, 0.8f, 0.8f));
+				// shader.setVec4("colour", Maths::Vector4(1,1,1,1));
+				// shader.setMat4("model_matrix", Maths::Matrix4::identity());
 				glDrawElements(GL_TRIANGLES, monkey.ElementCount(), GL_UNSIGNED_INT, 0);
 			}
 		}
+
+		ground.bind();
+		shader.setVec4("colour", Maths::Vector4(1,1,1,1));
+		shader.setMat4("model_matrix", Maths::Matrix4::scale(100, 1, 100));
+		glDrawElements(GL_TRIANGLES, ground.ElementCount(), GL_UNSIGNED_INT, 0);
 
 		// Maths::Vector3 front = camera.Front();
 		if (Input::isKeyPressed(GLFW_KEY_ESCAPE))

@@ -4,10 +4,11 @@ out vec4 FragColor;
 uniform vec4 lightCol;
 uniform vec3 lightPos;
 uniform vec4 colour;
-in vec3 fragPos;
+flat in vec3 col;
 in float angle;
 void main()
 {
-    float intensity = 1/ length(fragPos - lightPos);
-    FragColor =  colour * angle * lightCol;
+    // float intensity = 1/ length(fragPos - lightPos);
+    // FragColor = vec4(col.rgb, 1);
+    FragColor = 0.1+colour*angle*lightCol;
 }
