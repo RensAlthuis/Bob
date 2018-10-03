@@ -4,6 +4,8 @@ namespace Maths
 {
 
 const Vector3 Vector3::Up(0, 1, 0);
+const Vector3 Vector3::Forward(0, 0, -1);
+const Vector3 Vector3::Right(1, 0, 0);
 
 Vector3::Vector3(float x, float y, float z) : x(x),
                                               y(y),
@@ -101,6 +103,15 @@ Vector3 Vector3::rotate(const Quaternion &q) const
         pMult * x + vMult * q.x + crossMult * (q.y * z - q.z * y),
         pMult * y + vMult * q.y + crossMult * (q.z * x - q.x * z),
         pMult * z + vMult * q.z + crossMult * (q.x * y - q.y * x));
+}
+
+Vector3 &Vector3::normalize()
+{
+    float magnitude = length();
+    x /= magnitude;
+    y /= magnitude;
+    z /= magnitude;
+    return *this;
 }
 
 Vector3::~Vector3()

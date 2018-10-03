@@ -17,7 +17,7 @@ class Quaternion
     float dot(const Quaternion &q) const;
     Quaternion inverse() const;
     float length() const;
-    void normalize();
+    Quaternion& normalize();
 
     friend Quaternion operator*(const Quaternion &l, const Quaternion &r);
     friend std::ostream &operator<<(std::ostream &out, const Quaternion &v);

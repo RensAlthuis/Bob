@@ -35,13 +35,14 @@ float Quaternion::length() const
     return sqrtf(w * w + x * x + y * y + z * z);
 }
 
-void Quaternion::normalize()
+Quaternion& Quaternion::normalize()
 {
     float l = length();
     w = w / l;
     x = x / l;
     y = y / l;
     z = z / l;
+    return *this;
 }
 float Quaternion::dot(const Quaternion &q) const
 {

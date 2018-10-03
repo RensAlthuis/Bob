@@ -26,11 +26,7 @@ const Maths::Matrix4 &Object::Transform() const
 
 const Maths::Vector3 Object::Front() const
 {
-    Maths::Vector3 front(0, 0, -1.0f);
-    front = front.rotate(rotation);
-    front = front / front.length();
-    
-    return front;
+    return Maths::Vector3::Forward.rotate(rotation).normalize();
 }
 
 void Object::translate(Maths::Vector3 v, bool inWorldSpace)

@@ -1,12 +1,12 @@
 #include "Camera.h"
 
-Camera::Camera(float fov, float ar, float near, float far)
+Camera::Camera(float fov, float ar, float near, float far) :yangle(0), xangle(0)
 {
     projection = Maths::Matrix4::perspective(fov, ar, near, far);
     // recalculate();
 }
 
-Camera::Camera(float left, float right, float top, float bottom, float near, float far)
+Camera::Camera(float left, float right, float top, float bottom, float near, float far) :yangle(0), xangle(0)
 {
     projection = Maths::Matrix4::ortho(left, right, top, bottom, near, far);
     // recalculate();
@@ -30,28 +30,26 @@ const Maths::Matrix4 &Camera::Projection()
 
 void Camera::turn(int x, int y)
 {
+
     xangle += x;
     yangle += y;
-    if(yangle > 80) yangle = 80;
-    if(yangle < -80) yangle = -80;
-    if( xangle > 360 ) xangle = 0;
-    if( xangle < 0 ) xangle = 360;
+    xangle = xangle%360;
+    if (yangle >= 90.0f){
+        yangle = 90;
+        return;
+    }
+    if (yangle <= -90.0f){
+        yangle = -90;
+        return;
+    }
 
-    Maths::Vector3 front = Front();
-    Maths::Vector3 up = Maths::Vector3::Up - (front * Maths::Vector3::Up.dot(Front()));
-    up = up/up.length();
-    Maths::Vector3 side = front.cross(up);
-
-    Maths::Quaternion q = Maths::Quaternion::fromAxisAngle(
-        -xangle,
-        Maths::Vector3::Up);
-
-    Maths::Quaternion r = Maths::Quaternion::fromAxisAngle(
-        yangle,
-        side);
-
-    rotation = r * q;
+    Maths::Quaternion q(rotation.w, 0, rotation.y, 0);
+    Maths::Vector3 side = Maths::Vector3::Right.rotate(q.normalize());
+    Maths::Quaternion swing(Maths::Quaternion::fromAxisAngle(-xangle, Maths::Vector3::Up));
+    Maths::Quaternion tilt(Maths::Quaternion::fromAxisAngle(yangle, side));
+    rotation = tilt*swing;
     recalculate();
+    // std::cout << side << std::endl;
 }
 
 void Camera::lookAt(const Maths::Vector3 &v)
