@@ -133,7 +133,7 @@ void Window::fullscreen(bool value)
 	{
 		GLFWmonitor *mon = glfwGetPrimaryMonitor();
 		const GLFWvidmode *mode = glfwGetVideoMode(mon);
-		glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+		glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, 60);
 	}
 	else{
 		glfwSetWindowMonitor(window, NULL, 0, 0, width, height, GLFW_DONT_CARE);

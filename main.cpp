@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include "Window.h"
 #include "Shader.h"
-#include "Maths/Maths.h"
-
-#include "Texture.h"
-#include "FreeImage.h"
-#include "Model.h"
 #include "Camera.h"
+#include "Model.h"
+#include "Texture.h"
+#include "Maths/Maths.h"
+#include "FreeImage.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -26,14 +25,12 @@ bool checkGLError()
 
 int main(void)
 {
-	float x = (1, 10);
-	std::cout << x << std::endl;
 	FreeImage_Initialise();
 	Window window("Bob", WIDTH, HEIGHT, false);
 	if (!window.init())
 		return -1;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	Model monkey("Assets/Model/Monkey.obj");
+	Model monkey("Assets/Model/cube.obj");
 	Model ground("Assets/Model/Floor.obj");
 	Shader shader("Assets/Shader/vertexCol.glsl", "Assets/Shader/fragmentCol.glsl");
 	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
@@ -63,6 +60,7 @@ int main(void)
 		shader.use();
 		shader.setMat4("projection_matrix", camera.Projection());
 		// shader.setMat4("projection_matrix", Maths::Matrix4::obliquePerspective(-8,8,-4.5f,4.5f,1.00f, 100.0f));
+		// shader.setMat4("projection_matrix", Maths::Matrix4::ortho(-8,8,-4.5f,4.5f,1.00f, 100.0f));
 		shader.setMat4("view_matrix", camera.Transform());
 		shader.setVec4("lightCol", Maths::Vector4(1.0f, 0.6f, 0.4f, 1));
 		shader.setVec3("lightPos", Maths::Vector3(0, 0, 1.0f));
@@ -119,15 +117,16 @@ int main(void)
 			camera.translate(0, -0.1f, 0, true);
 		}
 
-		// camera.lookAt(Maths::Vector3(0, 0, 0));
-		if (Input::mouseDragged())
-			camera.turn(Input::mouseDragX()/3.0f, Input::mouseDragY()/3.0f);
+		camera.lookAt(Maths::Vector3(0, 0, 0));
+		// if (Input::mouseDragged())
+			// camera.turn(Input::mouseDragX()/3.0f, Input::mouseDragY()/3.0f);
 
 		if(Input::isKeyPressed(GLFW_KEY_F11))
 		{
 			std::cout << "Switch fullscreen" << std::endl;
 			window.fullscreen(!window.isFullscreen());
 		}
+		std::cout << glfwGetKey(window.window, GLFW_KEY_F) << std::endl;
 
 		//end of stuff
 

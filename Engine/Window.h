@@ -7,7 +7,6 @@
 class Window
 {
   private:
-	GLFWwindow *window;
 	const char *name;
 	int width;
 	int height;
@@ -17,6 +16,7 @@ class Window
 	bool _isFullscreen;
 
   public:
+	GLFWwindow *window;
 	Input *input;
 	bool isfocused;
 	bool running;
