@@ -95,7 +95,8 @@ bool Window::init(Window *_parent)
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(window, 0, 0);
-	std::cout << "Intialized with openGL version: " << glGetString(GL_VERSION) << std::endl;
+	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+	std::cout << "GLFW version: " << glfwGetVersionString() << std::endl;
 	return true;
 }
 
@@ -133,7 +134,7 @@ void Window::fullscreen(bool value)
 	{
 		GLFWmonitor *mon = glfwGetPrimaryMonitor();
 		const GLFWvidmode *mode = glfwGetVideoMode(mon);
-		glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, 60);
+		glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
 	}
 	else{
 		glfwSetWindowMonitor(window, NULL, 0, 0, width, height, GLFW_DONT_CARE);

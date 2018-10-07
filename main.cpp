@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "Maths/Maths.h"
 #include "FreeImage.h"
+#include <ctime>
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -22,7 +23,6 @@ bool checkGLError()
 	}
 	return false;
 }
-
 int main(void)
 {
 	FreeImage_Initialise();
@@ -48,11 +48,16 @@ int main(void)
 	}
 
 	float t = 0;
-	int n= 0;
-	int tiltdir = 1;
-	int dotilt = 0;
+	long starttime = time(nullptr);
+	int framecount=0;
 	while (window.running)
 	{
+		if(time(nullptr) - starttime >= 1){
+			starttime = time(nullptr);
+			std::cout << framecount << std::endl;
+			framecount = 0;
+		}
+
 		if (checkGLError())
 			return -1;
 		window.clear();
@@ -126,13 +131,14 @@ int main(void)
 			std::cout << "Switch fullscreen" << std::endl;
 			window.fullscreen(!window.isFullscreen());
 		}
-		std::cout << glfwGetKey(window.window, GLFW_KEY_F) << std::endl;
+		// std::cout << glfwGetKey(window.window, GLFW_KEY_F) << std::endl;
 
 		//end of stuff
 
 		if (window.isfocused)
 			window.setCurrent();
 		window.update();
+		framecount++;
 	}
 	FreeImage_DeInitialise();
 	return 0;
