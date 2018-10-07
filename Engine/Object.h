@@ -1,5 +1,7 @@
 #pragma once
 #include "Maths/Maths.h"
+
+namespace Engine{
 class Object
 {
   protected:
@@ -20,4 +22,6 @@ class Object
 
   protected:
     virtual void recalculate();
+};
+
 };

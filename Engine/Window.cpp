@@ -1,5 +1,6 @@
 #include "Window.h"
 
+namespace Engine{
 Window::Window(const char *name, int width, int height, bool isFullscreen) : name(name),
 																			 width(width),
 																			 height(height),
@@ -95,6 +96,7 @@ bool Window::init(Window *_parent)
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(window, 0, 0);
+	// glfwSwapInterval(0);
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 	std::cout << "GLFW version: " << glfwGetVersionString() << std::endl;
 	return true;
@@ -173,3 +175,4 @@ Window::~Window()
 {
 	glfwTerminate();
 }
+};

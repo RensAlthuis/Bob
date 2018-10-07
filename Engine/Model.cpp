@@ -1,5 +1,6 @@
 #include "Model.h"
 
+namespace Engine{
 Model::Model(const char *path) : indexmap(),
 								 indexcount(0)
 {
@@ -147,3 +148,4 @@ void Model::unbind()
 Model::~Model()
 {
 }
+};

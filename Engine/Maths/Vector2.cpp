@@ -1,5 +1,6 @@
 #include "Vector2.h"
 
+namespace Engine{
 namespace Maths
 {
 
@@ -77,4 +78,5 @@ Vector2::~Vector2()
 {
 }
 
-} // namespace Maths
+}; // namespace Maths
+};

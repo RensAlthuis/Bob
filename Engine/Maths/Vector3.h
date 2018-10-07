@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Maths.h"
 
+namespace Engine{
 namespace Maths
 {
 
@@ -35,4 +36,5 @@ public:
 	float length() const;
 	Vector3 rotate(const Quaternion& q) const;
 };
-} // namespace Maths
+}; // namespace Maths
+};

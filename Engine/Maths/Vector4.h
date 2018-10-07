@@ -2,6 +2,8 @@
 #include <math.h>
 #include <iostream>
 #include "Matrix4.h"
+
+namespace Engine{
 namespace Maths
 {
 
@@ -30,4 +32,5 @@ public:
 	Vector4 cross(const Vector4 &other);
 	float length();
 };
-} // namespace Maths
+}; // namespace Maths
+};

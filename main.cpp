@@ -7,10 +7,13 @@
 #include "Texture.h"
 #include "Maths/Maths.h"
 #include "FreeImage.h"
+#include <chrono>
 #include <ctime>
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
+
+using namespace Engine;
 
 bool checkGLError()
 {
@@ -48,15 +51,17 @@ int main(void)
 	}
 
 	float t = 0;
-	long starttime = time(nullptr);
+	// long starttime = time(nullptr);
 	int framecount=0;
 	while (window.running)
 	{
-		if(time(nullptr) - starttime >= 1){
-			starttime = time(nullptr);
-			std::cout << framecount << std::endl;
-			framecount = 0;
-		}
+		// std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() << std::endl;
+
+		// if(time(nullptr) - starttime >= 1){
+		// 	starttime = time(nullptr);
+		// 	std::cout << framecount << std::endl;
+		// 	framecount = 0;
+		// }
 
 		if (checkGLError())
 			return -1;

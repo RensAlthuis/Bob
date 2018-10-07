@@ -1,5 +1,7 @@
 #include "Shader.h"
 
+
+namespace Engine{
 Shader::Shader(const char *vertexPath, const char *fragmentPath)
 {
 	int success;
@@ -82,3 +84,4 @@ void Shader::use()
 Shader::~Shader()
 {
 }
+};

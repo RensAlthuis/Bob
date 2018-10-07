@@ -1,5 +1,6 @@
 #include "Object.h"
 
+namespace Engine{
 Object::Object() : translation(0, 0, 0),
                    scale(1),
                    rotation(1, 0, 0, 0)
@@ -55,3 +56,4 @@ void Object::rotate(Maths::Quaternion q)
     rotation = q * rotation;
     recalculate();
 }
+};

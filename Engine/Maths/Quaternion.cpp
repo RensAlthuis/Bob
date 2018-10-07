@@ -1,5 +1,6 @@
 #include "Quaternion.h"
 
+namespace Engine{
 namespace Maths
 {
 Quaternion::Quaternion(float w, float x, float y, float z) : w(w),
@@ -70,4 +71,5 @@ std::ostream &operator<<(std::ostream &out, const Quaternion &r)
 {
     return out << "(" << r.w << ", " << r.x << ", " << r.y << ", " << r.z << ")";
 }
-} // namespace Maths
+}; // namespace Maths
+};

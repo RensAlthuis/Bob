@@ -1,6 +1,8 @@
 #pragma once
 #include <glad/glad.h>
 
+
+namespace Engine{
 class VertexBuffer
 {
   public:
@@ -12,4 +14,6 @@ class VertexBuffer
 
 	void bind();
 	void unbind();
+};
+
 };

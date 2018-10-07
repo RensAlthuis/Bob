@@ -1,5 +1,6 @@
 #include "ElementBuffer.h"
 
+namespace Engine {
 ElementBuffer::ElementBuffer(GLuint *data, int length) : elementCount(length)
 {
     glGenBuffers(1, &ID);
@@ -21,3 +22,4 @@ void ElementBuffer::unbind()
 ElementBuffer::~ElementBuffer()
 {
 }
+};

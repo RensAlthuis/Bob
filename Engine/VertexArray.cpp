@@ -1,5 +1,9 @@
 #include "VertexArray.h"
 #include <iostream>
+
+
+namespace Engine{
+
 VertexArray::VertexArray()
 {
     glGenVertexArrays(1, &ID);
@@ -35,3 +39,5 @@ void VertexArray::setEBO(ElementBuffer *ebo)
 VertexArray::~VertexArray()
 {
 }
+
+};

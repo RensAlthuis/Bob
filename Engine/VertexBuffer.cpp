@@ -1,5 +1,7 @@
 #include "VertexBuffer.h"
 
+
+namespace Engine{
 VertexBuffer::VertexBuffer(GLfloat *data, unsigned int nElements, unsigned int elementLength) : elementCount(nElements * elementLength),
 																								elementLength(elementLength)
 {
@@ -22,3 +24,5 @@ void VertexBuffer::unbind()
 VertexBuffer::~VertexBuffer()
 {
 }
+
+};

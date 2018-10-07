@@ -1,5 +1,6 @@
 #include "Camera.h"
 
+namespace Engine{
 Camera::Camera(float fov, float ar, float near, float far) : yangle(0), xangle(0)
 {
     projection = Maths::Matrix4::perspective(fov, ar, near, far);
@@ -64,3 +65,4 @@ void Camera::lookAt(const Maths::Vector3 &v)
     rotation = tilt*swing;
     recalculate();
 }
+};

@@ -1,5 +1,6 @@
 #pragma once
 
+namespace Engine{
 namespace Maths
 {
 
@@ -9,7 +10,8 @@ class Vector4;
 class Matrix4;
 class Quaternion;
 
-} // namespace Maths
+}; // namespace Maths
+};
 
 #include "Vector2.h"
 #include "Vector3.h"

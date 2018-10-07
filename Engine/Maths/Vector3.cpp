@@ -1,5 +1,7 @@
 #include "Vector3.h"
 
+
+namespace Engine{
 namespace Maths
 {
 
@@ -118,4 +120,5 @@ Vector3::~Vector3()
 {
 }
 
-} // namespace Maths
+}; // namespace Maths
+};
