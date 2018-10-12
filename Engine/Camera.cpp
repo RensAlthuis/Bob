@@ -48,19 +48,3 @@ void Camera::turn(float x, float y)
     rotation = tilt * swing;
     recalculate();
 }
-
-void Camera::lookAt(const Maths::Vector3 &v)
-{
-
-    Maths::Vector3 dir = (v - translation).normalize();
-    float anglefront = atan2f(Maths::Vector3::Forward.x, Maths::Vector3::Forward.z);
-    float angledir = atan2f(dir.x, dir.z);
-    xangle = (anglefront - angledir) * (180.0f / (float)M_PI);
-    float a = acosf(dir.dot(Maths::Vector3::Up));
-    yangle = ((float)M_PI_2 - a) * (180.0f / (float)M_PI);
-    Maths::Quaternion swing(Maths::Quaternion::fromAxisAngle(-xangle, Maths::Vector3::Up));
-    Maths::Vector3 side = Maths::Vector3::Right.rotate(swing);
-    Maths::Quaternion tilt(Maths::Quaternion::fromAxisAngle(yangle, side));
-    rotation = tilt*swing;
-    recalculate();
-}

@@ -30,11 +30,11 @@ int main(void)
 	if (!window.init())
 		return -1;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	Model monkey("Assets/Model/cube.obj");
+	Model monkey("Assets/Model/Monkey.obj");
 	Model ground("Assets/Model/Floor.obj");
 	Shader shader("Assets/Shader/vertexCol.glsl", "Assets/Shader/fragmentCol.glsl");
 	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
-	camera.translate(0, 10, 10, false);
+	camera.translate(0, 10, 20, false);
 
 	float cols[300];
 	for (int i = 0; i < 10; i++)
@@ -50,6 +50,8 @@ int main(void)
 	float t = 0;
 	long starttime = time(nullptr);
 	int framecount=0;
+	Object light;
+	light.translate(Maths::Vector3(0,10,10),false);
 	while (window.running)
 	{
 		if(time(nullptr) - starttime >= 1){
@@ -64,14 +66,18 @@ int main(void)
 
 		shader.use();
 		shader.setMat4("projection_matrix", camera.Projection());
-		// shader.setMat4("projection_matrix", Maths::Matrix4::obliquePerspective(-8,8,-4.5f,4.5f,1.00f, 100.0f));
-		// shader.setMat4("projection_matrix", Maths::Matrix4::ortho(-8,8,-4.5f,4.5f,1.00f, 100.0f));
 		shader.setMat4("view_matrix", camera.Transform());
-		shader.setVec4("lightCol", Maths::Vector4(1.0f, 0.6f, 0.4f, 1));
-		shader.setVec3("lightPos", Maths::Vector3(0, 0, 1.0f));
+
 		Maths::Vector3 dir(cos(t), -0.3f, sin(t));
 		dir.normalize();
 		shader.setVec3("directionallight", dir);
+		shader.setVec4("lightCol", Maths::Vector4(0.0f, 0.0f, 0.0f, 1));
+
+		shader.setVec3("pointlight", light.translation);
+		shader.setFloat1("pointIntensity", 8.0f);
+		light.translate(Maths::Vector3(0.1f, 0, 0), true);
+		light.lookAt(Maths::Vector3(0,10,0));
+
 		t += 0.01;
 		if (t >= 360)
 			t = 0;
@@ -122,17 +128,14 @@ int main(void)
 			camera.translate(0, -0.1f, 0, true);
 		}
 
-		camera.lookAt(Maths::Vector3(0, 0, 0));
-		// if (Input::mouseDragged())
-			// camera.turn(Input::mouseDragX()/3.0f, Input::mouseDragY()/3.0f);
+		if (Input::mouseDragged())
+			camera.turn(Input::mouseDragX()/3.0f, Input::mouseDragY()/3.0f);
 
 		if(Input::isKeyPressed(GLFW_KEY_F11))
 		{
 			std::cout << "Switch fullscreen" << std::endl;
 			window.fullscreen(!window.isFullscreen());
 		}
-		// std::cout << glfwGetKey(window.window, GLFW_KEY_F) << std::endl;
-
 		//end of stuff
 
 		if (window.isfocused)

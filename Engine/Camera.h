@@ -16,7 +16,6 @@ class Camera : public Object
     ~Camera();
     const Maths::Matrix4 &Projection();
     void turn(float x, float y);
-    void lookAt(const Maths::Vector3 &v);
 
   private:
     void recalculate() override;

@@ -75,6 +75,12 @@ void Shader::setInt1(const char *str, int i)
 {
 	glUniform1i(glGetUniformLocation(ID, str), i);
 }
+
+void Shader::setFloat1(const char *str, float f)
+{
+	glUniform1f(glGetUniformLocation(ID, str), f);
+}
+
 void Shader::use()
 {
 	glUseProgram(ID);
