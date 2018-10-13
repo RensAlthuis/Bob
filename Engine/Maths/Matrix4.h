@@ -5,6 +5,7 @@
 #include <math.h>
 #include "Maths.h"
 
+namespace Engine{
 namespace Maths
 {
 class Matrix4
@@ -37,4 +38,6 @@ class Matrix4
 	friend std::ostream &operator<<(std::ostream &out, const Matrix4 &r);
 };
 
-} // namespace Maths
+}; // namespace Maths
+
+};

@@ -1,5 +1,6 @@
 #include "Texture.h"
 
+namespace Engine{
 Texture::Texture(const char *path)
 {
 	FREE_IMAGE_FORMAT formatobj = FreeImage_GetFileType(path, 0);
@@ -31,3 +32,4 @@ void Texture::unbind()
 Texture::~Texture()
 {
 }
+};

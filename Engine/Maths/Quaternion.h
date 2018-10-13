@@ -1,6 +1,7 @@
 #pragma once
 #include "Maths.h"
 
+namespace Engine{
 namespace Maths
 {
 class Quaternion
@@ -22,4 +23,5 @@ class Quaternion
     friend Quaternion operator*(const Quaternion &l, const Quaternion &r);
     friend std::ostream &operator<<(std::ostream &out, const Quaternion &v);
 };
-} // namespace Maths
+}; // namespace Maths
+};

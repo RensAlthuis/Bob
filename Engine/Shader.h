@@ -4,6 +4,7 @@
 #include "Maths/Maths.h"
 #include "FileReader.h"
 
+namespace Engine{
 class Shader
 {
   public:
@@ -20,4 +21,6 @@ class Shader
 	void setFloat1(const char *str, float f);
 	void use();
 	~Shader();
+};
+
 };

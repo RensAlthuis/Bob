@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 
+namespace Engine {
 class ElementBuffer
 {
   public:
@@ -11,4 +12,5 @@ class ElementBuffer
 	~ElementBuffer();
 	void bind();
 	void unbind();
+};
 };

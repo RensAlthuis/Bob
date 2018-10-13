@@ -9,6 +9,7 @@
 #include "ElementBuffer.h"
 #include "VertexArray.h"
 
+namespace Engine{
 class Model
 {
   private:
@@ -48,4 +49,5 @@ class Model
 	void parseFaceElement(std::string &line, std::vector<Maths::Vector3>& vlist, std::vector<Maths::Vector3>& nlist);
 	void insertElement(indexStruct ivn, std::vector<Maths::Vector3>& vlist, std::vector<Maths::Vector3>& nlist);
 
+};
 };

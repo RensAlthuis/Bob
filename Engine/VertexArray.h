@@ -3,6 +3,8 @@
 #include "VertexBuffer.h"
 #include "ElementBuffer.h"
 
+
+namespace Engine{
 class VertexArray
 {
   public:
@@ -13,4 +15,6 @@ class VertexArray
 	void setEBO(ElementBuffer *ebo);
 	void bind();
 	void unbind();
+};
+
 };

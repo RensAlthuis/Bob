@@ -1,7 +1,7 @@
 #pragma once
 #include "Object.h"
 #include <iostream>
-
+namespace Engine{
 class Camera : public Object
 {
 
@@ -19,4 +19,5 @@ class Camera : public Object
 
   private:
     void recalculate() override;
+};
 };

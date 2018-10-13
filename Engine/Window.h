@@ -4,6 +4,8 @@
 #include <GLFW/glfw3.h>
 #include "Input.h"
 
+
+namespace Engine{
 class Window
 {
   private:
@@ -37,4 +39,5 @@ class Window
 	void focus();
 	void close();
 	bool isFullscreen(){return _isFullscreen;};
+};
 };

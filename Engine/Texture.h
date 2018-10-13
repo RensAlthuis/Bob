@@ -4,6 +4,8 @@
 #include <FreeImage.h>
 #include <iostream>
 
+
+namespace Engine{
 class Texture
 {
 
@@ -18,4 +20,5 @@ public:
   ~Texture();
   void bind();
   void unbind();
+};
 };

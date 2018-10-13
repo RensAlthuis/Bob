@@ -2,6 +2,7 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
+namespace Engine{
 class Input
 {
   public:
@@ -42,4 +43,5 @@ class Input
 	friend void windowKeyChange(GLFWwindow *win, int key, int scancode, int action, int mods);
 	friend void mouseMoved(GLFWwindow *win, double x, double y);
 	void setMouse(double x, double y);
+};
 };

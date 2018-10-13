@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 
+namespace Engine{
 namespace FileReader
 {
 static bool readFile(const char *path, char *&buf, long &len)
@@ -31,3 +32,4 @@ static bool readFile(const char *path, char *&buf, long &len)
 	return true;
 }
 }; // namespace FileReader
+};

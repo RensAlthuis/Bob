@@ -1,5 +1,6 @@
 #include "Input.h"
 
+namespace Engine{
 Input *Input::instance;
 
 Input::Input() : mPosX(0),
@@ -96,3 +97,5 @@ double Input::mouseDragY()
 Input::~Input()
 {
 }
+
+};

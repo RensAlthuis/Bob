@@ -1,5 +1,6 @@
 #include "Matrix4.h"
 
+namespace Engine{
 namespace Maths
 {
 
@@ -277,4 +278,5 @@ Vector3 operator*(const Matrix4 &r, const Vector3 &l)
         r[2] * l.x + r[6] * l.y + r[10] * l.z + r[14]);
 }
 
-} // namespace Maths
+}; // namespace Maths
+};
