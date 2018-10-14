@@ -41,5 +41,6 @@ class Window
 	void focus();
 	void close();
 	bool isFullscreen(){return _isFullscreen;};
+	void resize(int w, int h);
 };
 };

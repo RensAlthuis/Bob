@@ -44,7 +44,8 @@ void mouseMoved(GLFWwindow *win, double x, double y)
 
 void windowResized(GLFWwindow *win, int w, int h)
 {
-	glViewport(0, 0, w, h);
+	Window *window = (Window *)glfwGetWindowUserPointer(win);
+	window->resize(w,h);
 }
 
 void windowFocusChange(GLFWwindow *win, int focused)
@@ -73,8 +74,8 @@ bool Window::init(Window *_parent)
 	/* Initialize the library */
 	if (!glfwInit())
 		std::cout << "ERROR: Failed to initialize glfw" << std::endl;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	if (!createWindow())
@@ -99,6 +100,8 @@ bool Window::init(Window *_parent)
 	glfwSetCursorPos(window, 0, 0);
 	glfwSwapInterval(0);
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+	std::cout << "OpenGL Vendor: " << glGetString(GL_VENDOR) << std::endl;
+	std::cout << "OpenGL Renderer: " << glGetString(GL_RENDERER) << std::endl;
 	std::cout << "GLFW version: " << glfwGetVersionString() << std::endl;
 	return true;
 }
@@ -180,6 +183,13 @@ void Window::update_time()
 	long t = Time::time();
 	Time::deltaTime = (t - Time::oldTime) / 1000.0f;
 	Time::oldTime = t;
+}
+
+void Window::resize(int w, int h){
+	width = w;
+	height = h;
+	glViewport(0, 0, w, h);
+	std::cout << "HI" << std::endl;
 }
 
 Window::~Window()
