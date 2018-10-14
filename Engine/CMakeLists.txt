@@ -17,6 +17,7 @@ Texture.cpp
 Model.cpp
 Camera.cpp
 Object.cpp
+Time.cpp
 )
 
 

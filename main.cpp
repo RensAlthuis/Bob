@@ -7,11 +7,10 @@
 #include "Texture.h"
 #include "Maths/Maths.h"
 #include "FreeImage.h"
-#include <chrono>
-#include <ctime>
+#include "Time.h"
 
-#define WIDTH 1280.0f
-#define HEIGHT 720.0f
+#define WIDTH 800.0f
+#define HEIGHT 600.0f
 
 using namespace Engine;
 
@@ -51,19 +50,17 @@ int main(void)
 	}
 
 	float t = 0;
-	// long starttime = time(nullptr);
+	long starttime = Time::time();
 	int framecount=0;
 	Object light;
 	light.translate(Maths::Vector3(0,10,10),false);
 	while (window.running)
 	{
-		// std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() << std::endl;
-
-		// if(time(nullptr) - starttime >= 1){
-		// 	starttime = time(nullptr);
-		// 	std::cout << framecount << std::endl;
-		// 	framecount = 0;
-		// }
+		if(Time::time() - starttime >= 1000){
+			starttime = Time::time();
+			std::cout << framecount << std::endl;
+			framecount = 0;
+		}
 
 		if (checkGLError())
 			return -1;
@@ -80,7 +77,7 @@ int main(void)
 
 		shader.setVec3("pointlight", light.translation);
 		shader.setFloat1("pointIntensity", 8.0f);
-		light.translate(Maths::Vector3(0.1f, 0, 0), true);
+		light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), true);
 		light.lookAt(Maths::Vector3(0,10,0));
 
 		t += 0.01;
@@ -110,27 +107,27 @@ int main(void)
 			window.close();
 		if (Input::isKeyDown(GLFW_KEY_W))
 		{
-			camera.translate(0, 0, -0.1f, true);
+			camera.translate(Maths::Vector3(0, 0, -10) * Time::deltatime(), true);
 		}
 		if (Input::isKeyDown(GLFW_KEY_A))
 		{
-			camera.translate(-0.1f, 0, 0, true);
+			camera.translate(Maths::Vector3(-10, 0, 0) * Time::deltatime(), true);
 		}
 		if (Input::isKeyDown(GLFW_KEY_S))
 		{
-			camera.translate(0, 0, 0.1f, true);
+			camera.translate(Maths::Vector3(0, 0, 10) * Time::deltatime(), true);
 		}
 		if (Input::isKeyDown(GLFW_KEY_D))
 		{
-			camera.translate(0.1f, 0, 0, true);
+			camera.translate(Maths::Vector3(10, 0, 0) * Time::deltatime(), true);
 		}
 		if (Input::isKeyDown(GLFW_KEY_SPACE))
 		{
-			camera.translate(0, 0.1f, 0, true);
+			camera.translate(Maths::Vector3(0, 10, 0) * Time::deltatime(), true);
 		}
 		if (Input::isKeyDown(GLFW_KEY_LEFT_SHIFT))
 		{
-			camera.translate(0, -0.1f, 0, true);
+			camera.translate(Maths::Vector3(0, -10, 0) * Time::deltatime(), true);
 		}
 
 		if (Input::mouseDragged())

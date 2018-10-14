@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "Input.h"
+#include "Time.h"
 
 
 namespace Engine{
@@ -25,6 +26,7 @@ class Window
 
 	private:
 	bool createWindow();
+	void update_time();
 
   public:
 	Window(const char *name, int width, int height, bool isFullscreen);

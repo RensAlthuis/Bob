@@ -1,6 +1,7 @@
 #include "Window.h"
 
-namespace Engine{
+namespace Engine
+{
 Window::Window(const char *name, int width, int height, bool isFullscreen) : name(name),
 																			 width(width),
 																			 height(height),
@@ -96,7 +97,7 @@ bool Window::init(Window *_parent)
 	glEnable(GL_DEPTH_TEST);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(window, 0, 0);
-	// glfwSwapInterval(0);
+	glfwSwapInterval(0);
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 	std::cout << "GLFW version: " << glfwGetVersionString() << std::endl;
 	return true;
@@ -131,14 +132,16 @@ void Window::setCurrent()
 
 void Window::fullscreen(bool value)
 {
-	if (value == _isFullscreen) return;
-	if(value == true)
+	if (value == _isFullscreen)
+		return;
+	if (value == true)
 	{
 		GLFWmonitor *mon = glfwGetPrimaryMonitor();
 		const GLFWvidmode *mode = glfwGetVideoMode(mon);
 		glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
 	}
-	else{
+	else
+	{
 		glfwSetWindowMonitor(window, NULL, 0, 0, width, height, GLFW_DONT_CARE);
 	}
 	_isFullscreen = value;
@@ -157,6 +160,7 @@ void Window::update()
 {
 
 	input->update();
+	update_time();
 	/* Swap front and back buffers */
 	glfwSwapBuffers(window);
 
@@ -171,8 +175,15 @@ void Window::close()
 	glfwSetWindowShouldClose(window, true);
 }
 
+void Window::update_time()
+{
+	long t = Time::time();
+	Time::deltaTime = (t - Time::oldTime) / 1000.0f;
+	Time::oldTime = t;
+}
+
 Window::~Window()
 {
 	glfwTerminate();
 }
-};
+}; // namespace Engine
