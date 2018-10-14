@@ -38,17 +38,17 @@ int main(void)
 	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
 	camera.translate(0, 10, 20, false);
 
-	float cols[300];
-	for (int i = 0; i < 10; i++)
+	const int nMonkeys = 100;
+	float* cols = new float[3*nMonkeys*nMonkeys];
+	for (int i = 0; i < nMonkeys; i++)
 	{
-		for (int j = 0; j < 10; j++)
+		for (int j = 0; j < nMonkeys; j++)
 		{
-			cols[i * 10 + j + 0] = (float)(rand() % 255) / 255;
-			cols[i * 10 + j + 1] = (float)(rand() % 255) / 255;
-			cols[i * 10 + j + 2] = (float)(rand() % 255) / 255;
+			cols[i * nMonkeys + j + 0] = (float)(rand() % 255) / 255;
+			cols[i * nMonkeys + j + 1] = (float)(rand() % 255) / 255;
+			cols[i * nMonkeys + j + 2] = (float)(rand() % 255) / 255;
 		}
 	}
-
 	float t = 0;
 	long starttime = Time::time();
 	int framecount=0;
@@ -67,8 +67,7 @@ int main(void)
 		window.clear();
 
 		shader.use();
-		shader.setMat4("projection_matrix", camera.Projection());
-		shader.setMat4("view_matrix", camera.Transform());
+		shader.setMat4("pv_matrix", camera.Projection() * camera.Transform());
 
 		Maths::Vector3 dir(cos(t), -0.3f, sin(t));
 		dir.normalize();
@@ -86,7 +85,6 @@ int main(void)
 
 		// texture.bind();
 		monkey.bind();
-		const int nMonkeys = 10;
 		for (int i = 0; i < nMonkeys; i++)
 		{
 			for (int j = 0; j < nMonkeys; j++)
@@ -146,5 +144,6 @@ int main(void)
 		framecount++;
 	}
 	FreeImage_DeInitialise();
+	delete[] cols;
 	return 0;
 }
