@@ -33,12 +33,16 @@ int main(void)
 		return -1;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	Model monkey("Assets/Model/Monkey.obj");
+	Model cube("Assets/Model/cube.obj");
 	Model ground("Assets/Model/Floor.obj");
 	Shader shader("Assets/Shader/vertexCol.glsl", "Assets/Shader/fragmentCol.glsl");
 	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
 	camera.translate(0, 10, 20, false);
+	Object light;
+	light.translate(Maths::Vector3(0,5,5),false);
+	light.scaleAll(0.2);
 
-	const int nMonkeys = 100;
+	const int nMonkeys = 10;
 	float* cols = new float[3*nMonkeys*nMonkeys];
 	for (int i = 0; i < nMonkeys; i++)
 	{
@@ -52,8 +56,6 @@ int main(void)
 	float t = 0;
 	long starttime = Time::time();
 	int framecount=0;
-	Object light;
-	light.translate(Maths::Vector3(0,10,10),false);
 	while (window.running)
 	{
 		if(Time::time() - starttime >= 1000){
@@ -74,10 +76,10 @@ int main(void)
 		shader.setVec3("directionallight", dir);
 		shader.setVec4("lightCol", Maths::Vector4(0.0f, 0.0f, 0.0f, 1));
 
-		shader.setVec3("pointlight", light.translation);
-		shader.setFloat1("pointIntensity", 8.0f);
 		light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), true);
 		light.lookAt(Maths::Vector3(0,10,0));
+		shader.setVec3("pointlight", light.translation);
+		shader.setFloat1("pointIntensity", 8.0f);
 
 		t += 0.01;
 		if (t >= 360)
@@ -95,6 +97,10 @@ int main(void)
 				glDrawElements(GL_TRIANGLES, monkey.ElementCount(), GL_UNSIGNED_INT, 0);
 			}
 		}
+		cube.bind();
+		shader.setVec4("colour", Maths::Vector4(1,1,1,1));
+		shader.setMat4("model_matrix", light.Transform());
+		glDrawElements(GL_TRIANGLES, cube.ElementCount(), GL_UNSIGNED_INT, 0);
 
 		ground.bind();
 		shader.setVec4("colour", Maths::Vector4(1,1,1,1));

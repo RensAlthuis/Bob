@@ -15,9 +15,12 @@ Object::~Object()
 
 void Object::recalculate()
 {
-    transform = Maths::Matrix4::translate(translation) *
-                Maths::Matrix4::rotateAxisAngle(0, 1, 0, 0) *
-                scale;
+    // transform = Maths::Matrix4::scale(scale, scale, scale) *
+    //             Maths::Matrix4::rotateAxisAngle(0, 1, 0, 0) *
+    //             Maths::Matrix4::translate(translation);
+     transform = Maths::Matrix4::translate(translation) *
+                 Maths::Matrix4::rotateAxisAngle(0, 1, 0, 0) *
+                 Maths::Matrix4::scale(scale, scale, scale);
 }
 
 const Maths::Matrix4 &Object::Transform() const
@@ -75,4 +78,11 @@ void Object::lookAt(const Maths::Vector3 &v)
     rotation = tilt*swing;
     recalculate();
 }
+
+void Object::scaleAll(float s)
+{
+    scale *= s;
+    recalculate();
+}
+
 };

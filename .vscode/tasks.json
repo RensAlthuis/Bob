@@ -18,6 +18,15 @@
             "problemMatcher": []
         },
         {
+            "label": "cmake release",
+            "command": "cmake",
+            "args": [
+                ".."
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
             "label": "make",
             "command": "make",
             "group": "build",

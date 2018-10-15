@@ -20,6 +20,7 @@ class Object
     void translate(float x, float y, float z, bool inWorldSpace);
     void rotate(Maths::Quaternion q);
     void lookAt(const Maths::Vector3 &v);
+    void scaleAll(float s); 
 
   protected:
     virtual void recalculate();
