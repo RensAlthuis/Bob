@@ -4,19 +4,9 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 project(Bob VERSION 0.1.0)
 add_executable(Bob main.cpp)
 
-find_package(OpenGL REQUIRED)
-
-if(WIN32)
-    set(OS Windows)
-else()
-    set(OS Linux)
-endif()
+add_subdirectory(Engine)
 
 include_directories(
-    ${PROJECT_SOURCE_DIR}/Engine
-    ${PROJECT_SOURCE_DIR}/Engine/Libraries/include
+    Engine/Libraries/include
 )
-
-subdirs(Engine)
-
 target_link_libraries(Bob Engine)

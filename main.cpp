@@ -1,13 +1,13 @@
 #define FREEIMAGE_LIB
 #include <stdlib.h>
-#include "Window.h"
-#include "Shader.h"
-#include "Camera.h"
-#include "Model.h"
-#include "Texture.h"
-#include "Maths/Maths.h"
-#include "FreeImage.h"
-#include "Time.h"
+#include "Engine/Window.h"
+#include "Engine/Shader.h"
+#include "Engine/Camera.h"
+#include "Engine/Model.h"
+#include "Engine/Texture.h"
+#include "Engine/Maths/Maths.h"
+// #include "FreeImage.h"
+#include "Engine/Time.h"
 
 #define WIDTH 800.0f
 #define HEIGHT 600.0f

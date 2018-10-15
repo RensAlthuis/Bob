@@ -1,10 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
 set (CMAKE_CXX_STANDARD 11)
 
-subdirs(Maths)
+if(WIN32)
+    set(OS Windows)
+else()
+    set(OS Linux)
+endif()
 
-add_library(Engine
-STATIC
+add_subdirectory(Maths)
+
+add_library(Engine STATIC
 ElementBuffer.cpp
 FileReader.h
 glad.c
@@ -20,9 +25,8 @@ Object.cpp
 Time.cpp
 )
 
-
 include_directories(
-    ${PROJECT_SOURCE_DIR}/Libraries/include
+    Libraries/include
 )
 
 find_library(
@@ -34,8 +38,8 @@ find_library(
     HINTS Libraries/lib/${OS}
 )
 
-message("Found Library" ${GLFW})
-message("Found Library" ${FREEIMAGE})
+message(STATUS "Found Library" ${GLFW})
+message(STATUS "Found Library" ${FREEIMAGE})
 
 set(COMMONLIBS Maths ${FREEIMAGE} ${GLFW})
 
