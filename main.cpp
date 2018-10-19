@@ -1,5 +1,6 @@
 #define FREEIMAGE_LIB
 #include <stdlib.h>
+#include <assert.h>
 #include "Engine/Window.h"
 #include "Engine/Shader.h"
 #include "Engine/Camera.h"
@@ -32,18 +33,18 @@ int main(void)
 	if (!window.init())
 		return -1;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	Model monkey("Assets/Model/Monkey.obj");
+	Model monkey("Assets/Model/cube.obj");
 	Model cube("Assets/Model/cube.obj");
 	Model ground("Assets/Model/Floor.obj");
-	Shader shader("Assets/Shader/vertexCol.glsl", "Assets/Shader/fragmentCol.glsl");
+	Shader shader("Assets/Shader/vertex.glsl", "Assets/Shader/fragment.glsl");
 	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
 	camera.translate(0, 10, 20, false);
 	Object light;
-	light.translate(Maths::Vector3(0,5,5),false);
+	light.translate(Maths::Vector3(0, 5, 5), false);
 	light.scaleAll(0.2);
 
-	const int nMonkeys = 100;
-	float* cols = new float[3*nMonkeys*nMonkeys];
+	const int nMonkeys = 10;
+	float *cols = new float[3 * nMonkeys * nMonkeys];
 	for (int i = 0; i < nMonkeys; i++)
 	{
 		for (int j = 0; j < nMonkeys; j++)
@@ -54,10 +55,11 @@ int main(void)
 		}
 	}
 	long starttime = Time::time();
-	int framecount=0;
+	int framecount = 0;
 	while (window.running)
 	{
-		if(Time::time() - starttime >= 1000){
+		if (Time::time() - starttime >= 1000)
+		{
 			starttime = Time::time();
 			std::cout << framecount << std::endl;
 			framecount = 0;
@@ -67,37 +69,52 @@ int main(void)
 			return -1;
 		window.clear();
 
+		const Maths::Vector4 plp[] = {Maths::Vector4(light.translation.x, light.translation.y, light.translation.z, 1) * camera.Transform(),
+									  Maths::Vector4(-light.translation.x, light.translation.y, -light.translation.z, 1) * camera.Transform()};
+		const Maths::Vector3 pla[] = {Maths::Vector3(1, 1, 1), Maths::Vector3(1, 1, 1)};
+		const float pli[] = {40.0f, 2.0};
+		const Maths::Vector3 plc[] = {Maths::Vector3(1, 1, 1), Maths::Vector3(1, 1, 1)};
+		const Maths::Vector3 mEC = Maths::Vector3(0.1f, 0.1f, 0.1f);
+		const Maths::Vector3 mAC = Maths::Vector3(1, 1, 1);
+		const Maths::Vector4 mDC = Maths::Vector4(1, 1, 1, 1);
+		const Maths::Vector3 mSC = Maths::Vector3(1, 1, 1);
+		const float mSE = 80.0f;
+		const Maths::Vector3 lADS[] = {Maths::Vector3(0, 1, 1), Maths::Vector3(1, 1, 1)};
+		int pointLightCount = 1;
+
 		shader.use();
-		shader.setMat4("pv_matrix", camera.Transform());
+		shader.setMat4("view_matrix", camera.Transform());
+		shader.setMat4("proj_matrix", camera.Projection());
 
-		shader.setVec3("directionallight", Maths::Vector3(-0.5f, -0.5f, -0.5f).normalize());
-		shader.setVec4("lightCol", Maths::Vector4(0.1f, 0.1f, 0.1f, 1));
+		shader.setInt1("pointLightCount", pointLightCount);
+		shader.setVec4Arr("pointLightPos", plp, pointLightCount);
+		shader.setFloatArr("pointLightIntensity", pli, pointLightCount);
+		shader.setVec3Arr("pointLightColour", plc, pointLightCount);
+		shader.setVec3Arr("pointLightAttenuation", pla, pointLightCount);
 
-		light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), true);
-		light.lookAt(Maths::Vector3(0,10,0));
-		shader.setVec3("pointlight", light.translation);
-		shader.setFloat1("pointIntensity", 8.0f);
+		shader.setVec3("matEmissiveColour", mEC);
+		shader.setVec3("matAmbiantColour", mAC);
+		shader.setVec4("matDiffuseColour", mDC);
+		shader.setVec3("matSpecularColour", mSC);
+		shader.setFloat("matSpecularExp", mSE);
+		shader.setVec3Arr("lightAmbDiffSpec", lADS, pointLightCount);
 
 		// texture.bind();
 		monkey.bind();
+		assert(glGetError() == GL_NO_ERROR);
 		for (int i = 0; i < nMonkeys; i++)
 		{
 			for (int j = 0; j < nMonkeys; j++)
 			{
-				shader.setVec4("colour", Maths::Vector4(cols[i * nMonkeys + j + 0], cols[i * nMonkeys + j + 1], cols[i * nMonkeys + j + 2], 1));
+				// shader.setVec4("matDiffuseColour", Maths::Vector4(cols[i * nMonkeys + j + 0], cols[i * nMonkeys + j + 1], cols[i * nMonkeys + j + 2], 1));
 				Maths::Matrix4 model = Maths::Matrix4::translate(2 * i - nMonkeys + 1, 2 * j + 1, 0);
 				shader.setMat4("model_matrix", model * Maths::Matrix4::scale(0.8f, 0.8f, 0.8f));
 				glDrawElements(GL_TRIANGLES, monkey.ElementCount(), GL_UNSIGNED_INT, 0);
 			}
 		}
 
-		cube.bind();
-		shader.setVec4("colour", Maths::Vector4(1,1,1,1));
-		shader.setMat4("model_matrix", light.Transform());
-		glDrawElements(GL_TRIANGLES, cube.ElementCount(), GL_UNSIGNED_INT, 0);
-
 		ground.bind();
-		shader.setVec4("colour", Maths::Vector4(1,1,1,1));
+		shader.setVec4("matDiffuseColour", Maths::Vector4(1, 1, 1, 1));
 		shader.setMat4("model_matrix", Maths::Matrix4::scale(100, 1, 100));
 		glDrawElements(GL_TRIANGLES, ground.ElementCount(), GL_UNSIGNED_INT, 0);
 
@@ -129,13 +146,17 @@ int main(void)
 		}
 
 		if (Input::mouseDragged())
-			camera.turn(Input::mouseDragX()/3.0f, Input::mouseDragY()/3.0f);
+			camera.turn(Input::mouseDragX() / 3.0f, Input::mouseDragY() / 3.0f);
 
-		if(Input::isKeyPressed(GLFW_KEY_F11))
+		if (Input::isKeyPressed(GLFW_KEY_F11))
 		{
 			std::cout << "Switch fullscreen" << std::endl;
 			window.fullscreen(!window.isFullscreen());
 		}
+
+		// light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), true);
+		// light.lookAt(Maths::Vector3(0, 10, 0));
+
 		//end of stuff
 
 		if (window.isfocused)

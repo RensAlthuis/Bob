@@ -15,8 +15,7 @@ Camera::Camera(float left, float right, float top, float bottom, float near, flo
 
 void Camera::recalculate()
 {
-    transform = projection * 
-                Maths::Matrix4::scale(scale, scale, scale) *
+    transform = Maths::Matrix4::scale(scale, scale, scale) *
                 Maths::Matrix4::rotate(rotation.inverse()) *
                 Maths::Matrix4::translate(translation * -1);
 }

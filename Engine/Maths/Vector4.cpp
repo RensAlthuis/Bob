@@ -77,10 +77,10 @@ Vector4 operator-(const Vector4 &l, const Vector4 &r)
 Vector4 operator*(const Vector4 &l, const Matrix4 &r)
 {
     return Vector4(
-        r[0] * l.x + r[4] * l.y + r[8] * l.z + r[12] * l.x,
-        r[1] * l.x + r[5] * l.y + r[9] * l.z + r[13] * l.x,
-        r[2] * l.x + r[6] * l.y + r[10] * l.z + r[14] * l.x,
-        r[3] * l.x + r[7] * l.y + r[11] * l.z + r[15] * l.x);
+        r[0] * l.x + r[4] * l.y + r[8] * l.z + r[12] * l.w,
+        r[1] * l.x + r[5] * l.y + r[9] * l.z + r[13] * l.w,
+        r[2] * l.x + r[6] * l.y + r[10] * l.z + r[14] * l.w,
+        r[3] * l.x + r[7] * l.y + r[11] * l.z + r[15] * l.w);
 }
 
 std::ostream &operator<<(std::ostream &out, const Vector4 &r)
