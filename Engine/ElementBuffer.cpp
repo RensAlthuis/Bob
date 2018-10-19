@@ -21,5 +21,6 @@ void ElementBuffer::unbind()
 
 ElementBuffer::~ElementBuffer()
 {
+    glDeleteBuffers(1, &ID);
 }
 };

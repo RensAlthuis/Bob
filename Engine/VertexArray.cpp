@@ -38,6 +38,7 @@ void VertexArray::setEBO(ElementBuffer *ebo)
 
 VertexArray::~VertexArray()
 {
+    glDeleteVertexArrays(1, &ID);
 }
 
 };

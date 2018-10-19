@@ -9,8 +9,8 @@
 // #include "FreeImage.h"
 #include "Engine/Time.h"
 
-#define WIDTH 800.0f
-#define HEIGHT 600.0f
+#define WIDTH 1280.0f
+#define HEIGHT 720.0f
 
 using namespace Engine;
 
@@ -42,7 +42,7 @@ int main(void)
 	light.translate(Maths::Vector3(0,5,5),false);
 	light.scaleAll(0.2);
 
-	const int nMonkeys = 10;
+	const int nMonkeys = 100;
 	float* cols = new float[3*nMonkeys*nMonkeys];
 	for (int i = 0; i < nMonkeys; i++)
 	{
@@ -53,13 +53,13 @@ int main(void)
 			cols[i * nMonkeys + j + 2] = (float)(rand() % 255) / 255;
 		}
 	}
-	float t = 0;
 	long starttime = Time::time();
 	int framecount=0;
 	while (window.running)
 	{
 		if(Time::time() - starttime >= 1000){
 			starttime = Time::time();
+			Dit is echt ziek nice XD
 			std::cout << framecount << std::endl;
 			framecount = 0;
 		}
@@ -69,21 +69,15 @@ int main(void)
 		window.clear();
 
 		shader.use();
-		shader.setMat4("pv_matrix", camera.Projection() * camera.Transform());
+		shader.setMat4("pv_matrix", camera.Transform());
 
-		Maths::Vector3 dir(cos(t), -0.3f, sin(t));
-		dir.normalize();
-		shader.setVec3("directionallight", dir);
-		shader.setVec4("lightCol", Maths::Vector4(0.0f, 0.0f, 0.0f, 1));
+		shader.setVec3("directionallight", Maths::Vector3(-0.5f, -0.5f, -0.5f).normalize());
+		shader.setVec4("lightCol", Maths::Vector4(0.1f, 0.1f, 0.1f, 1));
 
 		light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), true);
 		light.lookAt(Maths::Vector3(0,10,0));
 		shader.setVec3("pointlight", light.translation);
 		shader.setFloat1("pointIntensity", 8.0f);
-
-		t += 0.01;
-		if (t >= 360)
-			t = 0;
 
 		// texture.bind();
 		monkey.bind();
@@ -97,6 +91,7 @@ int main(void)
 				glDrawElements(GL_TRIANGLES, monkey.ElementCount(), GL_UNSIGNED_INT, 0);
 			}
 		}
+
 		cube.bind();
 		shader.setVec4("colour", Maths::Vector4(1,1,1,1));
 		shader.setMat4("model_matrix", light.Transform());

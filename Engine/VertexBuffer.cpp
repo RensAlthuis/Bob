@@ -23,6 +23,7 @@ void VertexBuffer::unbind()
 
 VertexBuffer::~VertexBuffer()
 {
+	glDeleteBuffers(1, &ID);
 }
 
 };
