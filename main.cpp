@@ -59,7 +59,6 @@ int main(void)
 	{
 		if(Time::time() - starttime >= 1000){
 			starttime = Time::time();
-			Dit is echt ziek nice XD
 			std::cout << framecount << std::endl;
 			framecount = 0;
 		}
