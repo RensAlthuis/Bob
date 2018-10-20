@@ -29,7 +29,7 @@ bool checkGLError()
 int main(void)
 {
 	FreeImage_Initialise();
-	Window window("Bob", WIDTH, HEIGHT, false);
+	Window window("Engine", WIDTH, HEIGHT, false);
 	if (!window.init())
 		return -1;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -71,16 +71,16 @@ int main(void)
 
 		const Maths::Vector4 plp[] = {Maths::Vector4(light.translation.x, light.translation.y, light.translation.z, 1) * camera.Transform(),
 									  Maths::Vector4(-light.translation.x, light.translation.y, -light.translation.z, 1) * camera.Transform()};
-		const Maths::Vector3 pla[] = {Maths::Vector3(1, 1, 1), Maths::Vector3(1, 1, 1)};
-		const float pli[] = {40.0f, 2.0};
-		const Maths::Vector3 plc[] = {Maths::Vector3(1, 1, 1), Maths::Vector3(1, 1, 1)};
-		const Maths::Vector3 mEC = Maths::Vector3(0.1f, 0.1f, 0.1f);
+		const Maths::Vector3 pla[] = {Maths::Vector3(0, 0, 0.1f), Maths::Vector3(0, 0, 0.1f)};
+		const float pli[] = {1.0f, 1.0f};
+		const Maths::Vector3 plc[] = {Maths::Vector3(1, 0.6, 0.3), Maths::Vector3(1, 1, 1)};
+		const Maths::Vector3 mEC = Maths::Vector3(0.0f, 0.0f, 0.0f);
 		const Maths::Vector3 mAC = Maths::Vector3(1, 1, 1);
 		const Maths::Vector4 mDC = Maths::Vector4(1, 1, 1, 1);
 		const Maths::Vector3 mSC = Maths::Vector3(1, 1, 1);
 		const float mSE = 80.0f;
-		const Maths::Vector3 lADS[] = {Maths::Vector3(0, 1, 1), Maths::Vector3(1, 1, 1)};
-		int pointLightCount = 1;
+		const Maths::Vector3 lADS[] = {Maths::Vector3(1, 1, 1), Maths::Vector3(1, 1, 1)};
+		int pointLightCount = 2;
 
 		shader.use();
 		shader.setMat4("view_matrix", camera.Transform());
@@ -154,8 +154,8 @@ int main(void)
 			window.fullscreen(!window.isFullscreen());
 		}
 
-		// light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), true);
-		// light.lookAt(Maths::Vector3(0, 10, 0));
+		light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), true);
+		light.lookAt(Maths::Vector3(0, 10, 0));
 
 		//end of stuff
 
