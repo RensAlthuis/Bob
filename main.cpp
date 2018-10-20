@@ -1,14 +1,14 @@
 #define FREEIMAGE_LIB
 #include <stdlib.h>
-#include <assert.h>
 #include "Engine/Window.h"
 #include "Engine/Shader.h"
 #include "Engine/Camera.h"
 #include "Engine/Model.h"
 #include "Engine/Texture.h"
 #include "Engine/Maths/Maths.h"
-// #include "FreeImage.h"
 #include "Engine/Time.h"
+#include "Engine/Material.h"
+#include "Engine/ModelRenderer.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -29,21 +29,41 @@ bool checkGLError()
 int main(void)
 {
 	FreeImage_Initialise();
-	Window window("Engine", WIDTH, HEIGHT, false);
+	Window window("Squash", WIDTH, HEIGHT, false);
 	if (!window.init())
 		return -1;
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	Model monkey("Assets/Model/cube.obj");
+
+	const Maths::Vector3 mEC = Maths::Vector3(0.0f, 0.0f, 0.0f);
+	const Maths::Vector3 mAC = Maths::Vector3(1, 1, 1);
+	const Maths::Vector4 mDC = Maths::Vector4(0, 1, 1, 1);
+	const Maths::Vector3 mSC = Maths::Vector3(1, 1, 1);
+	const float mSE = 80.0f;
+	const Maths::Vector3 lADS = Maths::Vector3(1, 1, 1);
+	Material material(mEC, mAC, mDC, mSC, mSE, lADS);
+
+	//Load Models
+	Model monkey("Assets/Model/Monkey.obj");
 	Model cube("Assets/Model/cube.obj");
 	Model ground("Assets/Model/Floor.obj");
+
+	//Shader
 	Shader shader("Assets/Shader/vertex.glsl", "Assets/Shader/fragment.glsl");
+
+	//Camera
 	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
 	camera.translate(0, 10, 20, false);
+
+	//Light
 	Object light;
 	light.translate(Maths::Vector3(0, 5, 5), false);
 	light.scaleAll(0.2);
 
-	const int nMonkeys = 10;
+	Object monkeyObj;
+	monkeyObj.addComponent((Component*)new ModelRenderer(&monkey, &material, &shader));
+	Object groundObj;
+	groundObj.addComponent((Component*) new ModelRenderer(&ground, &material, &shader));
+
+	const int nMonkeys = 1;
 	float *cols = new float[3 * nMonkeys * nMonkeys];
 	for (int i = 0; i < nMonkeys; i++)
 	{
@@ -68,19 +88,13 @@ int main(void)
 		if (checkGLError())
 			return -1;
 		window.clear();
+		int pointLightCount = 2;
 
 		const Maths::Vector4 plp[] = {Maths::Vector4(light.translation.x, light.translation.y, light.translation.z, 1) * camera.Transform(),
-									  Maths::Vector4(-light.translation.x, light.translation.y, -light.translation.z, 1) * camera.Transform()};
+										Maths::Vector4(-light.translation.x, light.translation.y, -light.translation.z, 1) * camera.Transform()};
 		const Maths::Vector3 pla[] = {Maths::Vector3(0, 0, 0.1f), Maths::Vector3(0, 0, 0.1f)};
 		const float pli[] = {1.0f, 1.0f};
 		const Maths::Vector3 plc[] = {Maths::Vector3(1, 0.6, 0.3), Maths::Vector3(1, 1, 1)};
-		const Maths::Vector3 mEC = Maths::Vector3(0.0f, 0.0f, 0.0f);
-		const Maths::Vector3 mAC = Maths::Vector3(1, 1, 1);
-		const Maths::Vector4 mDC = Maths::Vector4(1, 1, 1, 1);
-		const Maths::Vector3 mSC = Maths::Vector3(1, 1, 1);
-		const float mSE = 80.0f;
-		const Maths::Vector3 lADS[] = {Maths::Vector3(1, 1, 1), Maths::Vector3(1, 1, 1)};
-		int pointLightCount = 2;
 
 		shader.use();
 		shader.setMat4("view_matrix", camera.Transform());
@@ -92,31 +106,18 @@ int main(void)
 		shader.setVec3Arr("pointLightColour", plc, pointLightCount);
 		shader.setVec3Arr("pointLightAttenuation", pla, pointLightCount);
 
-		shader.setVec3("matEmissiveColour", mEC);
-		shader.setVec3("matAmbiantColour", mAC);
-		shader.setVec4("matDiffuseColour", mDC);
-		shader.setVec3("matSpecularColour", mSC);
-		shader.setFloat("matSpecularExp", mSE);
-		shader.setVec3Arr("lightAmbDiffSpec", lADS, pointLightCount);
-
-		// texture.bind();
-		monkey.bind();
-		assert(glGetError() == GL_NO_ERROR);
 		for (int i = 0; i < nMonkeys; i++)
 		{
 			for (int j = 0; j < nMonkeys; j++)
 			{
-				// shader.setVec4("matDiffuseColour", Maths::Vector4(cols[i * nMonkeys + j + 0], cols[i * nMonkeys + j + 1], cols[i * nMonkeys + j + 2], 1));
-				Maths::Matrix4 model = Maths::Matrix4::translate(2 * i - nMonkeys + 1, 2 * j + 1, 0);
-				shader.setMat4("model_matrix", model * Maths::Matrix4::scale(0.8f, 0.8f, 0.8f));
-				glDrawElements(GL_TRIANGLES, monkey.ElementCount(), GL_UNSIGNED_INT, 0);
+				Maths::Matrix4 model = Maths::Matrix4::translate(2 * i - nMonkeys + 1, 2 * j + 1, 0) * Maths::Matrix4::scale(0.8f, 0.8f, 0.8f);
+				shader.setMat4("model_matrix", model);
+				monkeyObj.update();
 			}
 		}
 
-		ground.bind();
-		shader.setVec4("matDiffuseColour", Maths::Vector4(1, 1, 1, 1));
 		shader.setMat4("model_matrix", Maths::Matrix4::scale(100, 1, 100));
-		glDrawElements(GL_TRIANGLES, ground.ElementCount(), GL_UNSIGNED_INT, 0);
+		groundObj.update();
 
 		if (Input::isKeyPressed(GLFW_KEY_ESCAPE))
 			window.close();

@@ -4,6 +4,8 @@ namespace Engine{
 namespace Maths
 {
 
+const Vector4 Vector4::Zero(0,0,0,0);
+
 Vector4::Vector4(float x, float y, float z, float w) : x(x),
                                                        y(y),
                                                        z(z),

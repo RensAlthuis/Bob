@@ -1,5 +1,7 @@
 #pragma once
 #include "Maths/Maths.h"
+#include <vector>
+#include "Component.h"
 
 namespace Engine{
 class Object
@@ -8,6 +10,7 @@ class Object
     Maths::Quaternion rotation;
     float scale;
     Maths::Matrix4 transform;
+    std::vector<Component*> components;
 
   public:
     Object();
@@ -21,6 +24,8 @@ class Object
     void rotate(Maths::Quaternion q);
     void lookAt(const Maths::Vector3 &v);
     void scaleAll(float s); 
+    void update();
+    void addComponent(Component* component);
 
   protected:
     virtual void recalculate();

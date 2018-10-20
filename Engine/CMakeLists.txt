@@ -23,6 +23,8 @@ Model.cpp
 Camera.cpp
 Object.cpp
 Time.cpp
+Material.cpp
+ModelRenderer.cpp
 )
 
 include_directories(

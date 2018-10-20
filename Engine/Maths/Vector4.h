@@ -14,6 +14,7 @@ public:
 	float y;
 	float z;
 	float w;
+	const static Vector4 Zero;
 
 public:
 	Vector4(float x, float y, float z, float w);

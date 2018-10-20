@@ -42,7 +42,7 @@
         },
         {
             "label": "run",
-            "command": "./Bob",
+            "command": "./Squash",
             "group": "build",
             "options": {
                 "cwd": "${workspaceRoot}"

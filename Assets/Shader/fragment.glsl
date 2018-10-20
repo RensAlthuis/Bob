@@ -26,7 +26,7 @@ uniform vec3 matAmbiantColour;
 uniform vec4 matDiffuseColour;
 uniform vec3 matSpecularColour;
 uniform float matSpecularExp;
-uniform vec3 lightAmbDiffSpec[nLights];
+uniform vec3 lightAmbDiffSpec;
 
 struct lightValue{
     vec3 L;
@@ -67,11 +67,11 @@ lightValue computeSpotLight(in vec4 surfacePos, in int i){
 }
 
 vec3 computeAmb(in lightValue lv, in int i){
-    return lv.I * (pointLightColour[i] * lightAmbDiffSpec[i].x) * matAmbiantColour;
+    return lv.I * (pointLightColour[i] * lightAmbDiffSpec.x) * matAmbiantColour;
 }
 
 vec3 computeDiff(in vec3 norm, in lightValue lv, in int i){
-    return lv.I * (pointLightColour[i] * lightAmbDiffSpec[i].y)
+    return lv.I * (pointLightColour[i] * lightAmbDiffSpec.y)
                 * matDiffuseColour.rgb
                 * max(0.0, dot(norm, lv.L));
 }
@@ -81,7 +81,7 @@ vec3 computeSpec(in vec3 norm, in vec4 pos, in lightValue lv, in int i){
     vec3 reflection = 2.0 * dot(lv.L, norm) * norm - lv.L;
     return (dot(norm, lv.L) <= 0.0)
             ? vec3(0,0,0)
-            : (lv.I * (pointLightColour[i] * lightAmbDiffSpec[i].z)
+            : (lv.I * (pointLightColour[i] * lightAmbDiffSpec.z)
                     * matSpecularColour
                     * pow(max(0.0, dot(reflection, viewVec)), matSpecularExp));
 }

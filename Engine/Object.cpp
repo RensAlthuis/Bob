@@ -1,6 +1,7 @@
 #include "Object.h"
 
-namespace Engine{
+namespace Engine
+{
 Object::Object() : translation(0, 0, 0),
                    scale(1),
                    rotation(1, 0, 0, 0)
@@ -11,6 +12,10 @@ Object::Object() : translation(0, 0, 0),
 
 Object::~Object()
 {
+    for(int i = 0; i < components.size(); i++)
+    {
+        delete components.at(i);
+    }
 }
 
 void Object::recalculate()
@@ -18,9 +23,9 @@ void Object::recalculate()
     // transform = Maths::Matrix4::scale(scale, scale, scale) *
     //             Maths::Matrix4::rotateAxisAngle(0, 1, 0, 0) *
     //             Maths::Matrix4::translate(translation);
-     transform = Maths::Matrix4::translate(translation) *
-                 Maths::Matrix4::rotateAxisAngle(0, 1, 0, 0) *
-                 Maths::Matrix4::scale(scale, scale, scale);
+    transform = Maths::Matrix4::translate(translation) *
+                Maths::Matrix4::rotateAxisAngle(0, 1, 0, 0) *
+                Maths::Matrix4::scale(scale, scale, scale);
 }
 
 const Maths::Matrix4 &Object::Transform() const
@@ -72,10 +77,10 @@ void Object::lookAt(const Maths::Vector3 &v)
     float yangle = ((float)M_PI_2 - a) * (180.0f / (float)M_PI);
 
     Maths::Quaternion swing(Maths::Quaternion::fromAxisAngle(-xangle, Maths::Vector3::Up));
-    Maths::Quaternion tilt(Maths::Quaternion::fromAxisAngle(yangle, 
+    Maths::Quaternion tilt(Maths::Quaternion::fromAxisAngle(yangle,
                                                             Maths::Vector3::Right.rotate(swing)));
 
-    rotation = tilt*swing;
+    rotation = tilt * swing;
     recalculate();
 }
 
@@ -85,4 +90,17 @@ void Object::scaleAll(float s)
     recalculate();
 }
 
-};
+void Object::update()
+{
+    for (int i = 0; i < components.size(); i++)
+    {
+        components.at(i)->update();
+    }
+}
+
+void Object::addComponent(Component *component)
+{
+    components.push_back(component);
+}
+
+}; // namespace Engine

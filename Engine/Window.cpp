@@ -189,7 +189,6 @@ void Window::resize(int w, int h){
 	width = w;
 	height = h;
 	glViewport(0, 0, w, h);
-	std::cout << "HI" << std::endl;
 }
 
 Window::~Window()
