@@ -96,7 +96,7 @@ bool Window::init(Window *_parent)
 	glfwSetErrorCallback(errorCallback);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(window, 0, 0);
 	glfwSwapInterval(0);
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;

@@ -1,26 +1,7 @@
-#version 330 core
+#macro INSERTVERSION
+#macro USE_LIGHTS
 
-#define nLights 8
-uniform int dirLightCount;
-uniform vec4 dirLightPos[nLights];
-uniform float dirLightIntensity[nLights];
-uniform vec3 dirLightColour[nLights];
-
-uniform int pointLightCount;
-uniform vec4 pointLightPos[nLights];
-uniform vec3 pointLightAttenuation[nLights];
-uniform float pointLightIntensity[nLights];
-uniform vec3 pointLightColour[nLights];
-
-uniform int spotLightCount;
-uniform vec4 spotLightPos[nLights];
-uniform float spotLightIntensity[nLights];
-uniform vec3 spotLightAttenuation[nLights];
-uniform vec3 spotLightDir[nLights];
-uniform float spotLightAngle[nLights];
-uniform float spotLightExponent[nLights];
-uniform vec3 spotLightColour[nLights];
-
+#macro CODE
 uniform vec3 matEmissiveColour;
 uniform vec3 matAmbiantColour;
 uniform vec4 matDiffuseColour;
@@ -35,14 +16,14 @@ struct lightValue{
 
 lightValue computeDirLight(in int i){
     lightValue v;
-    v.L = dirLightPos[i].xyz;
+    v.L = dirLightPos[i];
     v.I = dirLightIntensity[i];
     return v;
 }
 
-lightValue computePointLight(in vec4 surfacePos, in int i){
+lightValue computePointLight(in vec3 surfacePos, in int i){
     lightValue v;
-    v.L = pointLightPos[i].xyz - surfacePos.xyz;
+    v.L = pointLightPos[i] - surfacePos;
     float dist = length(v.L);
     v.L = v.L / dist;
 
@@ -51,9 +32,9 @@ lightValue computePointLight(in vec4 surfacePos, in int i){
     return v;
 }
 
-lightValue computeSpotLight(in vec4 surfacePos, in int i){
+lightValue computeSpotLight(in vec3 surfacePos, in int i){
     lightValue v;
-    v.L = pointLightPos[i].xyz - surfacePos.xyz;
+    v.L = pointLightPos[i] - surfacePos;
     float dist = length(v.L);
     v.L = v.L / dist;
 
@@ -76,8 +57,8 @@ vec3 computeDiff(in vec3 norm, in lightValue lv, in int i){
                 * max(0.0, dot(norm, lv.L));
 }
 
-vec3 computeSpec(in vec3 norm, in vec4 pos, in lightValue lv, in int i){
-    vec3 viewVec = normalize(-pos.xyz);
+vec3 computeSpec(in vec3 norm, in vec3 pos, in lightValue lv, in int i){
+    vec3 viewVec = normalize(-pos);
     vec3 reflection = 2.0 * dot(lv.L, norm) * norm - lv.L;
     return (dot(norm, lv.L) <= 0.0)
             ? vec3(0,0,0)
@@ -86,13 +67,13 @@ vec3 computeSpec(in vec3 norm, in vec4 pos, in lightValue lv, in int i){
                     * pow(max(0.0, dot(reflection, viewVec)), matSpecularExp));
 }
 
-vec3 computefinalColour(in lightValue lv, in vec4 pos, in vec3 norm, in int i){
+vec3 computefinalColour(in lightValue lv, in vec3 pos, in vec3 norm, in int i){
     return computeAmb(lv, i)
          + computeDiff(norm, lv, i)
          + computeSpec(norm, pos, lv, i);
 }
 
-in vec4 surfacepos;
+in vec3 surfacepos;
 in vec3 surfacenorm;
 out vec4 FragColor;
 void main()
@@ -101,7 +82,7 @@ void main()
     vec4 finalColour;
     finalColour.rgb = matEmissiveColour;
     finalColour.a = matDiffuseColour.a;
-    for (i = 0; i < pointLightCount; i++){
+    for (i = 0; i < nPointLights; i++){
         lightValue lv = computePointLight(surfacepos, i);
         finalColour.rgb += computefinalColour(lv, surfacepos, surfacenorm, i);
     }

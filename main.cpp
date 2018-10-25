@@ -9,6 +9,9 @@
 #include "Engine/Time.h"
 #include "Engine/Material.h"
 #include "Engine/ModelRenderer.h"
+#include "Engine/PointLight.h"
+#include "Engine/DirectionalLight.h"
+#include "Engine/SpotLight.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -26,6 +29,7 @@ bool checkGLError()
 	}
 	return false;
 }
+
 int main(void)
 {
 	FreeImage_Initialise();
@@ -33,6 +37,7 @@ int main(void)
 	if (!window.init())
 		return -1;
 
+	//create material
 	const Maths::Vector3 mEC = Maths::Vector3(0.0f, 0.0f, 0.0f);
 	const Maths::Vector3 mAC = Maths::Vector3(1, 1, 1);
 	const Maths::Vector4 mDC = Maths::Vector4(0, 1, 1, 1);
@@ -47,37 +52,59 @@ int main(void)
 	Model ground("Assets/Model/Floor.obj");
 
 	//Shader
-	Shader shader("Assets/Shader/vertex.glsl", "Assets/Shader/fragment.glsl");
+	Shader shader("Assets/Shader/vertex.glsl", "Assets/Shader/fragmenttest.glsl", 0,1,0);
 
 	//Camera
 	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
 	camera.translate(0, 10, 20, false);
 
-	//Light
-	Object light;
-	light.translate(Maths::Vector3(0, 5, 5), false);
-	light.scaleAll(0.2);
+	//Lights
+	PointLight light(1.0f, Maths::Vector3(1, 0.6, 0.3), Maths::Vector3(0, 0, 0.1f));
+	light.translate(Maths::Vector3(0, 4, 5), false);
+	DirectionalLight dirlight(1.0f, Maths::Vector3(1, 0.6, 0.3));
+	SpotLight spotlight(1.0f, Maths::Vector3(1,1,1), Maths::Vector3(0, 0, 0.1f), Maths::Vector3(0,0,-1), 1.0f, 1.0f);
+	// camera.addChild((Object*)&spotlight);
 
+	float *pli = new float[1];
+	Maths::Vector3 *plc = new Maths::Vector3[1];
+	Maths::Vector3 *plp = new Maths::Vector3[1];
+	Maths::Vector3 *pla = new Maths::Vector3[1];
+	float *dli = new float[1];
+	Maths::Vector3 *dlc = new Maths::Vector3[1];
+	Maths::Vector3 *dlp = new Maths::Vector3[1];
+	float *sli = new float[1];
+	Maths::Vector3 *slp = new Maths::Vector3[1];
+	Maths::Vector3 *slc = new Maths::Vector3[1];
+	Maths::Vector3 *sla = new Maths::Vector3[1];
+	Maths::Vector3 *sld = new Maths::Vector3[1];
+	float *slangle = new float[1];
+	float *slexp = new float[1];
+
+	dli[0] = dirlight.intensity;
+	dlc[0] = dirlight.colour;
+	pli[0] = light.intensity;
+	plc[0] = light.colour;
+	pla[0] = light.attenuation;
+	sli[0] = spotlight.intensity;
+	slc[0] = spotlight.colour;
+	sla[0] = spotlight.attenuation;
+	sld[0] = spotlight.direction;
+	slangle[0] = spotlight.angle;
+	slexp[0] = spotlight.exponent;
+			   
+	//Objects
 	Object monkeyObj;
-	monkeyObj.addComponent((Component*)new ModelRenderer(&monkey, &material, &shader));
+	monkeyObj.addComponent((Component *)new ModelRenderer(&monkey, &material, &shader));
+	monkeyObj.translate(Maths::Vector3(0,3,0), true);
 	Object groundObj;
-	groundObj.addComponent((Component*) new ModelRenderer(&ground, &material, &shader));
+	groundObj.addComponent((Component *)new ModelRenderer(&ground, &material, &shader));
+	groundObj.scale(Maths::Vector3(100, 1, 100));
 
-	const int nMonkeys = 1;
-	float *cols = new float[3 * nMonkeys * nMonkeys];
-	for (int i = 0; i < nMonkeys; i++)
-	{
-		for (int j = 0; j < nMonkeys; j++)
-		{
-			cols[i * nMonkeys + j + 0] = (float)(rand() % 255) / 255;
-			cols[i * nMonkeys + j + 1] = (float)(rand() % 255) / 255;
-			cols[i * nMonkeys + j + 2] = (float)(rand() % 255) / 255;
-		}
-	}
 	long starttime = Time::time();
 	int framecount = 0;
 	while (window.running)
 	{
+		//update fps counter
 		if (Time::time() - starttime >= 1000)
 		{
 			starttime = Time::time();
@@ -85,40 +112,42 @@ int main(void)
 			framecount = 0;
 		}
 
+		//check for errors
 		if (checkGLError())
 			return -1;
+
+		//reset the window
 		window.clear();
-		int pointLightCount = 2;
 
-		const Maths::Vector4 plp[] = {Maths::Vector4(light.translation.x, light.translation.y, light.translation.z, 1) * camera.Transform(),
-										Maths::Vector4(-light.translation.x, light.translation.y, -light.translation.z, 1) * camera.Transform()};
-		const Maths::Vector3 pla[] = {Maths::Vector3(0, 0, 0.1f), Maths::Vector3(0, 0, 0.1f)};
-		const float pli[] = {1.0f, 1.0f};
-		const Maths::Vector3 plc[] = {Maths::Vector3(1, 0.6, 0.3), Maths::Vector3(1, 1, 1)};
-
+		dlp[0] = dirlight.translation*camera.Transform();
+		plp[0] = light.translation*camera.Transform();
+		slp[0] = spotlight.translation*camera.Transform();
+		//set up the shader
 		shader.use();
+		shader.setVec3Arr("pointLightPos", plp, 1);
+		shader.setFloatArr("pointLightIntensity", pli, 1);
+		shader.setVec3Arr("pointLightColour", plc, 1);
+		shader.setVec3Arr("pointLightAttenuation", pla, 1);
+		shader.setVec3Arr("dirLightPos", dlp, 1);
+		shader.setFloatArr("dirLightIntensity", dli, 1);
+		shader.setVec3Arr("dirLightColour", dlc, 1);
+		shader.setVec3Arr("spotLightPos", slp, 1);
+		shader.setFloatArr("spotLightIntensity", sli, 1);
+		shader.setVec3Arr("spotLightColour", slc, 1);
+		shader.setVec3Arr("spotLightAttenuation", sla, 1);
+		shader.setVec3Arr("spotLightDir", sld, 1);
+		shader.setFloatArr("spotLightAngle", slangle, 1);
+		shader.setFloatArr("spotLightExponent", slexp, 1);
 		shader.setMat4("view_matrix", camera.Transform());
 		shader.setMat4("proj_matrix", camera.Projection());
 
-		shader.setInt1("pointLightCount", pointLightCount);
-		shader.setVec4Arr("pointLightPos", plp, pointLightCount);
-		shader.setFloatArr("pointLightIntensity", pli, pointLightCount);
-		shader.setVec3Arr("pointLightColour", plc, pointLightCount);
-		shader.setVec3Arr("pointLightAttenuation", pla, pointLightCount);
-
-		for (int i = 0; i < nMonkeys; i++)
-		{
-			for (int j = 0; j < nMonkeys; j++)
-			{
-				Maths::Matrix4 model = Maths::Matrix4::translate(2 * i - nMonkeys + 1, 2 * j + 1, 0) * Maths::Matrix4::scale(0.8f, 0.8f, 0.8f);
-				shader.setMat4("model_matrix", model);
-				monkeyObj.update();
-			}
-		}
-
-		shader.setMat4("model_matrix", Maths::Matrix4::scale(100, 1, 100));
+		//draw the objects
+		shader.setMat4("model_matrix", monkeyObj.Transform());
+		monkeyObj.update();
+		shader.setMat4("model_matrix", groundObj.Transform());
 		groundObj.update();
 
+		//handle the input
 		if (Input::isKeyPressed(GLFW_KEY_ESCAPE))
 			window.close();
 		if (Input::isKeyDown(GLFW_KEY_W))
@@ -155,17 +184,18 @@ int main(void)
 			window.fullscreen(!window.isFullscreen());
 		}
 
+		//update the pointlight
+		monkeyObj.rotate(Maths::Quaternion::fromAxisAngle(20 * Time::deltatime(), Maths::Vector3(0,1,0)));
 		light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), true);
-		light.lookAt(Maths::Vector3(0, 10, 0));
+		light.lookAt(Maths::Vector3(0, 0, 0));
 
-		//end of stuff
-
+		//update the window
 		if (window.isfocused)
 			window.setCurrent();
 		window.update();
 		framecount++;
 	}
+
 	FreeImage_DeInitialise();
-	delete[] cols;
 	return 0;
 }

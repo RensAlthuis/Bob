@@ -3,29 +3,24 @@
 namespace Engine
 {
 Object::Object() : translation(0, 0, 0),
-                   scale(1),
-                   rotation(1, 0, 0, 0)
+                   scaling(1, 1, 1),
+                   rotation(1, 0, 0, 0),
+                   children(),
+                   parent(nullptr)
 {
     transform = Maths::Matrix4::identity();
     recalculate();
 }
 
-Object::~Object()
-{
-    for(int i = 0; i < components.size(); i++)
-    {
-        delete components.at(i);
-    }
-}
-
 void Object::recalculate()
 {
-    // transform = Maths::Matrix4::scale(scale, scale, scale) *
-    //             Maths::Matrix4::rotateAxisAngle(0, 1, 0, 0) *
-    //             Maths::Matrix4::translate(translation);
-    transform = Maths::Matrix4::translate(translation) *
-                Maths::Matrix4::rotateAxisAngle(0, 1, 0, 0) *
-                Maths::Matrix4::scale(scale, scale, scale);
+     transform = Maths::Matrix4::scale(scaling.x, scaling.y, scaling.z) *
+                 Maths::Matrix4::rotate(rotation) *
+                 Maths::Matrix4::translate(translation) *
+                (parent == nullptr? Maths::Matrix4::identity() : parent->Transform());
+    for(Object* p : children){
+        p->recalculate();
+    }
 }
 
 const Maths::Matrix4 &Object::Transform() const
@@ -84,9 +79,9 @@ void Object::lookAt(const Maths::Vector3 &v)
     recalculate();
 }
 
-void Object::scaleAll(float s)
+void Object::scale(Maths::Vector3 s)
 {
-    scale *= s;
+    scaling = s;
     recalculate();
 }
 
@@ -98,9 +93,28 @@ void Object::update()
     }
 }
 
+void Object::addChild(Object* object)
+{
+    children.push_back(object);
+    object->parent = this;
+    recalculate();
+}
+
 void Object::addComponent(Component *component)
 {
     components.push_back(component);
 }
 
+Object::~Object()
+{
+    // for (int i  = 0; i < children.size(); i++)
+    // {
+    //     delete children.at(i);
+    // }
+
+    for (int i = 0; i < components.size(); i++)
+    {
+        delete components.at(i);
+    }
+}
 }; // namespace Engine

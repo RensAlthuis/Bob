@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 namespace Engine{
-Camera::Camera(float fov, float ar, float near, float far) : yangle(0), xangle(0)
+Camera::Camera(float fov, float ar, float near, float far) : Object(), yangle(0), xangle(0)
 {
     projection = Maths::Matrix4::perspective(fov, ar, near, far);
     recalculate();
@@ -15,9 +15,10 @@ Camera::Camera(float left, float right, float top, float bottom, float near, flo
 
 void Camera::recalculate()
 {
-    transform = Maths::Matrix4::scale(scale, scale, scale) *
+    transform = Maths::Matrix4::scale(scaling.x, scaling.y, scaling.z) *
                 Maths::Matrix4::rotate(rotation.inverse()) *
-                Maths::Matrix4::translate(translation * -1);
+                Maths::Matrix4::translate(translation * -1) *
+                (parent == nullptr? Maths::Matrix4::identity() : parent->Transform());
 }
 
 Camera::~Camera()

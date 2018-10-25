@@ -117,6 +117,13 @@ Vector3 &Vector3::normalize()
     return *this;
 }
 
+Vector3 operator*(const Vector3 &l, const Matrix4 &r)
+{
+    return Vector3(
+        r[0] * l.x + r[4] * l.y + r[8] * l.z + r[12],
+        r[1] * l.x + r[5] * l.y + r[9] * l.z + r[13],
+        r[2] * l.x + r[6] * l.y + r[10] * l.z + r[14]);
+}
 Vector3::~Vector3()
 {
 }

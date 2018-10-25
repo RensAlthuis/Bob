@@ -25,6 +25,9 @@ Object.cpp
 Time.cpp
 Material.cpp
 ModelRenderer.cpp
+DirectionalLight.cpp
+PointLight.cpp
+SpotLight.cpp
 )
 
 include_directories(
