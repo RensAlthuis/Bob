@@ -14,6 +14,13 @@ struct lightValue{
     float I;
 };
 
+lightValue computeDirLight(in int i){
+    lightValue v;
+    v.L = dirLightPos[i];
+    v.I = dirLightIntensity[i];
+    return v;
+}
+
 lightValue computePointLight(in vec3 surfacePos, in int i){
     lightValue v;
     v.L = pointLightPos[i] - surfacePos;
@@ -62,6 +69,10 @@ void main()
     finalColour.a = matDiffuseColour.a;
     for (i = 0; i < nPointLights; i++){
         lightValue lv = computePointLight(surfacepos, i);
+        finalColour.rgb += computefinalColour(lv, surfacepos, surfacenorm, i);
+    }
+    for (i = 0; i < nDirLights; i++){
+        lightValue lv = computeDirLight(i);
         finalColour.rgb += computefinalColour(lv, surfacepos, surfacenorm, i);
     }
     FragColor = finalColour;
