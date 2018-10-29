@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include "FileReader.h"
+#include <assert.h>
 
 namespace Engine
 {
