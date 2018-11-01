@@ -14,11 +14,12 @@ Object::Object() : translation(0, 0, 0),
 
 void Object::recalculate()
 {
-     transform = Maths::Matrix4::scale(scaling.x, scaling.y, scaling.z) *
-                 Maths::Matrix4::rotate(rotation) *
-                 Maths::Matrix4::translate(translation) *
-                (parent == nullptr? Maths::Matrix4::identity() : parent->Transform());
-    for(Object* p : children){
+    transform = Maths::Matrix4::scale(scaling.x, scaling.y, scaling.z) *
+                Maths::Matrix4::rotate(rotation) *
+                Maths::Matrix4::translate(translation) *
+                (parent == nullptr ? Maths::Matrix4::identity() : parent->Transform());
+    for (Object *p : children)
+    {
         p->recalculate();
     }
 }
@@ -30,21 +31,22 @@ const Maths::Matrix4 &Object::Transform() const
 
 const Maths::Vector3 Object::Front() const
 {
-    return Maths::Vector3::Forward.rotate(rotation).normalize();
+    return Maths::Vector3(transform[2], transform[6], transform[10]);
+    // return Maths::Vector3::Forward.rotate(rotation).normalize();
 }
 
 void Object::translate(Maths::Vector3 v, bool inWorldSpace)
 {
     if (inWorldSpace)
     {
+        translation = translation + v;
+    }
+    else
+    {
         Maths::Vector3 v2 = v.rotate(rotation);
         translation.x += v2.x;
         translation.y += v2.y;
         translation.z += v2.z;
-    }
-    else
-    {
-        translation = translation + v;
     }
     recalculate();
 }
@@ -93,7 +95,7 @@ void Object::update()
     }
 }
 
-void Object::addChild(Object* object)
+void Object::addChild(Object *object)
 {
     children.push_back(object);
     object->parent = this;

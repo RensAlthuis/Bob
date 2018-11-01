@@ -1,6 +1,8 @@
 #pragma once
 #include "Object.h"
 #include "Maths/Maths.h"
+#include "Shader.h"
+#include "Camera.h"
 
 namespace Engine
 {
@@ -13,6 +15,7 @@ public:
 
 public:
   PointLight(float intensity, Maths::Vector3 colour, Maths::Vector3 attenuation);
+  void setShader(Shader *shader, const Camera &cam, int index);
   ~PointLight();
 };
 }; // namespace Engine
