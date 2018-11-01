@@ -72,7 +72,7 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 int main(void)
 {
 	FreeImage_Initialise();
-	Window window("Squash", WIDTH, HEIGHT, false);
+	Window window("Engine", WIDTH, HEIGHT, false);
 	if (!window.init())
 		return -1;
 

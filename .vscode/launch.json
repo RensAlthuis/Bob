@@ -5,23 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name":" (run) Launch",
+        },
+        {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/Squash",
+            "program": "${workspaceFolder}/build/engine",
             "windows": {
-                "program": "${workspaceFolder}/Squash.exe",
+                "program": "${workspaceFolder}/build/engine.exe",
                 "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe"
-            },
-            "linux": {
-                "program": "${workspaceRoot}/Squash",
-                "miDebuggerPath": "/usr/bin/gdb"
             },
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
                 {
