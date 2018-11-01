@@ -11,9 +11,9 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/engine",
+            "program": "${workspaceFolder}/build/engine",
             "windows": {
-                "program": "${workspaceFolder}/engine.exe",
+                "program": "${workspaceFolder}/build/engine.exe",
                 "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe"
             },
             "args": [],

@@ -8,49 +8,10 @@
     "type": "shell",
     "tasks": [
         {
-            "label": "cmake",
-            "command": "cmake",
-            "args": [
-                "-DCMAKE_BUILD_TYPE=Debug",
-                ".."
-            ],
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "cmake release",
-            "command": "cmake",
-            "args": [
-                ".."
-            ],
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "make",
-            "command": "make",
-            "group": "build",
-            "problemMatcher": [
-                "$gcc"
-            ]
-        },
-        {
             "label": "clean",
             "command": "rm -r *",
             "group": "build",
             "problemMatcher": []
         },
-        {
-            "label": "run",
-            "command": "./engine",
-            "group": "build",
-            "options": {
-                "cwd": "${workspaceRoot}"
-            },
-            "dependsOn": [
-                "make"
-            ],
-            "problemMatcher": []
-        }
     ]
 }
