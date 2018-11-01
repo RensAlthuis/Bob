@@ -17,6 +17,7 @@
         {
             "name": "Win32",
             "includePath": [
+                "${workspaceFolder}",
                 "${workspaceFolder}/Engine",
                 "${workspaceFolder}/Engine/Libraries/include"
             ],
