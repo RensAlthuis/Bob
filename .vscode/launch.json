@@ -8,13 +8,13 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceRoot}/Squash",
+            "program": "${workspaceRoot}/Engine",
             "windows": {
-                "program": "${workspaceFolder}/Squash.exe",
+                "program": "${workspaceFolder}/engine.exe",
                 "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe"
             },
             "linux": {
-                "program": "${workspaceRoot}/Squash",
+                "program": "${workspaceRoot}/engine",
                 "miDebuggerPath": "/usr/bin/gdb"
             },
             "args": [],

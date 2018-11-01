@@ -33,7 +33,7 @@ bool checkGLError()
 int main(void)
 {
 	FreeImage_Initialise();
-	Window window("Squash", WIDTH, HEIGHT, false);
+	Window window("Engine", WIDTH, HEIGHT, false);
 	if (!window.init())
 		return -1;
 
@@ -185,7 +185,7 @@ int main(void)
 		}
 
 		//update the pointlight
-		monkeyObj.rotate(Maths::Quaternion::fromAxisAngle(20 * Time::deltatime(), Maths::Vector3(0,1,0)));
+		// monkeyObj.rotate(Maths::Quaternion::fromAxisAngle(20 * Time::deltatime(), Maths::Vector3(0,1,0)));
 		light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), true);
 		light.lookAt(Maths::Vector3(0, 0, 0));
 
