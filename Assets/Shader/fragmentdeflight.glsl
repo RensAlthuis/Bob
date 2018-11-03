@@ -5,10 +5,10 @@
 
 uniform sampler2D gPos;
 uniform sampler2D gNorm;
+uniform sampler2D gEm;
 uniform sampler2D gAmb;
 uniform sampler2D gDiff;
 uniform sampler2D gSpec;
-uniform sampler2D gEm;
 uniform sampler2D gADS;
 
 struct lightValue{
@@ -110,5 +110,5 @@ void main()
     }
     FragColor = finalColour;
     // FragColor = vec4(TexCoords,0,1);
-    // FragColor = vec4(colDiff,1);
+    // FragColor = vec4(surfacepos,1);
 }

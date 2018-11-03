@@ -1,10 +1,9 @@
 #pragma once
 #include "Maths/Maths.h"
 #include <vector>
-#include "Component.h"
-
 namespace Engine
 {
+class Component;
 class Object
 {
 protected:

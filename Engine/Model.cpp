@@ -1,6 +1,7 @@
 #include "Model.h"
 
-namespace Engine{
+namespace Engine
+{
 Model::Model(const char *path) : indexmap(),
 								 indexcount(0)
 {
@@ -48,8 +49,8 @@ Model::Model(const char *path) : indexmap(),
 	Indices(uiindices, nindices);
 	Normals(fnormals, nnorms);
 	ebo = new ElementBuffer(uiindices, nindices);
-	VertexBuffer *vbo = new VertexBuffer(fverts, nverts, 3);
-	VertexBuffer *nbo = new VertexBuffer(fnormals, nnorms, 3);
+	vbo = new VertexBuffer(fverts, nverts, 3);
+	nbo = new VertexBuffer(fnormals, nnorms, 3);
 	vao = new VertexArray();
 	vao->setEBO(ebo);
 	vao->addBuffer(vbo, 0);
@@ -147,5 +148,9 @@ void Model::unbind()
 
 Model::~Model()
 {
+	delete vbo;
+	delete nbo;
+	delete ebo;
+	delete vao;
 }
-};
+}; // namespace Engine

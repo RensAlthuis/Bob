@@ -2,12 +2,8 @@
 
 namespace Engine
 {
-Window::Window(const char *name, int width, int height, bool isFullscreen) : name(name),
-																			 width(width),
-																			 height(height),
-																			 input(new Input()),
-																			 window(NULL),
-																			 _isFullscreen(isFullscreen)
+Window::Window(const char *name, int width, int height, bool isFullscreen)
+	: name(name), width(width), height(height), input(new Input()), window(NULL), _isFullscreen(isFullscreen), lastFrameTime(Time::time()), framecount(0), frametime(0), framestart(Time::time())
 {
 }
 
@@ -45,7 +41,7 @@ void mouseMoved(GLFWwindow *win, double x, double y)
 void windowResized(GLFWwindow *win, int w, int h)
 {
 	Window *window = (Window *)glfwGetWindowUserPointer(win);
-	window->resize(w,h);
+	// window->resize(w,h);
 }
 
 void windowFocusChange(GLFWwindow *win, int focused)
@@ -74,8 +70,8 @@ bool Window::init(Window *_parent)
 	/* Initialize the library */
 	if (!glfwInit())
 		std::cout << "ERROR: Failed to initialize glfw" << std::endl;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	if (!createWindow())
@@ -108,10 +104,10 @@ bool Window::init(Window *_parent)
 
 bool Window::createWindow()
 {
-	if (window != NULL)
+	if (window != nullptr)
 		glfwDestroyWindow(window);
-	GLFWwindow *p = NULL;
-	if (parent != NULL)
+	GLFWwindow *p = nullptr;
+	if (parent != nullptr)
 	{
 		p = parent->getContext();
 	}
@@ -125,6 +121,9 @@ bool Window::createWindow()
 
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
+	GLFWmonitor *mon = glfwGetPrimaryMonitor();
+	const GLFWvidmode *mode = glfwGetVideoMode(mon);
+	glfwSetWindowMonitor(window, NULL, mode->width-width, mode->height-height, width, height, mode->refreshRate);
 	return true;
 }
 
@@ -137,15 +136,15 @@ void Window::fullscreen(bool value)
 {
 	if (value == _isFullscreen)
 		return;
+	GLFWmonitor *mon = glfwGetPrimaryMonitor();
+	const GLFWvidmode *mode = glfwGetVideoMode(mon);
 	if (value == true)
 	{
-		GLFWmonitor *mon = glfwGetPrimaryMonitor();
-		const GLFWvidmode *mode = glfwGetVideoMode(mon);
-		glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+		glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, mode->refreshRate);
 	}
 	else
 	{
-		glfwSetWindowMonitor(window, NULL, 0, 0, width, height, GLFW_DONT_CARE);
+		glfwSetWindowMonitor(window, NULL, mode->width-width, mode->height-height, width, height, mode->refreshRate);
 	}
 	_isFullscreen = value;
 }
@@ -154,6 +153,7 @@ void Window::focus()
 {
 	glfwFocusWindow(window);
 }
+
 void Window::clear()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -162,15 +162,37 @@ void Window::clear()
 void Window::update()
 {
 
-	input->update();
 	update_time();
+	input->update();
 	/* Swap front and back buffers */
+	if(framestart != 0){
+		frametime = (Time::time() - framestart);
+		framestart = 0;
+	}
 	glfwSwapBuffers(window);
 
 	/* Poll for and process events */
 	glfwPollEvents();
 
 	running = !glfwWindowShouldClose(window);
+
+	//update fps counter
+	double t = Time::time();
+	if (t - lastFrameTime >= 1)
+	{
+		lastFrameTime = t;
+		fps = framecount;
+		framecount = 0;
+
+		std::cout << "FPS: " << fps << " , Frametime: " << frametime*1000 << "ms" << std::endl;
+		framestart = t;
+	}
+	framecount++;
+}
+
+int Window::Fps()
+{
+	return fps;
 }
 
 void Window::close()
@@ -180,12 +202,13 @@ void Window::close()
 
 void Window::update_time()
 {
-	long t = Time::time();
-	Time::deltaTime = (t - Time::oldTime) / 1000.0f;
+	double t = Time::time();
+	Time::deltaTime = (t - Time::oldTime);
 	Time::oldTime = t;
 }
 
-void Window::resize(int w, int h){
+void Window::resize(int w, int h)
+{
 	width = w;
 	height = h;
 	glViewport(0, 0, w, h);

@@ -26,6 +26,7 @@ void ModelRenderer::draw()
         lastBoundModel = model;
     }
     material->setShader(shader);
+    shader->setMat4("model_matrix", parent->Transform());
     glDrawElements(GL_TRIANGLES, model->ElementCount(), GL_UNSIGNED_INT, 0);
 }
 

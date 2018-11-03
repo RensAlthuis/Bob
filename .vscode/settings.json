@@ -56,5 +56,6 @@
         "chrono": "cpp",
         "ratio": "cpp",
         "cinttypes": "cpp"
-    }
+    },
+    "C_Cpp.configurationWarnings": "Disabled"
 }

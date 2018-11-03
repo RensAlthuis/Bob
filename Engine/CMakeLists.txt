@@ -10,19 +10,20 @@ endif()
 add_subdirectory(Maths)
 
 add_library(Engine STATIC
-ElementBuffer.cpp
-FileReader.h
 glad.c
+Window.cpp
+FileReader.h
 Input.cpp
 Shader.cpp
+Time.cpp
+ElementBuffer.cpp
 VertexArray.cpp
 VertexBuffer.cpp
-Window.cpp
+FrameBuffer.cpp
 Texture.cpp
 Model.cpp
 Camera.cpp
 Object.cpp
-Time.cpp
 Material.cpp
 ModelRenderer.cpp
 DirectionalLight.cpp

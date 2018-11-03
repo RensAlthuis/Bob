@@ -9,19 +9,23 @@
 #include "ElementBuffer.h"
 #include "VertexArray.h"
 
-namespace Engine{
+namespace Engine
+{
 class Model
 {
-  private:
-	struct indexStruct{
+private:
+	struct indexStruct
+	{
 		int v;
 		int n;
-		bool operator ==(const indexStruct &o)const{
+		bool operator==(const indexStruct &o) const
+		{
 			return v == o.v && n == o.n;
 		}
-		bool operator<(const indexStruct &o) const{
+		bool operator<(const indexStruct &o) const
+		{
 			return v < o.v || (v == o.v && n < o.n);
-    }
+		}
 	};
 	std::map<indexStruct, int> indexmap;
 	int indexcount;
@@ -33,8 +37,10 @@ class Model
 
 	VertexArray *vao;
 	ElementBuffer *ebo;
+	VertexBuffer *vbo;
+	VertexBuffer *nbo;
 
-  public:
+public:
 	Model(const char *path);
 	~Model();
 	void Vertices(float *&vertices, int &n);
@@ -43,11 +49,11 @@ class Model
 	void bind();
 	void unbind();
 	int ElementCount();
-  private:
-	void parseVert(std::string &line, std::vector<Maths::Vector3>& list);
-	void parseNormal(std::string &line, std::vector<Maths::Vector3>& list);
-	void parseFaceElement(std::string &line, std::vector<Maths::Vector3>& vlist, std::vector<Maths::Vector3>& nlist);
-	void insertElement(indexStruct ivn, std::vector<Maths::Vector3>& vlist, std::vector<Maths::Vector3>& nlist);
 
+private:
+	void parseVert(std::string &line, std::vector<Maths::Vector3> &list);
+	void parseNormal(std::string &line, std::vector<Maths::Vector3> &list);
+	void parseFaceElement(std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
+	void insertElement(indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
 };
-};
+}; // namespace Engine

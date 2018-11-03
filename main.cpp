@@ -13,6 +13,7 @@
 #include "Engine/PointLight.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/SpotLight.h"
+#include "Engine/FrameBuffer.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -60,145 +61,7 @@ bool checkGLError()
 	return false;
 }
 
-void genFrameBuf(unsigned int* buf, GLenum attachment, GLint format, GLenum type){
-	glGenTextures(1, buf);
-	glBindTexture(GL_TEXTURE_2D, *buf);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, WIDTH, HEIGHT, 0, type, GL_FLOAT, nullptr);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, *buf, 0);
-}
-
-int main(void)
-{
-	FreeImage_Initialise();
-	Window window("Engine", WIDTH, HEIGHT, false);
-	if (!window.init())
-		return -1;
-
-	//create material
-	const Maths::Vector3 mEC = Maths::Vector3(0.0f, 0.0f, 0.0f);
-	const Maths::Vector3 mAC = Maths::Vector3(1, 1, 1);
-	const Maths::Vector4 mDC = Maths::Vector4(1, 1, 1, 1);
-	const Maths::Vector3 mSC = Maths::Vector3(1, 1, 1);
-	const float mSE = 80.0f;
-	const Maths::Vector3 lADS = Maths::Vector3(1, 1, 1);
-	Material material(mEC, mAC, mDC, mSC, mSE, lADS);
-
-	//Load Models
-	Model monkey("Assets/Model/Monkey.obj");
-	Model cube("Assets/Model/cube.obj");
-	Model ground("Assets/Model/Floor.obj");
-
-	//Shader
-	Shader geomShader("Assets/Shader/vertexdef.glsl", "Assets/Shader/fragmentdef.glsl", 0, 0, 0);
-	Shader lightShader("Assets/Shader/vertexdeflight.glsl", "Assets/Shader/fragmentdeflight.glsl", 1, 2, 1);
-
-	//Camera
-	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
-	camera.translate(0, 10, 20, false);
-
-	//Lights
-	PointLight light(1.0f, Maths::Vector3(1, 1, 1), Maths::Vector3(0, 0, 0.1f));
-	PointLight light2(1.0f, Maths::Vector3(1, 0, 1), Maths::Vector3(0, 0, 0.1f));
-	light.translate(Maths::Vector3(0, 4, 5), true);
-	light2.translate(Maths::Vector3(0, 4, -5), true);
-	DirectionalLight dirlight(0.1f, Maths::Vector3(1, 1, 1));
-	dirlight.translate(0,0,1, true);
-	SpotLight spotlight(1.0f, Maths::Vector3(1, 0.5f, 0.2f), Maths::Vector3(0, 0.1f, 0.1f), Maths::Vector3(0, 0, -1), 0.5f, 40.0f);
-	camera.addChild((Object *)&spotlight);
-
-	//Objects
-	Object monkeyObj;
-	monkeyObj.addComponent((Component *)new ModelRenderer(&monkey, &material, &geomShader));
-	monkeyObj.translate(Maths::Vector3(0, 3, 0), true);
-	Object groundObj;
-	groundObj.addComponent((Component *)new ModelRenderer(&ground, &material, &geomShader));
-	groundObj.scale(Maths::Vector3(100, 1, 100));
-
-	long starttime = Time::time();
-	int framecount = 0;
-	unsigned int gBuffer;
-	glGenFramebuffers(1, &gBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-	unsigned int gPos, gNorm, gDiff, gAmb, gSpec, gEm, gADS;
-	genFrameBuf(&gPos, GL_COLOR_ATTACHMENT0, GL_RGB16F, GL_RGB);
-	genFrameBuf(&gNorm, GL_COLOR_ATTACHMENT1, GL_RGB16F, GL_RGB);
-	genFrameBuf(&gAmb, GL_COLOR_ATTACHMENT2, GL_RGB, GL_RGB);
-	genFrameBuf(&gDiff, GL_COLOR_ATTACHMENT3, GL_RGB, GL_RGB);
-	genFrameBuf(&gSpec, GL_COLOR_ATTACHMENT4, GL_RGBA, GL_RGBA);
-	genFrameBuf(&gEm, GL_COLOR_ATTACHMENT5, GL_RGB, GL_RGB);
-	genFrameBuf(&gADS, GL_COLOR_ATTACHMENT6, GL_RGB, GL_RGB);
-	unsigned int attachments[7] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4, GL_COLOR_ATTACHMENT5, GL_COLOR_ATTACHMENT6};
-	glDrawBuffers(7, attachments);
-    unsigned int rboDepth;
-    glGenRenderbuffers(1, &rboDepth);
-    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, WIDTH, HEIGHT);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        std::cout << "Framebuffer not complete!" << std::endl;
-	lightShader.use();
-	lightShader.setInt1("gPos", 0);
-    lightShader.setInt1("gNorm", 1);
-    lightShader.setInt1("gAmb", 2);
-    lightShader.setInt1("gDiff", 3);
-    lightShader.setInt1("gSpec", 4);
-    lightShader.setInt1("gEm", 5);
-    lightShader.setInt1("gADS", 6);
-	while (window.running)
-	{
-		//update fps counter
-		if (Time::time() - starttime >= 1000)
-		{
-			starttime = Time::time();
-			std::cout << framecount << std::endl;
-			framecount = 0;
-		}
-
-		//check for errors
-		if (checkGLError())
-			return -1;
-
-		//reset the window
-		window.clear();
-
-		//set up the shader
-		geomShader.use();
-		geomShader.setMat4("view_matrix", camera.Transform());
-		geomShader.setMat4("proj_matrix", camera.Projection());
-
-		//GEOMETRY PASS
-		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		geomShader.setMat4("model_matrix", monkeyObj.Transform());
-		monkeyObj.update();
-		geomShader.setMat4("model_matrix", groundObj.Transform());
-		groundObj.update();
-
-		//LIGHTINGPASS
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		lightShader.use();
-		light.setShader(&lightShader, camera, 0);
-		light2.setShader(&lightShader, camera, 1);
-		dirlight.setShader(&lightShader, camera, 0);
-		spotlight.setShader(&lightShader, camera, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gPos);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, gNorm);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, gAmb);
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, gDiff);
-		glActiveTexture(GL_TEXTURE4);
-		glBindTexture(GL_TEXTURE_2D, gSpec);
-		glActiveTexture(GL_TEXTURE5);
-		glBindTexture(GL_TEXTURE_2D, gEm);
-		glActiveTexture(GL_TEXTURE6);
-		glBindTexture(GL_TEXTURE_2D, gADS);
-		renderQuad();
-		//handle the input
+void handleInput(Window& window, Camera& camera){
 		if (Input::isKeyPressed(GLFW_KEY_ESCAPE))
 			window.close();
 		if (Input::isKeyDown(GLFW_KEY_W))
@@ -235,18 +98,108 @@ int main(void)
 			window.fullscreen(!window.isFullscreen());
 		}
 
-		//update the pointlight
-		// monkeyObj.rotate(Maths::Quaternion::fromAxisAngle(20 * Time::deltatime(), Maths::Vector3(0,1,0)));
+}
+
+int main(void)
+{
+	FreeImage_Initialise();
+	Window window("Engine", WIDTH, HEIGHT, false);
+	if (!window.init())
+		return -1;
+
+	//create material
+	const Maths::Vector3 mEC = Maths::Vector3(0.0f, 0.0f, 0.0f);
+	const Maths::Vector3 mAC = Maths::Vector3(1, 1, 1);
+	const Maths::Vector4 mDC = Maths::Vector4(1, 1, 1, 1);
+	const Maths::Vector3 mSC = Maths::Vector3(1, 1, 1);
+	const float mSE = 80.0f;
+	const Maths::Vector3 lADS = Maths::Vector3(1, 1, 1);
+	Material material(mEC, mAC, mDC, mSC, mSE, lADS);
+
+	//Load Models
+	Model monkey("Assets/Model/MonkeySmooth.obj");
+	Model cube("Assets/Model/cube.obj");
+	Model ground("Assets/Model/Floor.obj");
+
+	//Shader
+	Shader geomShader("Assets/Shader/vertexdef.glsl", "Assets/Shader/fragmentdef.glsl", 0, 0, 0);
+	Shader lightShader("Assets/Shader/vertexdeflight.glsl", "Assets/Shader/fragmentdeflight.glsl", 1, 2, 1);
+
+	//Camera
+	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
+	camera.translate(0, 10, 20, false);
+
+	//Lights
+	PointLight light(1.0f, Maths::Vector3(1, 1, 1), Maths::Vector3(0, 0, 0.1f));
+	PointLight light2(1.0f, Maths::Vector3(1, 0, 1), Maths::Vector3(0, 0, 0.1f));
+	light.translate(Maths::Vector3(0, 4, 5), true);
+	light2.translate(Maths::Vector3(0, 4, -5), true);
+	DirectionalLight dirlight(0.1f, Maths::Vector3(1, 1, 1));
+	dirlight.translate(0,0,1, true);
+	SpotLight spotlight(1.0f, Maths::Vector3(1, 0.5f, 0.2f), Maths::Vector3(0, 0.1f, 0.1f), Maths::Vector3(0, 0, -1), 0.5f, 40.0f);
+	camera.addChild((Object *)&spotlight);
+
+	//Objects
+	Object monkeyObj;
+	monkeyObj.addComponent((Component *)new ModelRenderer(&monkey, &material, &geomShader));
+	monkeyObj.translate(Maths::Vector3(0, 3, 0), true);
+	Object groundObj;
+	groundObj.addComponent((Component *)new ModelRenderer(&ground, &material, &geomShader));
+	groundObj.scale(Maths::Vector3(100, 1, 100));
+
+	//FrameBuffer
+	FrameBuffer gBuffer(WIDTH, HEIGHT);
+	gBuffer.bind();
+	gBuffer.addTextureBuffer("gPos", GL_COLOR_ATTACHMENT0, GL_RGB16F, GL_RGB);
+	gBuffer.addTextureBuffer("gNorm", GL_COLOR_ATTACHMENT1, GL_RGB16F, GL_RGB);
+	gBuffer.addTextureBuffer("gEm", GL_COLOR_ATTACHMENT2, GL_RGB, GL_RGB);
+	gBuffer.addTextureBuffer("gAmb", GL_COLOR_ATTACHMENT3, GL_RGB, GL_RGB);
+	gBuffer.addTextureBuffer("gDiff", GL_COLOR_ATTACHMENT4, GL_RGB, GL_RGB);
+	gBuffer.addTextureBuffer("gSpec", GL_COLOR_ATTACHMENT5, GL_RGBA, GL_RGBA);
+	gBuffer.addTextureBuffer("gADS", GL_COLOR_ATTACHMENT6, GL_RGB, GL_RGB);
+	gBuffer.setShader(lightShader);
+	gBuffer.unbind();
+
+	while (window.running)
+	{
+
+
+		//check for errors
+		if (checkGLError())
+			return -1;
+
+
+		//set up the shader
+		geomShader.use();
+		geomShader.setMat4("view_matrix", camera.Transform());
+		geomShader.setMat4("proj_matrix", camera.Projection());
+
+		//GEOMETRY PASS
+		gBuffer.bind();
+		window.clear();
+		monkeyObj.update();
+		groundObj.update();
+		gBuffer.unbind();
+
+		//LIGHTINGPASS
+		lightShader.use();
+		light.setShader(&lightShader, camera, 0);
+		light2.setShader(&lightShader, camera, 1);
+		dirlight.setShader(&lightShader, camera, 0);
+		spotlight.setShader(&lightShader, camera, 0);
+		window.clear();
+		gBuffer.bindTextures();
+		renderQuad();
+
+		handleInput(window, camera);
+
+		//update lights
 		light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), false);
 		light2.translate(Maths::Vector3(1.0f * Time::deltatime(), 0, 0), false);
 		light.lookAt(Maths::Vector3(0, 4, 0));
 		light2.lookAt(Maths::Vector3(0, 4, 0));
 
-		//update the window
-		if (window.isfocused)
-			window.setCurrent();
 		window.update();
-		framecount++;
 	}
 
 	FreeImage_DeInitialise();

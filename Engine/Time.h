@@ -6,11 +6,11 @@ namespace Engine{
 class Time{
 
     private:
-        static float deltaTime;
-        static long oldTime;
+        static double deltaTime;
+        static double oldTime;
     public:
-        static long time();
-        static float deltatime();
+        static double time();
+        static double deltatime();
 
     private:
         friend class Window;

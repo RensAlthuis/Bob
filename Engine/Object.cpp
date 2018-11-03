@@ -1,5 +1,5 @@
 #include "Object.h"
-
+#include "Component.h"
 namespace Engine
 {
 Object::Object() : translation(0, 0, 0),
@@ -32,7 +32,6 @@ const Maths::Matrix4 &Object::Transform() const
 const Maths::Vector3 Object::Front() const
 {
     return Maths::Vector3(transform[2], transform[6], transform[10]);
-    // return Maths::Vector3::Forward.rotate(rotation).normalize();
 }
 
 void Object::translate(Maths::Vector3 v, bool inWorldSpace)
@@ -104,15 +103,16 @@ void Object::addChild(Object *object)
 
 void Object::addComponent(Component *component)
 {
+    component->parent = this;
     components.push_back(component);
 }
 
 Object::~Object()
 {
-    // for (int i  = 0; i < children.size(); i++)
-    // {
-    //     delete children.at(i);
-    // }
+    for (auto p : children)
+    {
+        delete p;
+    }
 
     for (int i = 0; i < components.size(); i++)
     {

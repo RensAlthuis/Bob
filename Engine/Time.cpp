@@ -1,18 +1,17 @@
 #include "Time.h"
+#include <GLFW/glfw3.h>
 
 namespace Engine{
 
-long Time::oldTime = time();
-float Time::deltaTime = 0;
+double Time::oldTime = time();
+double Time::deltaTime = 0;
 
-long Time::time(){
+double Time::time(){
 
-    return (std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::steady_clock::now().time_since_epoch()
-            ).count());
+    return glfwGetTime();
 }
 
-float Time::deltatime(){
+double Time::deltatime(){
     return deltaTime;
 }
 

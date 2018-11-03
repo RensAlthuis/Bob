@@ -17,7 +17,11 @@ class Window
 	int resolutionY;
 	Window* parent;
 	bool _isFullscreen;
-
+	double lastFrameTime;
+	double framestart;
+	double frametime;
+	int framecount;
+	int fps;
   public:
 	GLFWwindow *window;
 	Input *input;
@@ -32,6 +36,7 @@ class Window
 	Window(const char *name, int width, int height, bool isFullscreen);
 	~Window();
 	GLFWwindow *getContext() { return window; };
+	int Fps();
 	bool init();
 	void fullscreen(bool value);
 	bool init(Window *parent);
