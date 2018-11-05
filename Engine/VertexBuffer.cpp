@@ -11,16 +11,6 @@ VertexBuffer::VertexBuffer(GLfloat *data, unsigned int nElements, unsigned int e
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VertexBuffer::bind()
-{
-	glBindBuffer(GL_ARRAY_BUFFER, ID);
-}
-
-void VertexBuffer::unbind()
-{
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
 VertexBuffer::~VertexBuffer()
 {
 	glDeleteBuffers(1, &ID);

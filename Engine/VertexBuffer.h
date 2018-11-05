@@ -1,19 +1,19 @@
 #pragma once
 #include <glad/glad.h>
 
-
-namespace Engine{
+namespace Engine
+{
 class VertexBuffer
 {
-  public:
+public:
 	GLuint ID;
 	unsigned int elementCount;
 	unsigned int elementLength;
 	VertexBuffer(GLfloat *data, unsigned int nElements, unsigned int elementLength);
 	~VertexBuffer();
 
-	void bind();
-	void unbind();
+	inline void bind() { glBindBuffer(GL_ARRAY_BUFFER, ID); }
+	inline void unbind() { glBindBuffer(GL_ARRAY_BUFFER, 0); }
 };
 
-};
+}; // namespace Engine

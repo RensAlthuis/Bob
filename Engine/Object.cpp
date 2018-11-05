@@ -24,15 +24,6 @@ void Object::recalculate()
     }
 }
 
-const Maths::Matrix4 &Object::Transform() const
-{
-    return transform;
-}
-
-const Maths::Vector3 Object::Front() const
-{
-    return Maths::Vector3(transform[2], transform[6], transform[10]);
-}
 
 void Object::translate(Maths::Vector3 v, bool inWorldSpace)
 {

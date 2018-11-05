@@ -18,8 +18,8 @@ public:
   Maths::Vector3 translation;
   Object();
   ~Object();
-  const Maths::Vector3 Front() const;
-  const Maths::Matrix4 &Transform() const;
+  inline const Maths::Matrix4 &Transform() const { return transform; }
+  inline const Maths::Vector3 Front() const { return Maths::Vector3(transform[2], transform[6], transform[10]); }
   void translate(Maths::Vector3 v, bool inWorldSpace);
   void translate(float x, float y, float z, bool inWorldSpace);
   void rotate(Maths::Quaternion q);
@@ -28,7 +28,6 @@ public:
   void update();
   void addComponent(Component *component);
   void addChild(Object *object);
-
 public:
   virtual void recalculate();
 };

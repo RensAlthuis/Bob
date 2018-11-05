@@ -1,22 +1,12 @@
 #include "VertexArray.h"
 #include <iostream>
 
-
-namespace Engine{
+namespace Engine
+{
 
 VertexArray::VertexArray()
 {
     glGenVertexArrays(1, &ID);
-}
-
-void VertexArray::bind()
-{
-    glBindVertexArray(ID);
-}
-
-void VertexArray::unbind()
-{
-    glBindVertexArray(0);
 }
 
 void VertexArray::addBuffer(VertexBuffer *vbo, int index)
@@ -41,4 +31,4 @@ VertexArray::~VertexArray()
     glDeleteVertexArrays(1, &ID);
 }
 
-};
+}; // namespace Engine

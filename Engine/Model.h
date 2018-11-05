@@ -13,7 +13,7 @@ namespace Engine
 {
 class Model
 {
-private:
+  private:
 	struct indexStruct
 	{
 		int v;
@@ -40,17 +40,17 @@ private:
 	VertexBuffer *vbo;
 	VertexBuffer *nbo;
 
-public:
+  public:
 	Model(const char *path);
 	~Model();
 	void Vertices(float *&vertices, int &n);
 	void Normals(float *&normals, int &n);
 	void Indices(unsigned int *&indices, int &n);
-	void bind();
-	void unbind();
-	int ElementCount();
+	inline void bind() { vao->bind(); }
+	inline int ElementCount() { return ebo->elementCount; }
+	inline void unbind() { vao->unbind(); }
 
-private:
+  private:
 	void parseVert(std::string &line, std::vector<Maths::Vector3> &list);
 	void parseNormal(std::string &line, std::vector<Maths::Vector3> &list);
 	void parseFaceElement(std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);

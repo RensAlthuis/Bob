@@ -20,8 +20,8 @@ public:
   void addTextureBuffer(std::string name, GLenum attachment, GLint format, GLenum type);
   void setShader(Shader& shader);
   void bindTextures();
-  void bind();
-  void unbind();
+  inline void bind() { glBindFramebuffer(GL_FRAMEBUFFER, ID); }
+  inline void unbind() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }
   ~FrameBuffer();
 };
 }; // namespace Engine

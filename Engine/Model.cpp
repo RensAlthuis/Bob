@@ -133,18 +133,6 @@ void Model::Indices(unsigned int *&indices, int &n)
 	n = index.size();
 }
 
-void Model::bind()
-{
-	vao->bind();
-}
-int Model::ElementCount()
-{
-	return ebo->elementCount;
-}
-void Model::unbind()
-{
-	vao->unbind();
-}
 
 Model::~Model()
 {

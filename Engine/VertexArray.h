@@ -3,8 +3,8 @@
 #include "VertexBuffer.h"
 #include "ElementBuffer.h"
 
-
-namespace Engine{
+namespace Engine
+{
 class VertexArray
 {
   public:
@@ -13,8 +13,8 @@ class VertexArray
 	~VertexArray();
 	void addBuffer(VertexBuffer *vbo, int index);
 	void setEBO(ElementBuffer *ebo);
-	void bind();
-	void unbind();
+	inline void bind() { glBindVertexArray(ID); }
+	inline void unbind() { glBindVertexArray(0); }
 };
 
-};
+}; // namespace Engine

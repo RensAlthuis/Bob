@@ -30,10 +30,7 @@ Camera::~Camera()
 {
 }
 
-const Maths::Matrix4 &Camera::Projection()
-{
-    return projection;
-}
+
 
 void Camera::turn(float x, float y)
 {

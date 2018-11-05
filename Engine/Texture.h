@@ -18,7 +18,7 @@ private:
 public:
   Texture(const char *path);
   ~Texture();
-  void bind();
-  void unbind();
+  inline void bind() { glBindTexture(GL_TEXTURE_2D, ID); }
+  inline void unbind() { glBindTexture(GL_TEXTURE_2D, 0); }
 };
 };

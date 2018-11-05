@@ -19,15 +19,6 @@ Texture::Texture(const char *path)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::bind()
-{
-	glBindTexture(GL_TEXTURE_2D, ID);
-}
-
-void Texture::unbind()
-{
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
 
 Texture::~Texture()
 {

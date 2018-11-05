@@ -2,15 +2,17 @@
 
 #include <glad/glad.h>
 
-namespace Engine {
+namespace Engine
+{
 class ElementBuffer
 {
-  public:
+public:
 	GLuint ID;
 	unsigned int elementCount;
 	ElementBuffer(GLuint *data, int length);
 	~ElementBuffer();
-	void bind();
-	void unbind();
+
+	inline void bind() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID); }
+	inline void unbind() { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
 };
-};
+}; // namespace Engine
