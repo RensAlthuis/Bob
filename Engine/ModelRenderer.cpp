@@ -2,10 +2,8 @@
 namespace Engine
 {
 
-Model *ModelRenderer::lastBoundModel = nullptr;
-
-ModelRenderer::ModelRenderer(Model *model, Material *material, Shader *shader)
-    : Component(), model(model), material(material), shader(shader)
+ModelRenderer::ModelRenderer(Model &model, Material &material, Shader &shader)
+    : Component(), model(&model), material(&material), shader(&shader)
 {
 }
 
@@ -20,12 +18,8 @@ void ModelRenderer::update()
 
 void ModelRenderer::draw()
 {
-    if (lastBoundModel != model)
-    {
-        model->bind();
-        lastBoundModel = model;
-    }
-    material->setShader(shader);
+    model->bind();
+    material->setShader(*shader);
     shader->setMat4("model_matrix", parent->Transform());
     glDrawElements(GL_TRIANGLES, model->ElementCount(), GL_UNSIGNED_INT, 0);
 }

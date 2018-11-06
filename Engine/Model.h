@@ -1,5 +1,6 @@
 #pragma once
 #include "FileReader.h"
+#include <memory>
 #include <sstream>
 #include <iostream>
 #include <vector>
@@ -27,33 +28,29 @@ class Model
 			return v < o.v || (v == o.v && n < o.n);
 		}
 	};
-	std::map<indexStruct, int> indexmap;
-	int indexcount;
+
 	std::vector<Maths::Vector3> vertices;
 	std::vector<unsigned int> index;
 	std::vector<Maths::Vector3> normals;
 	std::vector<unsigned int> normindex;
 	std::vector<float> texcoord;
 
-	VertexArray *vao;
-	ElementBuffer *ebo;
-	VertexBuffer *vbo;
-	VertexBuffer *nbo;
+	std::unique_ptr<VertexArray> vao;
 
   public:
 	Model(const char *path);
 	~Model();
-	void Vertices(float *&vertices, int &n);
-	void Normals(float *&normals, int &n);
-	void Indices(unsigned int *&indices, int &n);
+	void Vertices(std::unique_ptr<float[]> &vertices);
+	void Normals(std::unique_ptr<float[]> &normals);
+	void Indices(std::unique_ptr<unsigned int[]> &indices);
 	inline void bind() { vao->bind(); }
-	inline int ElementCount() { return ebo->elementCount; }
+	inline int ElementCount() { return vao->ElementCount(); }
 	inline void unbind() { vao->unbind(); }
 
   private:
 	void parseVert(std::string &line, std::vector<Maths::Vector3> &list);
 	void parseNormal(std::string &line, std::vector<Maths::Vector3> &list);
-	void parseFaceElement(std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
-	void insertElement(indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
+	void parseFaceElement(std::map<indexStruct, int>& indexmap, std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
+	void insertElement(std::map<indexStruct, int>& indexmap, indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
 };
 }; // namespace Engine

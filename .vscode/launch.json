@@ -11,13 +11,14 @@
             "program": "${workspaceFolder}/build/engine",
             "windows": {
                 "program": "${workspaceFolder}/build/engine.exe",
+                "MIMode": "gdb",
                 "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe"
             },
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": false,
+            "externalConsole": true,
             "MIMode": "gdb",
             "setupCommands": [
                 {

@@ -24,7 +24,7 @@ class Material {
                     const float SpecularExp,
                     const Maths::Vector3 ComponentScalars);
         ~Material();
-        void setShader(Shader* shader) const;
+        void setShader(const Shader& shader) const;
 
 };
 

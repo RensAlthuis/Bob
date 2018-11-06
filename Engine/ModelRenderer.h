@@ -6,16 +6,15 @@
 
 namespace Engine
 {
-class ModelRenderer : Component
+class ModelRenderer : public Component
 {
   private:
-    static Model* lastBoundModel;
-    Model *model;
-    Shader *shader;
-    Material *material;
+    std::shared_ptr<Model> model;
+    std::shared_ptr<Shader> shader;
+    std::shared_ptr<Material> material;
 
   public:
-    ModelRenderer(Model *model, Material *material, Shader *shader);
+    ModelRenderer(Model &model, Material &material, Shader &shader);
     ~ModelRenderer();
     void update() override;
     void draw();

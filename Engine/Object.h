@@ -26,8 +26,8 @@ public:
   void lookAt(const Maths::Vector3 &v);
   void scale(Maths::Vector3 s);
   void update();
-  void addComponent(Component *component);
-  void addChild(Object *object);
+  void addComponent(Component &component);
+  void addChild(Object &object);
 public:
   virtual void recalculate();
 };

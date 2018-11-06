@@ -85,17 +85,17 @@ void Object::update()
     }
 }
 
-void Object::addChild(Object *object)
+void Object::addChild(Object &object)
 {
-    children.push_back(object);
-    object->parent = this;
+    children.push_back(&object);
+    object.parent = this;
     recalculate();
 }
 
-void Object::addComponent(Component *component)
+void Object::addComponent(Component &component)
 {
-    component->parent = this;
-    components.push_back(component);
+    component.parent = this;
+    components.push_back(&component);
 }
 
 Object::~Object()

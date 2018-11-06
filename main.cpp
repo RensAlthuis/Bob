@@ -137,14 +137,17 @@ int main(void)
 	DirectionalLight dirlight(0.1f, Maths::Vector3(1, 1, 1));
 	dirlight.translate(0,0,1, true);
 	SpotLight spotlight(1.0f, Maths::Vector3(1, 0.5f, 0.2f), Maths::Vector3(0, 0.1f, 0.1f), Maths::Vector3(0, 0, -1), 0.5f, 40.0f);
-	camera.addChild((Object *)&spotlight);
+	camera.addChild(spotlight);
 
 	//Objects
 	Object monkeyObj;
-	monkeyObj.addComponent((Component *)new ModelRenderer(&monkey, &material, &geomShader));
+	ModelRenderer renderer(monkey, material, geomShader);
+	monkeyObj.addComponent(renderer);
 	monkeyObj.translate(Maths::Vector3(0, 3, 0), true);
+
 	Object groundObj;
-	groundObj.addComponent((Component *)new ModelRenderer(&ground, &material, &geomShader));
+	ModelRenderer renderer2(ground, material, geomShader);
+	groundObj.addComponent(renderer2);
 	groundObj.scale(Maths::Vector3(100, 1, 100));
 
 	//FrameBuffer

@@ -2,8 +2,7 @@
 
 namespace Engine
 {
-Model::Model(const char *path) : indexmap(),
-								 indexcount(0)
+Model::Model(const char *path)
 {
 	char *file;
 	long len;
@@ -21,6 +20,7 @@ Model::Model(const char *path) : indexmap(),
 	//otherwise likely a silent error
 	std::vector<Maths::Vector3> vlist;
 	std::vector<Maths::Vector3> nlist;
+	std::map<indexStruct, int> indexmap;
 	for (auto line : lines)
 	{
 		if ((*line)[0] == '#')
@@ -37,24 +37,24 @@ Model::Model(const char *path) : indexmap(),
 		}
 		else if ((*line)[0] == 'f' && (*line)[1] == ' ')
 		{
-			parseFaceElement(*line, vlist, nlist);
+			parseFaceElement(indexmap, *line, vlist, nlist);
 		}
 	}
 
 	int nverts, nnorms, nindices;
-	float *fverts;
-	float *fnormals;
-	unsigned int *uiindices;
-	Vertices(fverts, nverts);
-	Indices(uiindices, nindices);
-	Normals(fnormals, nnorms);
-	ebo = new ElementBuffer(uiindices, nindices);
-	vbo = new VertexBuffer(fverts, nverts, 3);
-	nbo = new VertexBuffer(fnormals, nnorms, 3);
-	vao = new VertexArray();
-	vao->setEBO(ebo);
-	vao->addBuffer(vbo, 0);
-	vao->addBuffer(nbo, 1);
+	std::unique_ptr<float[]> fverts = std::make_unique<float[]>(vertices.size() * 3);
+	std::unique_ptr<float[]> fnormals = std::make_unique<float[]>(normals.size() * 3);
+	std::unique_ptr<unsigned int[]> uiindices = std::make_unique<unsigned int[]>(index.size());
+	Vertices(fverts);
+	Indices(uiindices);
+	Normals(fnormals);
+	auto ebo = std::make_unique<ElementBuffer>(uiindices.get(), index.size());
+	auto vbo = std::make_unique<VertexBuffer>(fverts.get(), vertices.size(), 3);
+	auto nbo = std::make_unique<VertexBuffer>(fnormals.get(), normals.size(), 3);
+	vao = std::make_unique<VertexArray>();
+	vao->setEBO(std::move(ebo));
+	vao->addBuffer(std::move(vbo), 0);
+	vao->addBuffer(std::move(nbo), 1);
 }
 
 void Model::parseVert(std::string &line, std::vector<Maths::Vector3> &list)
@@ -71,27 +71,27 @@ void Model::parseNormal(std::string &line, std::vector<Maths::Vector3> &list)
 	list.push_back(Maths::Vector3(x, y, z));
 }
 
-void Model::parseFaceElement(std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
+void Model::parseFaceElement(std::map<indexStruct, int>& indexmap, std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
 {
 	int a, b, c, d, e, f;
 	sscanf(line.c_str(), "f %u//%u %u//%u %u//%u", &a, &b, &c, &d, &e, &f);
 	indexStruct ivn1{a - 1, b - 1};
 	indexStruct ivn2{c - 1, d - 1};
 	indexStruct ivn3{e - 1, f - 1};
-	insertElement(ivn1, vlist, nlist);
-	insertElement(ivn2, vlist, nlist);
-	insertElement(ivn3, vlist, nlist);
+	insertElement(indexmap, ivn1, vlist, nlist);
+	insertElement(indexmap, ivn2, vlist, nlist);
+	insertElement(indexmap, ivn3, vlist, nlist);
 }
 
-void Model::insertElement(indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
+void Model::insertElement(std::map<indexStruct, int>& indexmap, indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
 {
 	//check if map already has key
 	if (indexmap.count(ivn) == 0)
 	{
 		//map doesn't have key -> add key to map, push vertex and normal on indexcount positions in their respective C-Vertexes
-		indexmap.insert(std::pair<indexStruct, int>(ivn, indexcount));
-		index.push_back(indexcount);
-		indexcount++;
+		int count = indexmap.size();
+		indexmap.insert(std::pair<indexStruct, int>(ivn, count));
+		index.push_back(count);
 		vertices.push_back(vlist[ivn.v]);
 		normals.push_back(nlist[ivn.n]);
 	}
@@ -101,44 +101,33 @@ void Model::insertElement(indexStruct ivn, std::vector<Maths::Vector3> &vlist, s
 	}
 }
 
-void Model::Vertices(float *&array, int &n)
+void Model::Vertices(std::unique_ptr<float[]> &array)
 {
-	float *f = new float[vertices.size() * 3];
 	for (int i = 0; i < vertices.size(); i++)
 	{
-		f[i * 3 + 0] = vertices[i].x;
-		f[i * 3 + 1] = vertices[i].y;
-		f[i * 3 + 2] = vertices[i].z;
+		array[i * 3 + 0] = vertices[i].x;
+		array[i * 3 + 1] = vertices[i].y;
+		array[i * 3 + 2] = vertices[i].z;
 	}
-	array = f;
-	n = vertices.size();
 }
 
-void Model::Normals(float *&array, int &n)
+void Model::Normals(std::unique_ptr<float[]> &array)
 {
-	float *f = new float[normals.size() * 3];
 	for (int i = 0; i < normals.size(); i++)
 	{
-		f[i * 3 + 0] = normals[i].x;
-		f[i * 3 + 1] = normals[i].y;
-		f[i * 3 + 2] = normals[i].z;
+		array[i * 3 + 0] = normals[i].x;
+		array[i * 3 + 1] = normals[i].y;
+		array[i * 3 + 2] = normals[i].z;
 	}
-	array = f;
-	n = normals.size();
 }
 
-void Model::Indices(unsigned int *&indices, int &n)
+void Model::Indices(std::unique_ptr<unsigned int[]> &indices)
 {
-	indices = index.data();
-	n = index.size();
+	indices = std::unique_ptr<unsigned int[]>(index.data());
 }
 
 
 Model::~Model()
 {
-	delete vbo;
-	delete nbo;
-	delete ebo;
-	delete vao;
 }
 }; // namespace Engine

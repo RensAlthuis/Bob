@@ -30,14 +30,14 @@ Material::Material( const Maths::Vector3 EmissiveColour,
 
 }
 
-void Material::setShader(Shader *shader) const
+void Material::setShader(const Shader &shader) const
 {
-    shader->setVec3("matEmissiveColour", mEC);
-    shader->setVec3("matAmbiantColour", mAC);
-    shader->setVec3("matDiffuseColour", Maths::Vector3(mDC.x, mDC.y, mDC.z));
-    shader->setVec3("matSpecularColour", mSC);
-    shader->setFloat("matSpecularExp", mSE);
-    shader->setVec3("lightAmbDiffSpec", lADS);
+    shader.setVec3("matEmissiveColour", mEC);
+    shader.setVec3("matAmbiantColour", mAC);
+    shader.setVec3("matDiffuseColour", Maths::Vector3(mDC.x, mDC.y, mDC.z));
+    shader.setVec3("matSpecularColour", mSC);
+    shader.setFloat("matSpecularExp", mSE);
+    shader.setVec3("lightAmbDiffSpec", lADS);
 }
 
 Material::~Material(){}

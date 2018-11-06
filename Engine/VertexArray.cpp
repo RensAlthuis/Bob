@@ -9,18 +9,20 @@ VertexArray::VertexArray()
     glGenVertexArrays(1, &ID);
 }
 
-void VertexArray::addBuffer(VertexBuffer *vbo, int index)
+void VertexArray::addBuffer(std::unique_ptr<VertexBuffer> buffer, int index)
 {
     bind();
-    vbo->bind();
+    buffer->bind();
     glEnableVertexAttribArray(index);
-    glVertexAttribPointer(index, vbo->elementLength, GL_FLOAT, GL_FALSE, 0, (void *)0);
-    vbo->unbind();
+    glVertexAttribPointer(index, buffer->elementLength, GL_FLOAT, GL_FALSE, 0, (void *)0);
+    buffer->unbind();
     unbind();
+    buffers.push_back(std::move(buffer));
 }
 
-void VertexArray::setEBO(ElementBuffer *ebo)
+void VertexArray::setEBO(std::unique_ptr<ElementBuffer> buffer)
 {
+    ebo = std::move(buffer);
     bind();
     ebo->bind();
     unbind();

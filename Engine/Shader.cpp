@@ -58,22 +58,22 @@ Shader::Shader(const char *vertexPath, const char *fragmentPath, int nDirLights,
 	glDeleteShader(fragmentShader);
 }
 
-void Shader::setMat4(const char *str, const Maths::Matrix4 &mat)
+void Shader::setMat4(const char *str, const Maths::Matrix4 &mat) const
 {
 	glUniformMatrix4fv(glGetUniformLocation(ID, str), 1, false, mat.mat);
 }
 
-void Shader::setVec2(const char *str, const Maths::Vector2 &vec)
+void Shader::setVec2(const char *str, const Maths::Vector2 &vec) const
 {
 	glUniform2f(glGetUniformLocation(ID, str), vec.x, vec.y);
 }
 
-void Shader::setVec3(const char *str, const Maths::Vector3 &vec)
+void Shader::setVec3(const char *str, const Maths::Vector3 &vec) const
 {
 	glUniform3f(glGetUniformLocation(ID, str), vec.x, vec.y, vec.z);
 }
 
-void Shader::setVec3Arr(const char *str, const Maths::Vector3 *vec, int length)
+void Shader::setVec3Arr(const char *str, const Maths::Vector3 *vec, int length) const
 {
 	GLuint loc = glGetUniformLocation(ID, str);
 	float f[3 * length];
@@ -86,13 +86,13 @@ void Shader::setVec3Arr(const char *str, const Maths::Vector3 *vec, int length)
 	glUniform3fv(loc, length, f);
 }
 
-void Shader::setVec4(const char *str, const Maths::Vector4 &vec)
+void Shader::setVec4(const char *str, const Maths::Vector4 &vec) const
 {
 	GLuint loc = glGetUniformLocation(ID, str);
 	glUniform4f(loc, vec.x, vec.y, vec.z, vec.w);
 }
 
-void Shader::setVec4Arr(const char *str, const Maths::Vector4 *vec, int length)
+void Shader::setVec4Arr(const char *str, const Maths::Vector4 *vec, int length) const
 {
 	GLuint loc = glGetUniformLocation(ID, str);
 	float f[4 * length];
@@ -106,23 +106,23 @@ void Shader::setVec4Arr(const char *str, const Maths::Vector4 *vec, int length)
 	glUniform4fv(loc, length, f);
 }
 
-void Shader::setInt1(const char *str, int i)
+void Shader::setInt1(const char *str, int i) const
 {
 	glUniform1i(glGetUniformLocation(ID, str), i);
 }
 
-void Shader::setFloat(const char *str, float f)
+void Shader::setFloat(const char *str, float f) const
 {
 	glUniform1f(glGetUniformLocation(ID, str), f);
 }
 
-void Shader::setFloatArr(const char *str, const float *f, int length)
+void Shader::setFloatArr(const char *str, const float *f, int length) const
 {
 	GLuint loc = glGetUniformLocation(ID, str);
 	glUniform1fv(loc, length, f);
 }
 
-void Shader::use()
+void Shader::use() const
 {
 	glUseProgram(ID);
 }
