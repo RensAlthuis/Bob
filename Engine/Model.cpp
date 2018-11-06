@@ -55,6 +55,10 @@ Model::Model(const char *path)
 	vao->setEBO(std::move(ebo));
 	vao->addBuffer(std::move(vbo), 0);
 	vao->addBuffer(std::move(nbo), 1);
+
+	vertices.clear();
+	normals.clear();
+	index.clear();
 }
 
 void Model::parseVert(std::string &line, std::vector<Maths::Vector3> &list)

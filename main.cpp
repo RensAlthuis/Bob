@@ -117,9 +117,9 @@ int main(void)
 	Material material(mEC, mAC, mDC, mSC, mSE, lADS);
 
 	//Load Models
-	Model monkey("Assets/Model/MonkeySmooth.obj");
-	Model cube("Assets/Model/cube.obj");
-	Model ground("Assets/Model/Floor.obj");
+	auto monkey = std::make_shared<Model>("Assets/Model/MonkeySmooth.obj");
+	auto cube = std::make_shared<Model>("Assets/Model/cube.obj");
+	auto ground = std::make_shared<Model>("Assets/Model/Floor.obj");
 
 	//Shader
 	Shader geomShader("Assets/Shader/vertexdef.glsl", "Assets/Shader/fragmentdef.glsl", 0, 0, 0);
@@ -141,12 +141,12 @@ int main(void)
 
 	//Objects
 	Object monkeyObj;
-	ModelRenderer renderer(monkey, material, geomShader);
+	ModelRenderer renderer(*monkey, material, geomShader);
 	monkeyObj.addComponent(renderer);
 	monkeyObj.translate(Maths::Vector3(0, 3, 0), true);
 
 	Object groundObj;
-	ModelRenderer renderer2(ground, material, geomShader);
+	ModelRenderer renderer2(*ground, material, geomShader);
 	groundObj.addComponent(renderer2);
 	groundObj.scale(Maths::Vector3(100, 1, 100));
 

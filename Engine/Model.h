@@ -32,8 +32,7 @@ class Model
 	std::vector<Maths::Vector3> vertices;
 	std::vector<unsigned int> index;
 	std::vector<Maths::Vector3> normals;
-	std::vector<unsigned int> normindex;
-	std::vector<float> texcoord;
+	// std::vector<float> texcoord;
 
 	std::unique_ptr<VertexArray> vao;
 
