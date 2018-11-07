@@ -14,6 +14,7 @@
 #include "Engine/DirectionalLight.h"
 #include "Engine/SpotLight.h"
 #include "Engine/FrameBuffer.h"
+#include "Engine/ECS/Component.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -100,8 +101,22 @@ void handleInput(Window& window, Camera& camera){
 
 }
 
+class TestComponent : public ECS::Component<TestComponent>
+{
+	int test;
+};
+
+class TestComponent2 : public ECS::Component<TestComponent2>
+{
+	int test;
+	int test2;
+};
+
 int main(void)
 {
+	std::cout << "type: " << TestComponent::TYPE  << ", size:  " << TestComponent::SIZE << std::endl;
+	std::cout << "type: " << TestComponent2::TYPE  << ", size:  " << TestComponent2::SIZE << std::endl;
+	return 0;
 	FreeImage_Initialise();
 	Window window("Engine", WIDTH, HEIGHT, false);
 	if (!window.init())

@@ -8,6 +8,7 @@ else()
 endif()
 
 add_subdirectory(Maths)
+add_subdirectory(ECS)
 
 add_library(Engine STATIC
 glad.c
@@ -47,7 +48,7 @@ find_library(
 message(STATUS "Found Library" ${GLFW})
 message(STATUS "Found Library" ${FREEIMAGE})
 
-set(COMMONLIBS Maths ${FREEIMAGE} ${GLFW})
+set(COMMONLIBS ECS Maths ${FREEIMAGE} ${GLFW})
 
 if(WIN32)
     target_link_libraries(Engine
