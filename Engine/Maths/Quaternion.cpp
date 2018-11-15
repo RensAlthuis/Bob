@@ -31,6 +31,20 @@ Quaternion Quaternion::fromAxisAngle(float angle, const Vector3 &axis)
     return q;
 }
 
+Quaternion Quaternion::fromAxisAngle(float angle, float x, float y, float z)
+{
+    float qAngle= 0.5f * angle * ((float)M_PI / 180.0f);
+    float sinmult = sinf(qAngle);
+
+    Quaternion q(
+        cosf(qAngle),
+        x*sinmult,
+        y*sinmult,
+        z*sinmult
+    );
+    return q;
+}
+
 float Quaternion::length() const
 {
     return sqrtf(w * w + x * x + y * y + z * z);

@@ -17,10 +17,6 @@ FileReader.h
 Input.cpp
 Shader.cpp
 Time.cpp
-ElementBuffer.cpp
-VertexArray.cpp
-VertexBuffer.cpp
-FrameBuffer.cpp
 Texture.cpp
 Model.cpp
 Camera.cpp
@@ -30,6 +26,11 @@ ModelRenderer.cpp
 DirectionalLight.cpp
 PointLight.cpp
 SpotLight.cpp
+Buffer/ElementBuffer.cpp
+Buffer/VertexArray.cpp
+Buffer/VertexBuffer.cpp
+Buffer/FrameBuffer.cpp
+Transform.cpp
 )
 
 include_directories(
@@ -48,7 +49,7 @@ find_library(
 message(STATUS "Found Library" ${GLFW})
 message(STATUS "Found Library" ${FREEIMAGE})
 
-set(COMMONLIBS ECS Maths ${FREEIMAGE} ${GLFW})
+set(COMMONLIBS Maths ECS ${FREEIMAGE} ${GLFW})
 
 if(WIN32)
     target_link_libraries(Engine

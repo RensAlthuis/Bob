@@ -70,8 +70,8 @@ bool Window::init(Window *_parent)
 	/* Initialize the library */
 	if (!glfwInit())
 		std::cout << "ERROR: Failed to initialize glfw" << std::endl;
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	if (!createWindow())
@@ -92,7 +92,7 @@ bool Window::init(Window *_parent)
 	glfwSetErrorCallback(errorCallback);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(window, 0, 0);
 	glfwSwapInterval(0);
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
@@ -216,6 +216,7 @@ void Window::resize(int w, int h)
 
 Window::~Window()
 {
+	delete input;
 	glfwTerminate();
 }
 }; // namespace Engine

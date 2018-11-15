@@ -15,7 +15,7 @@ public:
 
 public:
   DirectionalLight(float intensity, Maths::Vector3 colour);
-  void setShader(Shader *shader, const Camera &cam, int index);
+  void setShader(const Shader *shader, const Camera &cam, int index);
   ~DirectionalLight();
 };
 }; // namespace Engine

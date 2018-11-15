@@ -41,20 +41,26 @@ Model::Model(const char *path)
 		}
 	}
 
-	int nverts, nnorms, nindices;
-	std::unique_ptr<float[]> fverts = std::make_unique<float[]>(vertices.size() * 3);
-	std::unique_ptr<float[]> fnormals = std::make_unique<float[]>(normals.size() * 3);
-	std::unique_ptr<unsigned int[]> uiindices = std::make_unique<unsigned int[]>(index.size());
+	vao = new VertexArray();
+
+	//set up vertices
+	float *fverts = new float[vertices.size() * 3];
 	Vertices(fverts);
-	Indices(uiindices);
+	auto vbo = new VertexBuffer(fverts, vertices.size(), 3);
+	delete[] fverts;
+	vao->addBuffer(vbo, 0);
+
+	//set up normals
+	float *fnormals = new float[normals.size() * 3];
 	Normals(fnormals);
-	auto ebo = std::make_unique<ElementBuffer>(uiindices.get(), index.size());
-	auto vbo = std::make_unique<VertexBuffer>(fverts.get(), vertices.size(), 3);
-	auto nbo = std::make_unique<VertexBuffer>(fnormals.get(), normals.size(), 3);
-	vao = std::make_unique<VertexArray>();
-	vao->setEBO(std::move(ebo));
-	vao->addBuffer(std::move(vbo), 0);
-	vao->addBuffer(std::move(nbo), 1);
+	auto nbo = new VertexBuffer(fnormals, normals.size(), 3);
+	delete[] fnormals;
+	vao->addBuffer(nbo, 1);
+
+	//set up indices
+	auto ebo = new ElementBuffer(index.data(), index.size());
+	vao->setEBO(ebo);
+
 
 	vertices.clear();
 	normals.clear();
@@ -105,7 +111,7 @@ void Model::insertElement(std::map<indexStruct, int>& indexmap, indexStruct ivn,
 	}
 }
 
-void Model::Vertices(std::unique_ptr<float[]> &array)
+void Model::Vertices(float *array)
 {
 	for (int i = 0; i < vertices.size(); i++)
 	{
@@ -115,7 +121,7 @@ void Model::Vertices(std::unique_ptr<float[]> &array)
 	}
 }
 
-void Model::Normals(std::unique_ptr<float[]> &array)
+void Model::Normals(float *array)
 {
 	for (int i = 0; i < normals.size(); i++)
 	{
@@ -125,13 +131,8 @@ void Model::Normals(std::unique_ptr<float[]> &array)
 	}
 }
 
-void Model::Indices(std::unique_ptr<unsigned int[]> &indices)
-{
-	indices = std::unique_ptr<unsigned int[]>(index.data());
-}
-
-
 Model::~Model()
 {
+	delete vao;
 }
 }; // namespace Engine

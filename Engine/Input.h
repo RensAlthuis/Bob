@@ -30,6 +30,7 @@ class Input
 
   public:
 	Input();
+	~Input();
 	void update();
 	void focus() { instance = this; };
 
@@ -38,7 +39,6 @@ class Input
 	bool keyDown(int key);
 	bool keyReleased(int key);
 
-	~Input();
 	friend void windowFocusChange(GLFWwindow *win, int focused);
 	friend void windowKeyChange(GLFWwindow *win, int key, int scancode, int action, int mods);
 	friend void mouseMoved(GLFWwindow *win, double x, double y);

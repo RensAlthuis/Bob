@@ -212,5 +212,6 @@ void Shader::insertLights(std::ostringstream &shader)
 
 Shader::~Shader()
 {
+	glDeleteProgram(ID);
 }
 }; // namespace Engine

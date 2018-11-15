@@ -5,5 +5,6 @@ add_library(ECS
     STATIC
     Component.cpp
     System.cpp
-    ECS.cpp
+    ECSManager.cpp
+    SystemGroup.cpp
 )

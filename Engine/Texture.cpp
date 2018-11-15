@@ -22,5 +22,6 @@ Texture::Texture(const char *path)
 
 Texture::~Texture()
 {
+	glDeleteTextures(1, &ID);
 }
 };

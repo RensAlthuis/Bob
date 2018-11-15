@@ -14,6 +14,7 @@ class Quaternion
     Quaternion(float w, float x, float y, float z);
     Quaternion(float w, Vector3 v);
     static Quaternion fromAxisAngle(float angle, const Vector3 &axis);
+    static Quaternion fromAxisAngle(float angle, float x, float y, float z);
     ~Quaternion();
     float dot(const Quaternion &q) const;
     Quaternion inverse() const;

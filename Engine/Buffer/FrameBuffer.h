@@ -1,7 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 #include <vector>
-#include "Shader.h"
+#include "../Shader.h"
 
 namespace Engine
 {

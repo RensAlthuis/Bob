@@ -7,7 +7,7 @@ DirectionalLight::DirectionalLight(float intensity, Maths::Vector3 colour)
 {
 }
 
-void DirectionalLight::setShader(Shader *shader, const Camera &cam, int index)
+void DirectionalLight::setShader(const Shader *shader, const Camera &cam, int index)
 {
 
     char num[10];

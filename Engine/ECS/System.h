@@ -7,11 +7,14 @@ namespace ECS
 {
 class System
 {
-    private:
-        int priority;
-        bool enabled;
+    protected:
+        std::vector<int> types;
+        System();
     public:
-        void update(float deltaTime);
+        virtual void update(float deltaTime, IComponent** components) const = 0;
+        inline const std::vector<int>& getTypes() const{return types;};
+        void addComponentTypes(int* addComponentTypes, int nTypes);
+        void addComponentType(int type);
 };
 }; // namespace ECS
 }; // namespace Engine

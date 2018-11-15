@@ -1,20 +1,22 @@
 #define FREEIMAGE_LIB
 #include <stdlib.h>
 #include <assert.h>
+#include "Engine/Maths/Maths.h"
 #include "Engine/Window.h"
 #include "Engine/Shader.h"
 #include "Engine/Camera.h"
 #include "Engine/Model.h"
 #include "Engine/Texture.h"
-#include "Engine/Maths/Maths.h"
 #include "Engine/Time.h"
 #include "Engine/Material.h"
 #include "Engine/ModelRenderer.h"
 #include "Engine/PointLight.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/SpotLight.h"
-#include "Engine/FrameBuffer.h"
-#include "Engine/ECS/Component.h"
+#include "Engine/Buffer/FrameBuffer.h"
+#include "Engine/ECS/ECSManager.h"
+#include "Engine/ECS/ECSManager.h"
+#include "Engine/Transform.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -25,29 +27,46 @@ unsigned int quadVAO = 0;
 unsigned int quadVBO;
 void renderQuad()
 {
-    if (quadVAO == 0)
-    {
-        float quadVertices[] = {
-            // positions        // texture Coords
-            -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-             1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-             1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        };
-        // setup plane VAO
-        glGenVertexArrays(1, &quadVAO);
-        glGenBuffers(1, &quadVBO);
-        glBindVertexArray(quadVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    }
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    glBindVertexArray(0);
+	
+	if (quadVAO == 0)
+	{
+		float quadVertices[] = {
+			// positions        // texture Coords
+			-1.0f,
+			1.0f,
+			0.0f,
+			0.0f,
+			1.0f,
+			-1.0f,
+			-1.0f,
+			0.0f,
+			0.0f,
+			0.0f,
+			1.0f,
+			1.0f,
+			0.0f,
+			1.0f,
+			1.0f,
+			1.0f,
+			-1.0f,
+			0.0f,
+			1.0f,
+			0.0f,
+		};
+		// setup plane VAO
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+	}
+	glBindVertexArray(quadVAO);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glBindVertexArray(0);
 }
 
 bool checkGLError()
@@ -62,65 +81,81 @@ bool checkGLError()
 	return false;
 }
 
-void handleInput(Window& window, Camera& camera){
-		if (Input::isKeyPressed(GLFW_KEY_ESCAPE))
-			window.close();
-		if (Input::isKeyDown(GLFW_KEY_W))
-		{
-			camera.translate(Maths::Vector3(0, 0, -10) * Time::deltatime(), false);
-		}
-		if (Input::isKeyDown(GLFW_KEY_A))
-		{
-			camera.translate(Maths::Vector3(-10, 0, 0) * Time::deltatime(), false);
-		}
-		if (Input::isKeyDown(GLFW_KEY_S))
-		{
-			camera.translate(Maths::Vector3(0, 0, 10) * Time::deltatime(), false);
-		}
-		if (Input::isKeyDown(GLFW_KEY_D))
-		{
-			camera.translate(Maths::Vector3(10, 0, 0) * Time::deltatime(), false);
-		}
-		if (Input::isKeyDown(GLFW_KEY_SPACE))
-		{
-			camera.translate(Maths::Vector3(0, 10, 0) * Time::deltatime(), false);
-		}
-		if (Input::isKeyDown(GLFW_KEY_LEFT_SHIFT))
-		{
-			camera.translate(Maths::Vector3(0, -10, 0) * Time::deltatime(), false);
-		}
+void handleInput(Window &window, Camera &camera)
+{
+	if (Input::isKeyPressed(GLFW_KEY_ESCAPE))
+		window.close();
+	if (Input::isKeyDown(GLFW_KEY_W))
+	{
+		camera.translate(Maths::Vector3(0, 0, -10) * Time::deltatime(), false);
+	}
+	if (Input::isKeyDown(GLFW_KEY_A))
+	{
+		camera.translate(Maths::Vector3(-10, 0, 0) * Time::deltatime(), false);
+	}
+	if (Input::isKeyDown(GLFW_KEY_S))
+	{
+		camera.translate(Maths::Vector3(0, 0, 10) * Time::deltatime(), false);
+	}
+	if (Input::isKeyDown(GLFW_KEY_D))
+	{
+		camera.translate(Maths::Vector3(10, 0, 0) * Time::deltatime(), false);
+	}
+	if (Input::isKeyDown(GLFW_KEY_SPACE))
+	{
+		camera.translate(Maths::Vector3(0, 10, 0) * Time::deltatime(), false);
+	}
+	if (Input::isKeyDown(GLFW_KEY_LEFT_SHIFT))
+	{
+		camera.translate(Maths::Vector3(0, -10, 0) * Time::deltatime(), false);
+	}
 
-		if (Input::mouseDragged())
-			camera.turn(Input::mouseDragX() / 3.0f, Input::mouseDragY() / 3.0f);
+	if (Input::mouseDragged())
+		camera.turn(Input::mouseDragX() / 3.0f, Input::mouseDragY() / 3.0f);
 
-		if (Input::isKeyPressed(GLFW_KEY_F11))
-		{
-			std::cout << "Switch fullscreen" << std::endl;
-			window.fullscreen(!window.isFullscreen());
-		}
-
+	if (Input::isKeyPressed(GLFW_KEY_F11))
+	{
+		std::cout << "Switch fullscreen" << std::endl;
+		window.fullscreen(!window.isFullscreen());
+	}
 }
 
-class TestComponent : public ECS::Component<TestComponent>
+struct TransformComponent : public ECS::Component<TransformComponent>
 {
-	int test;
+	TransformComponent *Parent;
+	Transform transform;
 };
 
-class TestComponent2 : public ECS::Component<TestComponent2>
+class TestSystem : public ECS::System
 {
-	int test;
-	int test2;
+  public:
+	TestSystem() : System()
+	{
+		addComponentType(TransformComponent::TYPE);
+	};
+	void update(float deltaTime, ECS::IComponent **components) const override
+	{
+		TransformComponent *comp0 = (TransformComponent *)components[0];
+		comp0->transform.rotate(Maths::Quaternion::fromAxisAngle(deltaTime * 10.0f, 0, 1, 0));
+	};
 };
 
 int main(void)
 {
-	std::cout << "type: " << TestComponent::TYPE  << ", size:  " << TestComponent::SIZE << std::endl;
-	std::cout << "type: " << TestComponent2::TYPE  << ", size:  " << TestComponent2::SIZE << std::endl;
-	return 0;
-	FreeImage_Initialise();
+
+	// FreeImage_Initialise();
 	Window window("Engine", WIDTH, HEIGHT, false);
 	if (!window.init())
 		return -1;
+
+	ECS::ECSManager ecs;
+
+	TestSystem sys;
+	ECS::SystemGroup testGroup;
+	testGroup.addSystem(&sys);
+
+	TransformComponent t;
+	ECS::Entity* monkeyEntity = ecs.createEntity<TransformComponent>(&t);
 
 	//create material
 	const Maths::Vector3 mEC = Maths::Vector3(0.0f, 0.0f, 0.0f);
@@ -129,41 +164,42 @@ int main(void)
 	const Maths::Vector3 mSC = Maths::Vector3(1, 1, 1);
 	const float mSE = 80.0f;
 	const Maths::Vector3 lADS = Maths::Vector3(1, 1, 1);
-	Material material(mEC, mAC, mDC, mSC, mSE, lADS);
+	Material *material = new Material(mEC, mAC, mDC, mSC, mSE, lADS);
 
 	//Load Models
-	auto monkey = std::make_shared<Model>("Assets/Model/MonkeySmooth.obj");
-	auto cube = std::make_shared<Model>("Assets/Model/cube.obj");
-	auto ground = std::make_shared<Model>("Assets/Model/Floor.obj");
+	Model *monkey = new Model("Assets/Model/MonkeySmooth.obj");
+	Model *cube = new Model("Assets/Model/cube.obj");
+	Model *ground = new Model("Assets/Model/Floor.obj");
 
 	//Shader
-	Shader geomShader("Assets/Shader/vertexdef.glsl", "Assets/Shader/fragmentdef.glsl", 0, 0, 0);
-	Shader lightShader("Assets/Shader/vertexdeflight.glsl", "Assets/Shader/fragmentdeflight.glsl", 1, 2, 1);
+	// Shader geomShader("Assets/Shader/vertex.glsl", "Assets/Shader/fragment.glsl", 1,2,1);
+	Shader *geomShader = new Shader("Assets/Shader/vertexdef.glsl", "Assets/Shader/fragmentdef.glsl", 0, 0, 0);
+	Shader *lightShader = new Shader("Assets/Shader/vertexdeflight.glsl", "Assets/Shader/fragmentdeflight.glsl", 1, 2, 1);
 
 	//Camera
-	Camera camera(60, WIDTH / HEIGHT, 0.1f, 100);
-	camera.translate(0, 10, 20, false);
+	Camera* camera = new Camera(60, WIDTH / HEIGHT, 0.1f, 100);
+	camera->translate(0, 10, 20, false);
 
 	//Lights
-	PointLight light(1.0f, Maths::Vector3(1, 1, 1), Maths::Vector3(0, 0, 0.1f));
-	PointLight light2(1.0f, Maths::Vector3(1, 0, 1), Maths::Vector3(0, 0, 0.1f));
-	light.translate(Maths::Vector3(0, 4, 5), true);
-	light2.translate(Maths::Vector3(0, 4, -5), true);
-	DirectionalLight dirlight(0.1f, Maths::Vector3(1, 1, 1));
-	dirlight.translate(0,0,1, true);
-	SpotLight spotlight(1.0f, Maths::Vector3(1, 0.5f, 0.2f), Maths::Vector3(0, 0.1f, 0.1f), Maths::Vector3(0, 0, -1), 0.5f, 40.0f);
-	camera.addChild(spotlight);
+	PointLight *light = new PointLight(1.0f, Maths::Vector3(1, 1, 1), Maths::Vector3(0, 0, 0.1f));
+	PointLight *light2 = new PointLight(1.0f, Maths::Vector3(1, 0, 1), Maths::Vector3(0, 0, 0.1f));
+	light->translate(Maths::Vector3(0, 4, 5), true);
+	light2->translate(Maths::Vector3(0, 4, -5), true);
+	DirectionalLight *dirlight = new DirectionalLight(0.1f, Maths::Vector3(1, 1, 1));
+	dirlight->translate(0, 0, 1, true);
+	SpotLight *spotlight = new SpotLight(1.0f, Maths::Vector3(1, 0.5f, 0.2f), Maths::Vector3(0, 0.1f, 0.1f), Maths::Vector3(0, 0, -1), 0.5f, 40.0f);
+	camera->addChild(*spotlight);
 
 	//Objects
-	Object monkeyObj;
-	ModelRenderer renderer(*monkey, material, geomShader);
-	monkeyObj.addComponent(renderer);
-	monkeyObj.translate(Maths::Vector3(0, 3, 0), true);
+	Object *monkeyObj = new Object();
+	ModelRenderer *renderer = new ModelRenderer(*monkey, *material, *geomShader);
+	monkeyObj->addComponent(*renderer);
+	monkeyObj->translate(Maths::Vector3(0, 3, 0), true);
 
-	Object groundObj;
-	ModelRenderer renderer2(*ground, material, geomShader);
-	groundObj.addComponent(renderer2);
-	groundObj.scale(Maths::Vector3(100, 1, 100));
+	Object *groundObj = new Object();
+	ModelRenderer *renderer2 = new ModelRenderer(*ground, *material, *geomShader);
+	groundObj->addComponent(*renderer2);
+	groundObj->scale(Maths::Vector3(100, 1, 100));
 
 	//FrameBuffer
 	FrameBuffer gBuffer(WIDTH, HEIGHT);
@@ -175,51 +211,60 @@ int main(void)
 	gBuffer.addTextureBuffer("gDiff", GL_COLOR_ATTACHMENT4, GL_RGB, GL_RGB);
 	gBuffer.addTextureBuffer("gSpec", GL_COLOR_ATTACHMENT5, GL_RGBA, GL_RGBA);
 	gBuffer.addTextureBuffer("gADS", GL_COLOR_ATTACHMENT6, GL_RGB, GL_RGB);
-	gBuffer.setShader(lightShader);
+	gBuffer.setShader(*lightShader);
 	gBuffer.unbind();
 
 	while (window.running)
 	{
 
-
 		//check for errors
 		if (checkGLError())
 			return -1;
 
-
-		//set up the shader
-		geomShader.use();
-		geomShader.setMat4("view_matrix", camera.Transform());
-		geomShader.setMat4("proj_matrix", camera.Projection());
-
 		//GEOMETRY PASS
+		geomShader->use();
+		geomShader->setMat4("view_matrix", camera->Transform());
+		geomShader->setMat4("proj_matrix", camera->Projection());
+
 		gBuffer.bind();
 		window.clear();
-		monkeyObj.update();
-		groundObj.update();
-		gBuffer.unbind();
+		monkey->bind();
+		material->setShader(*geomShader);
+		auto model = ecs.getComponent<TransformComponent>(monkeyEntity);
+		std::cout << model->transform.Matrix() << std::endl;
+		geomShader->setMat4("model_matrix", model->transform.Matrix());
+		glDrawElements(GL_TRIANGLES, monkey->ElementCount(), GL_UNSIGNED_INT, 0);
 
+		ground->bind();
+		material->setShader(*geomShader);
+		geomShader->setMat4("model_matrix", Maths::Matrix4::scale(100,1,100));
+		glDrawElements(GL_TRIANGLES, ground->ElementCount(), GL_UNSIGNED_INT, 0);
+
+		gBuffer.unbind();
+		
 		//LIGHTINGPASS
-		lightShader.use();
-		light.setShader(&lightShader, camera, 0);
-		light2.setShader(&lightShader, camera, 1);
-		dirlight.setShader(&lightShader, camera, 0);
-		spotlight.setShader(&lightShader, camera, 0);
+		lightShader->use();
+		light->setShader(lightShader, *camera, 0);
+		light2->setShader(lightShader, *camera, 1);
+		dirlight->setShader(lightShader, *camera, 0);
+		spotlight->setShader(lightShader, *camera, 0);
 		window.clear();
 		gBuffer.bindTextures();
 		renderQuad();
 
-		handleInput(window, camera);
+		handleInput(window, *camera);
 
 		//update lights
-		light.translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), false);
-		light2.translate(Maths::Vector3(1.0f * Time::deltatime(), 0, 0), false);
-		light.lookAt(Maths::Vector3(0, 4, 0));
-		light2.lookAt(Maths::Vector3(0, 4, 0));
+		light->translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), false);
+		light2->translate(Maths::Vector3(1.0f * Time::deltatime(), 0, 0), false);
+		light->lookAt(Maths::Vector3(0, 4, 0));
+		light2->lookAt(Maths::Vector3(0, 4, 0));
+
+		ecs.updateSystems(Time::deltatime(), testGroup);
 
 		window.update();
 	}
 
-	FreeImage_DeInitialise();
+	// FreeImage_DeInitialise();
 	return 0;
 }

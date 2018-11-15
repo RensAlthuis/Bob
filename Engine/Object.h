@@ -17,7 +17,7 @@ public:
   Maths::Quaternion rotation;
   Maths::Vector3 translation;
   Object();
-  ~Object();
+  virtual ~Object();
   inline const Maths::Matrix4 &Transform() const { return transform; }
   inline const Maths::Vector3 Front() const { return Maths::Vector3(transform[2], transform[6], transform[10]); }
   void translate(Maths::Vector3 v, bool inWorldSpace);

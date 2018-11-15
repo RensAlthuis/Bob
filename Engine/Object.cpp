@@ -102,7 +102,8 @@ Object::~Object()
 {
     for (auto p : children)
     {
-        delete p;
+        p->parent = nullptr;
+        p->recalculate();
     }
 
     for (int i = 0; i < components.size(); i++)
