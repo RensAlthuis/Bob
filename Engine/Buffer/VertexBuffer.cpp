@@ -1,9 +1,9 @@
 #include "VertexBuffer.h"
 
-
-namespace Engine{
-VertexBuffer::VertexBuffer(GLfloat *data, unsigned int nElements, unsigned int elementLength) : elementCount(nElements * elementLength),
-																								elementLength(elementLength)
+namespace Engine
+{
+VertexBuffer::VertexBuffer(GLfloat *data, unsigned int nElements, unsigned int elementLength)
+	: elementCount(nElements * elementLength), elementLength(elementLength)
 {
 	glGenBuffers(1, &ID);
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
@@ -16,4 +16,4 @@ VertexBuffer::~VertexBuffer()
 	glDeleteBuffers(1, &ID);
 }
 
-};
+}; // namespace Engine

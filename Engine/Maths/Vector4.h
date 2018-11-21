@@ -3,20 +3,21 @@
 #include <iostream>
 #include "Matrix4.h"
 
-namespace Engine{
+namespace Engine
+{
 namespace Maths
 {
 
 class Vector4
 {
-public:
+  public:
 	float x;
 	float y;
 	float z;
 	float w;
 	const static Vector4 Zero;
 
-public:
+  public:
 	Vector4();
 	Vector4(float x, float y, float z, float w);
 	~Vector4();
@@ -35,4 +36,4 @@ public:
 	float length();
 };
 }; // namespace Maths
-};
+}; // namespace Engine

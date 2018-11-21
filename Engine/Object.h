@@ -28,6 +28,7 @@ public:
   void update();
   void addComponent(Component &component);
   void addChild(Object &object);
+
 public:
   virtual void recalculate();
 };

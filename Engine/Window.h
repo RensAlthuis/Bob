@@ -5,34 +5,35 @@
 #include "Input.h"
 #include "Time.h"
 
-
-namespace Engine{
+namespace Engine
+{
 class Window
 {
-  private:
+private:
 	const char *name;
 	int width;
 	int height;
 	int resolutionX;
 	int resolutionY;
-	Window* parent;
+	Window *parent;
 	bool _isFullscreen;
 	double lastFrameTime;
 	double framestart;
 	double frametime;
 	int framecount;
 	int fps;
-  public:
+
+public:
 	GLFWwindow *window;
 	Input *input;
 	bool isfocused;
 	bool running;
 
-	private:
+private:
 	bool createWindow();
 	void update_time();
 
-  public:
+public:
 	Window(const char *name, int width, int height, bool isFullscreen);
 	~Window();
 	GLFWwindow *getContext() { return window; };
@@ -45,7 +46,7 @@ class Window
 	void setCurrent();
 	void focus();
 	void close();
-	bool isFullscreen(){return _isFullscreen;};
+	bool isFullscreen() { return _isFullscreen; };
 	void resize(int w, int h);
 };
-};
+}; // namespace Engine

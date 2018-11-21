@@ -15,7 +15,7 @@ namespace Engine
 {
 class Model : public ECS::Component<Model>
 {
-  private:
+private:
 	struct indexStruct
 	{
 		int v;
@@ -34,22 +34,22 @@ class Model : public ECS::Component<Model>
 	std::vector<unsigned int> index;
 	std::vector<Maths::Vector3> normals;
 
-	VertexArray* vao;
+	VertexArray *vao;
 
-  public:
+public:
 	Model(const char *path);
 	~Model();
 	inline void bind() { vao->bind(); }
 	inline int ElementCount() { return vao->ElementCount(); }
 	inline void unbind() { vao->unbind(); }
 
-  private:
+private:
 	void Vertices(float *vertices);
 	void Normals(float *normals);
 	void Indices(unsigned int *indices);
 	void parseVert(std::string &line, std::vector<Maths::Vector3> &list);
 	void parseNormal(std::string &line, std::vector<Maths::Vector3> &list);
-	void parseFaceElement(std::map<indexStruct, int>& indexmap, std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
-	void insertElement(std::map<indexStruct, int>& indexmap, indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
+	void parseFaceElement(std::map<indexStruct, int> &indexmap, std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
+	void insertElement(std::map<indexStruct, int> &indexmap, indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist);
 };
 }; // namespace Engine

@@ -5,7 +5,8 @@
 #include <math.h>
 #include "Maths.h"
 
-namespace Engine{
+namespace Engine
+{
 namespace Maths
 {
 
@@ -25,8 +26,8 @@ class Matrix4
 	static Matrix4 identity();
 	static Matrix4 scale(float x, float y, float z);
 	static Matrix4 translate(float x, float y, float z);
-	static Matrix4 translate(const Vector3& v);
-	static Matrix4 rotate(const Quaternion& q);
+	static Matrix4 translate(const Vector3 &v);
+	static Matrix4 rotate(const Quaternion &q);
 	static Matrix4 rotateAxisAngle(float angle, float x, float y, float z);
 	static Matrix4 ortho(float left, float right, float top, float bottom, float near, float far);
 	static Matrix4 perspective(float fov, float aspect, float near, float far);
@@ -48,4 +49,4 @@ class Matrix4
 
 }; // namespace Maths
 
-};
+}; // namespace Engine

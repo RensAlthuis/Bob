@@ -1,6 +1,7 @@
 #include "ElementBuffer.h"
 
-namespace Engine {
+namespace Engine
+{
 ElementBuffer::ElementBuffer(GLuint *data, int length) : elementCount(length)
 {
     glGenBuffers(1, &ID);
@@ -12,4 +13,4 @@ ElementBuffer::~ElementBuffer()
 {
     glDeleteBuffers(1, &ID);
 }
-};
+}; // namespace Engine

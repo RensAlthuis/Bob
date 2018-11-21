@@ -123,7 +123,7 @@ bool Window::createWindow()
 	glfwMakeContextCurrent(window);
 	GLFWmonitor *mon = glfwGetPrimaryMonitor();
 	const GLFWvidmode *mode = glfwGetVideoMode(mon);
-	glfwSetWindowMonitor(window, NULL, mode->width-width, mode->height-height, width, height, mode->refreshRate);
+	glfwSetWindowMonitor(window, NULL, mode->width - width, mode->height - height, width, height, mode->refreshRate);
 	return true;
 }
 
@@ -144,7 +144,7 @@ void Window::fullscreen(bool value)
 	}
 	else
 	{
-		glfwSetWindowMonitor(window, NULL, mode->width-width, mode->height-height, width, height, mode->refreshRate);
+		glfwSetWindowMonitor(window, NULL, mode->width - width, mode->height - height, width, height, mode->refreshRate);
 	}
 	_isFullscreen = value;
 }
@@ -165,7 +165,8 @@ void Window::update()
 	update_time();
 	input->update();
 	/* Swap front and back buffers */
-	if(framestart != 0){
+	if (framestart != 0)
+	{
 		frametime = (Time::time() - framestart);
 		framestart = 0;
 	}
@@ -184,7 +185,7 @@ void Window::update()
 		fps = framecount;
 		framecount = 0;
 
-		std::cout << "FPS: " << fps << " , Frametime: " << frametime*1000 << "ms" << std::endl;
+		std::cout << "FPS: " << fps << " , Frametime: " << frametime * 1000 << "ms" << std::endl;
 		framestart = t;
 	}
 	framecount++;

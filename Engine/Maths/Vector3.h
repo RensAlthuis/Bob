@@ -3,13 +3,14 @@
 #include <iostream>
 #include "Maths.h"
 
-namespace Engine{
+namespace Engine
+{
 namespace Maths
 {
 
 class Vector3
 {
-public:
+  public:
 	float x;
 	float y;
 	float z;
@@ -18,8 +19,8 @@ public:
 	static const Vector3 Right;
 	static const Vector3 Zero;
 
-public:
-	Vector3():Vector3(0,0,0){};
+  public:
+	Vector3() : Vector3(0, 0, 0){};
 	Vector3(float x, float y, float z);
 	~Vector3();
 
@@ -36,7 +37,7 @@ public:
 	float dot(const Vector3 &other) const;
 	Vector3 cross(const Vector3 &other) const;
 	float length() const;
-	Vector3 rotate(const Quaternion& q) const;
+	Vector3 rotate(const Quaternion &q) const;
 };
 }; // namespace Maths
-};
+}; // namespace Engine

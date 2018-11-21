@@ -1,7 +1,7 @@
 #include "Vector3.h"
 
-
-namespace Engine{
+namespace Engine
+{
 namespace Maths
 {
 
@@ -10,9 +10,8 @@ const Vector3 Vector3::Forward(0, 0, -1);
 const Vector3 Vector3::Right(1, 0, 0);
 const Vector3 Vector3::Zero(0, 0, 0);
 
-Vector3::Vector3(float x, float y, float z) : x(x),
-                                              y(y),
-                                              z(z)
+Vector3::Vector3(float x, float y, float z)
+    : x(x), y(y), z(z)
 {
 }
 
@@ -129,4 +128,4 @@ Vector3::~Vector3()
 }
 
 }; // namespace Maths
-};
+}; // namespace Engine

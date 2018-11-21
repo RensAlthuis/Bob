@@ -1,14 +1,14 @@
 #include "Quaternion.h"
 
-namespace Engine{
+namespace Engine
+{
 namespace Maths
 {
-Quaternion::Quaternion(float w, float x, float y, float z) : w(w),
-                                                             x(x),
-                                                             y(y),
-                                                             z(z)
+Quaternion::Quaternion(float w, float x, float y, float z)
+    : w(w), x(x), y(y), z(z)
 {
 }
+
 Quaternion::Quaternion(float w, Vector3 v) : Quaternion(w, v.x, v.y, v.z)
 {
 }
@@ -19,29 +19,27 @@ Quaternion::~Quaternion()
 
 Quaternion Quaternion::fromAxisAngle(float angle, const Vector3 &axis)
 {
-    float qAngle= 0.5f * angle * ((float)M_PI / 180.0f);
+    float qAngle = 0.5f * angle * ((float)M_PI / 180.0f);
     float sinmult = sinf(qAngle);
 
     Quaternion q(
         cosf(qAngle),
-        axis.x*sinmult,
-        axis.y*sinmult,
-        axis.z*sinmult
-    );
+        axis.x * sinmult,
+        axis.y * sinmult,
+        axis.z * sinmult);
     return q;
 }
 
 Quaternion Quaternion::fromAxisAngle(float angle, float x, float y, float z)
 {
-    float qAngle= 0.5f * angle * ((float)M_PI / 180.0f);
+    float qAngle = 0.5f * angle * ((float)M_PI / 180.0f);
     float sinmult = sinf(qAngle);
 
     Quaternion q(
         cosf(qAngle),
-        x*sinmult,
-        y*sinmult,
-        z*sinmult
-    );
+        x * sinmult,
+        y * sinmult,
+        z * sinmult);
     return q;
 }
 
@@ -50,7 +48,7 @@ float Quaternion::length() const
     return sqrtf(w * w + x * x + y * y + z * z);
 }
 
-Quaternion& Quaternion::normalize()
+Quaternion &Quaternion::normalize()
 {
     float l = length();
     w = w / l;
@@ -76,7 +74,7 @@ Quaternion operator*(const Quaternion &l, const Quaternion &r)
 
     float w = l.w * r.w - vr.dot(vl);
     Vector3 v = vl * r.w + vr * l.w + vl.cross(vr);
-    Quaternion q(w,v); 
+    Quaternion q(w, v);
     q.normalize();
     return q;
 }
@@ -86,4 +84,4 @@ std::ostream &operator<<(std::ostream &out, const Quaternion &r)
     return out << "(" << r.w << ", " << r.x << ", " << r.y << ", " << r.z << ")";
 }
 }; // namespace Maths
-};
+}; // namespace Engine

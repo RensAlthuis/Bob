@@ -61,7 +61,6 @@ Model::Model(const char *path)
 	auto ebo = new ElementBuffer(index.data(), index.size());
 	vao->setEBO(ebo);
 
-
 	vertices.clear();
 	normals.clear();
 	index.clear();
@@ -81,7 +80,7 @@ void Model::parseNormal(std::string &line, std::vector<Maths::Vector3> &list)
 	list.push_back(Maths::Vector3(x, y, z));
 }
 
-void Model::parseFaceElement(std::map<indexStruct, int>& indexmap, std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
+void Model::parseFaceElement(std::map<indexStruct, int> &indexmap, std::string &line, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
 {
 	int a, b, c, d, e, f;
 	sscanf(line.c_str(), "f %u//%u %u//%u %u//%u", &a, &b, &c, &d, &e, &f);
@@ -93,7 +92,7 @@ void Model::parseFaceElement(std::map<indexStruct, int>& indexmap, std::string &
 	insertElement(indexmap, ivn3, vlist, nlist);
 }
 
-void Model::insertElement(std::map<indexStruct, int>& indexmap, indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
+void Model::insertElement(std::map<indexStruct, int> &indexmap, indexStruct ivn, std::vector<Maths::Vector3> &vlist, std::vector<Maths::Vector3> &nlist)
 {
 	//check if map already has key
 	if (indexmap.count(ivn) == 0)

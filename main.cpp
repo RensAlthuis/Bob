@@ -5,17 +5,18 @@
 #include "Engine/Window.h"
 #include "Engine/Shader.h"
 #include "Engine/Camera.h"
-#include "Engine/Model.h"
 #include "Engine/Texture.h"
 #include "Engine/Time.h"
-#include "Engine/Material.h"
 #include "Engine/ModelRenderer.h"
+#include "Engine/Buffer/FrameBuffer.h"
+
 #include "Engine/PointLight.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/SpotLight.h"
-#include "Engine/Buffer/FrameBuffer.h"
+
 #include "Engine/ECS/ECSManager.h"
-#include "Engine/ECS/ECSManager.h"
+#include "Engine/Material.h"
+#include "Engine/Model.h"
 #include "Engine/Transform.h"
 
 #define WIDTH 1280.0f
@@ -27,7 +28,7 @@ unsigned int quadVAO = 0;
 unsigned int quadVBO;
 void renderQuad()
 {
-	
+
 	if (quadVAO == 0)
 	{
 		float quadVertices[] = {
@@ -132,7 +133,7 @@ struct RenderComponent : public ECS::Component<RenderComponent>
 	Shader* shader;
 };
 
-struct rotateFlag: public ECS::Component<rotateFlag> { 
+struct rotateFlag: public ECS::Component<rotateFlag> {
 	float speed;
 };
 
@@ -279,7 +280,7 @@ int main(void)
 		window.clear();
 		ecs.updateSystems(Time::deltatime(), renderGroup);
 		gBuffer.unbind();
-		
+
 		//LIGHTINGPASS
 		lightShader->use();
 		light->setShader(lightShader, *camera, 0);

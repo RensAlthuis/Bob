@@ -30,8 +30,6 @@ Camera::~Camera()
 {
 }
 
-
-
 void Camera::turn(float x, float y)
 {
 

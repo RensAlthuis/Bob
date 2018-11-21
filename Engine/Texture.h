@@ -4,8 +4,8 @@
 #include <FreeImage.h>
 #include <iostream>
 
-
-namespace Engine{
+namespace Engine
+{
 class Texture
 {
 
@@ -21,4 +21,4 @@ public:
   inline void bind() { glBindTexture(GL_TEXTURE_2D, ID); }
   inline void unbind() { glBindTexture(GL_TEXTURE_2D, 0); }
 };
-};
+}; // namespace Engine

@@ -6,7 +6,7 @@ namespace Engine
 {
 class ElementBuffer
 {
-public:
+  public:
 	GLuint ID;
 	unsigned int elementCount;
 	ElementBuffer(GLuint *data, int length);

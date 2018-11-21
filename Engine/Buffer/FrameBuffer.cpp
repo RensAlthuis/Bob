@@ -48,10 +48,10 @@ void FrameBuffer::bindTextures()
     }
 }
 
-
 FrameBuffer::~FrameBuffer()
 {
-    for (auto buf : bufferIDs){
+    for (auto buf : bufferIDs)
+    {
         glDeleteTextures(1, &buf.second);
     }
     glDeleteFramebuffers(1, &ID);

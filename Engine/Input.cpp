@@ -1,6 +1,7 @@
 #include "Input.h"
 
-namespace Engine{
+namespace Engine
+{
 Input *Input::instance;
 
 Input::Input() : mPosX(0),
@@ -98,4 +99,4 @@ Input::~Input()
 {
 }
 
-};
+}; // namespace Engine

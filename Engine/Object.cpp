@@ -2,11 +2,8 @@
 #include "Component.h"
 namespace Engine
 {
-Object::Object() : translation(0, 0, 0),
-                   scaling(1, 1, 1),
-                   rotation(1, 0, 0, 0),
-                   children(),
-                   parent(nullptr)
+Object::Object()
+    : translation(0, 0, 0), scaling(1, 1, 1), rotation(1, 0, 0, 0), children(), parent(nullptr)
 {
     transform = Maths::Matrix4::identity();
     recalculate();
@@ -23,7 +20,6 @@ void Object::recalculate()
         p->recalculate();
     }
 }
-
 
 void Object::translate(Maths::Vector3 v, bool inWorldSpace)
 {

@@ -5,7 +5,7 @@ namespace Engine
 {
 class VertexBuffer
 {
-public:
+  public:
 	GLuint ID;
 	unsigned int elementCount;
 	unsigned int elementLength;

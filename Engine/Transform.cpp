@@ -3,9 +3,9 @@
 namespace Engine
 {
 Transform::Transform() : translation(0, 0, 0),
-                   scaling(1, 1, 1),
-                   rotation(1, 0, 0, 0),
-                   dirty(true)
+                         scaling(1, 1, 1),
+                         rotation(1, 0, 0, 0),
+                         dirty(true)
 {
     recalculate();
 }

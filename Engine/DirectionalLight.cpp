@@ -17,7 +17,7 @@ void DirectionalLight::setShader(const Shader *shader, const Camera &cam, int in
     memset(string, 0, 256);
     strcpy(string, "dirLightPos");
     strcat(string, num);
-    shader->setVec3(string, (translation + (parent != nullptr? parent->translation : Maths::Vector3::Zero)).normalize());
+    shader->setVec3(string, (translation + (parent != nullptr ? parent->translation : Maths::Vector3::Zero)).normalize());
 
     strcpy(string, "dirLightIntensity");
     strcat(string, num);

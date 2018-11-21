@@ -16,7 +16,7 @@ void PointLight::setShader(Shader *shader, const Camera &cam, int index)
     memset(string, 0, 256);
     strcpy(string, "pointLightPos");
     strcat(string, num);
-    shader->setVec3(string, (translation + (parent != nullptr? parent->translation : Maths::Vector3::Zero))*cam.Transform());
+    shader->setVec3(string, (translation + (parent != nullptr ? parent->translation : Maths::Vector3::Zero)) * cam.Transform());
 
     strcpy(string, "pointLightIntensity");
     strcat(string, num);

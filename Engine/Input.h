@@ -2,10 +2,11 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-namespace Engine{
+namespace Engine
+{
 class Input
 {
-  public:
+public:
 	static Input *instance;
 	static bool isKeyPressed(int key);
 	static bool isKeyDown(int key);
@@ -16,7 +17,7 @@ class Input
 	static double mouseDragY();
 	static bool mouseDragged();
 
-  private:
+private:
 	bool keysPressed[GLFW_KEY_LAST];
 	bool keysReleased[GLFW_KEY_LAST];
 	bool keysDown[GLFW_KEY_LAST];
@@ -28,13 +29,13 @@ class Input
 	double oldMouseY;
 	bool isMouseDragged;
 
-  public:
+public:
 	Input();
 	~Input();
 	void update();
 	void focus() { instance = this; };
 
-  private:
+private:
 	bool keyPressed(int key);
 	bool keyDown(int key);
 	bool keyReleased(int key);
@@ -44,4 +45,4 @@ class Input
 	friend void mouseMoved(GLFWwindow *win, double x, double y);
 	void setMouse(double x, double y);
 };
-};
+}; // namespace Engine

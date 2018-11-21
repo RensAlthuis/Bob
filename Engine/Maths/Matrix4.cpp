@@ -1,6 +1,7 @@
 #include "Matrix4.h"
 
-namespace Engine{
+namespace Engine
+{
 namespace Maths
 {
 
@@ -139,17 +140,17 @@ Matrix4 Matrix4::obliquePerspective(float left, float right, float bottom, float
     float rpl = right + left;
     float tmb = top - bottom;
     float tpb = top + bottom;
-    float n2 = 2*near;
+    float n2 = 2 * near;
     float nmf = near - far;
     float npf = near + far;
     Matrix4 m;
     m.mat[0] = n2 / rml;
     m.mat[5] = n2 / tmb;
-    m.mat[8] = rpl/rml;
-    m.mat[9] = tpb/tmb;
-    m.mat[10] = npf/nmf;
+    m.mat[8] = rpl / rml;
+    m.mat[9] = tpb / tmb;
+    m.mat[10] = npf / nmf;
     m.mat[11] = -1;
-    m.mat[14] = (n2*far)/nmf;
+    m.mat[14] = (n2 * far) / nmf;
     return m;
 }
 
@@ -160,31 +161,32 @@ float Matrix4::operator[](unsigned int index) const
 
 void Matrix4::setRows(const Vector3 &a, const Vector3 &b, const Vector3 &c)
 {
-        mat[0] = a.x;
-        mat[1] = b.x;
-        mat[2] = c.x;
-        mat[3] = 0;
-        mat[4] = a.y;
-        mat[5] = b.y;
-        mat[6] = c.y;
-        mat[7] = 0;
-        mat[8] = a.z;
-        mat[9] = b.z;
-        mat[10] = c.z;
-        mat[11] = 0;
-        mat[12] = 0;
-        mat[13] = 0;
-        mat[14] = 0;
-        mat[15] = 1;
+    mat[0] = a.x;
+    mat[1] = b.x;
+    mat[2] = c.x;
+    mat[3] = 0;
+    mat[4] = a.y;
+    mat[5] = b.y;
+    mat[6] = c.y;
+    mat[7] = 0;
+    mat[8] = a.z;
+    mat[9] = b.z;
+    mat[10] = c.z;
+    mat[11] = 0;
+    mat[12] = 0;
+    mat[13] = 0;
+    mat[14] = 0;
+    mat[15] = 1;
 }
 
 void Matrix4::setCol(int i, const Vector4 &v)
 {
-    if(i > 3) return;
-    mat[i*4 + 0] = v.x;
-    mat[i*4 + 1] = v.y;
-    mat[i*4 + 2] = v.z;
-    mat[i*4 + 3] = v.w;
+    if (i > 3)
+        return;
+    mat[i * 4 + 0] = v.x;
+    mat[i * 4 + 1] = v.y;
+    mat[i * 4 + 2] = v.z;
+    mat[i * 4 + 3] = v.w;
 }
 
 Matrix4 operator+(const Matrix4 &l, float r)
@@ -279,4 +281,4 @@ Vector3 operator*(const Matrix4 &r, const Vector3 &l)
 }
 
 }; // namespace Maths
-};
+}; // namespace Engine

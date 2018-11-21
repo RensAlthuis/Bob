@@ -11,19 +11,19 @@ namespace Engine
 {
 class Shader
 {
-public:
-private:
+  public:
+  private:
 	GLuint ID;
 	int nDirLights;
 	int nPointLights;
 	int nSpotLights;
 
-private:
-	long parseFile(const char *path, std::ostringstream& target);
-	void insertLights(std::ostringstream& shader);
-	void handleMacro(std::ostringstream& shader, const char *macro, std::istringstream& file);
+  private:
+	long parseFile(const char *path, std::ostringstream &target);
+	void insertLights(std::ostringstream &shader);
+	void handleMacro(std::ostringstream &shader, const char *macro, std::istringstream &file);
 
-public:
+  public:
 	Shader(const char *vertexPath, const char *fragmentPath, int nDirLights, int nPointLights, int nSpotLights);
 	void setMat4(const char *str, const Maths::Matrix4 &mat) const;
 	void setVec2(const char *str, const Maths::Vector2 &vec) const;

@@ -1,6 +1,7 @@
 #include "Texture.h"
 
-namespace Engine{
+namespace Engine
+{
 Texture::Texture(const char *path)
 {
 	FREE_IMAGE_FORMAT formatobj = FreeImage_GetFileType(path, 0);
@@ -19,9 +20,8 @@ Texture::Texture(const char *path)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-
 Texture::~Texture()
 {
 	glDeleteTextures(1, &ID);
 }
-};
+}; // namespace Engine

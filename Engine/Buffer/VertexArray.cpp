@@ -9,7 +9,7 @@ VertexArray::VertexArray()
     glGenVertexArrays(1, &ID);
 }
 
-void VertexArray::addBuffer(VertexBuffer* buffer, int index)
+void VertexArray::addBuffer(VertexBuffer *buffer, int index)
 {
     bind();
     buffer->bind();
@@ -20,7 +20,7 @@ void VertexArray::addBuffer(VertexBuffer* buffer, int index)
     buffers.push_back(buffer);
 }
 
-void VertexArray::setEBO(ElementBuffer* buffer)
+void VertexArray::setEBO(ElementBuffer *buffer)
 {
     ebo = buffer;
     bind();
@@ -30,7 +30,8 @@ void VertexArray::setEBO(ElementBuffer* buffer)
 
 VertexArray::~VertexArray()
 {
-    for(VertexBuffer* buf : buffers){
+    for (VertexBuffer *buf : buffers)
+    {
         delete buf;
     }
     delete ebo;

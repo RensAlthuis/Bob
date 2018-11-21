@@ -11,9 +11,10 @@ namespace ECS
 
 class IComponent;
 
-typedef int (*createFunc)(std::vector<char> &memory, int entityID, IComponent* comp);
+typedef int (*copyCreateFunc)(std::vector<char> &memory, int entityID, IComponent* comp);
+typedef int (*createFunc)(std::vector<char> &memory, int entityID);
 typedef void (*freeFunc)(IComponent *comp);
-typedef std::tuple<size_t, createFunc, freeFunc> TypeData;
+typedef std::tuple<size_t, createFunc, copyCreateFunc, freeFunc> TypeData;
 
 class IComponent
 {
@@ -30,10 +31,11 @@ class IComponent
     int entityID;
     // static int registerComponentType(size_t size, createFunc cf, freeFunc ff);
     // static int test();
-    static int registerComponentType(size_t size, createFunc cf, freeFunc ff);
+    static int registerComponentType(size_t size, createFunc cf, copyCreateFunc ccf, freeFunc ff);
     inline static size_t TypeSize(int type) { return std::get<0>(typeInfo()[type]); }
     inline static createFunc CreateFunc(int type) { return std::get<1>(typeInfo()[type]); }
-    inline static freeFunc FreeFunc(int type) { return std::get<2>(typeInfo()[type]); }
+    inline static copyCreateFunc CopyCreateFunc(int type) { return std::get<2>(typeInfo()[type]); }
+    inline static freeFunc FreeFunc(int type) { return std::get<3>(typeInfo()[type]); }
 };
 
 
@@ -44,6 +46,7 @@ class Component : public IComponent
     static const int TYPE;
     static const int SIZE;
     static const createFunc CREATEFUNC;
+    static const copyCreateFunc COPYCREATEFUNC;
     static const freeFunc FREEFUNC;
 
   private:
@@ -56,18 +59,18 @@ void componentFree(IComponent *comp)
     component->~T();
 };
 
-// template <typename T>
-// int componentCreate(std::vector<char> &memory, int entityID)
-// {
-//     int index = memory.size();
-//     memory.resize(index + T::SIZE);
-//     T *component = new (&memory[index]) T;
-//     component->entityID = entityID;
-//     return index;
-// };
+template <typename T>
+int componentCreate(std::vector<char> &memory, int entityID)
+{
+    int index = memory.size();
+    memory.resize(index + T::SIZE);
+    T *component = new (&memory[index]) T;
+    component->entityID = entityID;
+    return index;
+};
 
 template <typename T>
-int componentCreate(std::vector<char> &memory, int entityID, IComponent* comp)
+int componentCreateCopy(std::vector<char> &memory, int entityID, IComponent* comp)
 {
     int index = memory.size();
     memory.resize(index + T::SIZE);
@@ -77,10 +80,13 @@ int componentCreate(std::vector<char> &memory, int entityID, IComponent* comp)
 };
 
 template <typename T>
-const int Component<T>::TYPE(IComponent::registerComponentType(sizeof(T), componentCreate<T>, componentFree<T>));
+const int Component<T>::TYPE(IComponent::registerComponentType(sizeof(T), componentCreate<T>, componentCreateCopy<T>, componentFree<T>));
 
 template <typename T>
 const createFunc Component<T>::CREATEFUNC(componentCreate<T>);
+
+template <typename T>
+const copyCreateFunc Component<T>::COPYCREATEFUNC(componentCreateCopy<T>);
 
 template <typename T>
 const freeFunc Component<T>::FREEFUNC(componentFree<T>);

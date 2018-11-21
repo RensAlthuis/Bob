@@ -21,7 +21,7 @@ void SpotLight::setShader(Shader *shader, const Camera &cam, int index)
     memset(string, 0, 256);
     strcpy(string, "spotLightPos");
     strcat(string, num);
-    shader->setVec3(string, (translation + (parent != nullptr? parent->translation : Maths::Vector3::Zero))*cam.Transform());
+    shader->setVec3(string, (translation + (parent != nullptr ? parent->translation : Maths::Vector3::Zero)) * cam.Transform());
 
     memset(string, 0, 256);
     strcpy(string, "spotLightIntensity");

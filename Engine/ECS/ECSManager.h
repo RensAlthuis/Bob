@@ -41,15 +41,24 @@ class ECSManager
         return createEntity(types, sizeof...(T), c);
     };
 
+    template <typename... T>
+    Entity* createEntity()
+    {
+        int types[] = {(T::TYPE)...};
+        return createEntity(types, sizeof...(T));
+    };
+
     void updateSystems(float deltaTime, SystemGroup& systems);
   private:
-    
+
     IComponent *getComponent(Entity* entity, int type);
     void addComponent(Entity* entity, int type, IComponent* comp);
+    void addComponent(Entity *entity, int type);
     void deleteComponent(int type, int index);
     void removeComponent(Entity* entity, int type);
 
     Entity* createEntity(int* ComponentTypes, int numComponentsm, IComponent** comps);
+    Entity* createEntity(int* ComponentTypes, int numComponentsm);
     void removeEntity(Entity* entity);
 
 };

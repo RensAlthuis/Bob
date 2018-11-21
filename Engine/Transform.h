@@ -34,7 +34,7 @@ class Transform
      void translate(Maths::Vector3 v, bool inWorldSpace);
      inline void translate(float x, float y, float z, bool inWorldSpace)
      {
-          translate(Maths::Vector3(x,y,z), inWorldSpace);
+          translate(Maths::Vector3(x, y, z), inWorldSpace);
      }
 
      void rotate(Maths::Quaternion q);

@@ -1,6 +1,7 @@
 #pragma once
 #define _USE_MATH_DEFINES
-namespace Engine{
+namespace Engine
+{
 namespace Maths
 {
 
@@ -11,7 +12,7 @@ class Matrix4;
 class Quaternion;
 
 }; // namespace Maths
-};
+}; // namespace Engine
 
 #include "Vector2.h"
 #include "Vector3.h"

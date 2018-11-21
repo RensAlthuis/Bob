@@ -18,7 +18,7 @@ private:
 public:
   FrameBuffer(int width, int height);
   void addTextureBuffer(std::string name, GLenum attachment, GLint format, GLenum type);
-  void setShader(Shader& shader);
+  void setShader(Shader &shader);
   void bindTextures();
   inline void bind() { glBindFramebuffer(GL_FRAMEBUFFER, ID); }
   inline void unbind() { glBindFramebuffer(GL_FRAMEBUFFER, 0); }

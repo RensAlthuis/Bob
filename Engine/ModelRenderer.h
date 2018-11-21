@@ -8,15 +8,15 @@ namespace Engine
 {
 class ModelRenderer : public Component
 {
-  private:
-    Model* model; //shared objects. ModelRenderer does not need to destroy them.
-    Shader* shader;
-    Material* material;
+private:
+  Model *model; //shared objects. ModelRenderer does not need to destroy them.
+  Shader *shader;
+  Material *material;
 
-  public:
-    ModelRenderer(Model &model, Material &material, Shader &shader);
-    ~ModelRenderer();
-    void update() override;
-    void draw();
+public:
+  ModelRenderer(Model &model, Material &material, Shader &shader);
+  ~ModelRenderer();
+  void update() override;
+  void draw();
 };
 }; // namespace Engine

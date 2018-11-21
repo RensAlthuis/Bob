@@ -20,6 +20,21 @@ Entity *ECSManager::createEntity(int *componentTypes, int numTypes, IComponent *
     return e;
 }
 
+Entity *ECSManager::createEntity(int *componentTypes, int numTypes)
+{
+    int index = entities.size();
+    Entity *e = new Entity();
+    e->first = index;
+
+    for (int i = 0; i < numTypes; i++)
+    {
+        //TODO errorcheck
+        addComponent(e, componentTypes[i]);
+    }
+    entities.push_back(e);
+    return e;
+}
+
 IComponent *ECSManager::getComponent(Entity *entity, int type)
 {
     auto &componentList = entity->second;
@@ -37,15 +52,21 @@ IComponent *ECSManager::getComponent(Entity *entity, int type)
 
 void ECSManager::addComponent(Entity *entity, int type, IComponent *comp)
 {
-    createFunc fn = IComponent::CreateFunc(type);
+    copyCreateFunc fn = IComponent::CopyCreateFunc(type);
     int index = fn(components[type], entity->first, comp);
-    std::cout << "add comp to: " << entity->first << ", " << type << ":" << index;
     IComponent *v2 = (IComponent *)&components[type];
     IComponent *v = (IComponent *)&components[type][index];
-    std::cout << " @ " << v << " in " << v2 << std::endl;
     entity->second.push_back(std::make_pair(type, index));
 }
 
+void ECSManager::addComponent(Entity *entity, int type)
+{
+    createFunc fn = IComponent::CreateFunc(type);
+    int index = fn(components[type], entity->first);
+    IComponent *v2 = (IComponent *)&components[type];
+    IComponent *v = (IComponent *)&components[type][index];
+    entity->second.push_back(std::make_pair(type, index));
+}
 void ECSManager::deleteComponent(int type, int index)
 {
     auto &componentMemory = components[type];

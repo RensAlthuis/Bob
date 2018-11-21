@@ -1,18 +1,21 @@
 #include "Time.h"
 #include <GLFW/glfw3.h>
 
-namespace Engine{
+namespace Engine
+{
 
 double Time::oldTime = time();
 double Time::deltaTime = 0;
 
-double Time::time(){
+double Time::time()
+{
 
     return glfwGetTime();
 }
 
-double Time::deltatime(){
+double Time::deltatime()
+{
     return deltaTime;
 }
 
-};
+}; // namespace Engine

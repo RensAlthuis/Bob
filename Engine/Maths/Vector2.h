@@ -3,18 +3,18 @@
 #include <iostream>
 #include "Matrix4.h"
 
-
-namespace Engine{
+namespace Engine
+{
 namespace Maths
 {
 
 class Vector2
 {
-public:
+  public:
 	float x;
 	float y;
 
-public:
+  public:
 	Vector2(float x, float y);
 	~Vector2();
 
@@ -31,4 +31,4 @@ public:
 	float length();
 };
 }; // namespace Maths
-};
+}; // namespace Engine
