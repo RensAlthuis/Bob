@@ -66,6 +66,7 @@ void Transform::scale(Maths::Vector3 s, bool set)
     {
         scaling = scaling + s;
     }
+    dirty = true;
 }
 
 } // namespace Engine

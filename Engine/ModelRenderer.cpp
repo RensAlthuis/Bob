@@ -19,7 +19,7 @@ void ModelRenderer::update()
 void ModelRenderer::draw()
 {
     model->bind();
-    material->setShader(*shader);
+    // material->setShader(*shader);
     shader->setMat4("model_matrix", parent->Transform());
     glDrawElements(GL_TRIANGLES, model->ElementCount(), GL_UNSIGNED_INT, 0);
 }

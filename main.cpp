@@ -126,18 +126,66 @@ struct TransformComponent : public ECS::Component<TransformComponent>
 	Transform transform;
 };
 
+struct RenderComponent : public ECS::Component<RenderComponent>
+{
+	Material* mat;
+	Shader* shader;
+};
+
+struct rotateFlag: public ECS::Component<rotateFlag> { 
+	float speed;
+};
+
 class TestSystem : public ECS::System
 {
   public:
 	TestSystem() : System()
 	{
 		addComponentType(TransformComponent::TYPE);
+		addComponentType(rotateFlag::TYPE);
 	};
 	void update(float deltaTime, ECS::IComponent **components) const override
 	{
 		TransformComponent *comp0 = (TransformComponent *)components[0];
-		comp0->transform.rotate(Maths::Quaternion::fromAxisAngle(deltaTime * 10.0f, 0, 1, 0));
+		rotateFlag *comp1 = (rotateFlag*)components[1];
+		comp0->transform.rotate(Maths::Quaternion::fromAxisAngle(deltaTime * comp1->speed, 0, 1, 0));
 	};
+};
+
+class RenderSystem : public ECS::System
+{
+	public:
+	RenderSystem() : System()
+	{
+		addComponentType(TransformComponent::TYPE);
+		addComponentType(RenderComponent::TYPE);
+		addComponentType(Model::TYPE);
+	}
+
+	void update(float deltaTime, ECS::IComponent **components) const override
+	{
+		//transform
+		TransformComponent *transform = (TransformComponent*)components[0];
+		RenderComponent *render = (RenderComponent*)components[1];
+		Model *model= (Model*)components[2];
+
+		model->bind();
+		render->shader->setMat4("model_matrix", transform->transform.Matrix());
+		setMaterial(render);
+		glDrawElements(GL_TRIANGLES, model->ElementCount(), GL_UNSIGNED_INT, 0);
+	}
+
+	void setMaterial(RenderComponent* render) const
+	{
+		Shader* shader = render->shader;
+		Material* mat = render->mat;
+		shader->setVec3("matEmissiveColour", mat->mEC);
+		shader->setVec3("matAmbiantColour", mat->mAC);
+		shader->setVec3("matDiffuseColour", Maths::Vector3(mat->mDC.x, mat->mDC.y, mat->mDC.z));
+		shader->setVec3("matSpecularColour", mat->mSC);
+		shader->setFloat("matSpecularExp", mat->mSE);
+		shader->setVec3("lightAmbDiffSpec", mat->lADS);
+	}
 };
 
 int main(void)
@@ -148,23 +196,24 @@ int main(void)
 	if (!window.init())
 		return -1;
 
+
 	ECS::ECSManager ecs;
-
 	TestSystem sys;
+	RenderSystem rendersys;
 	ECS::SystemGroup testGroup;
+	ECS::SystemGroup renderGroup;
 	testGroup.addSystem(&sys);
+	renderGroup.addSystem(&rendersys);
 
-	TransformComponent t;
-	ECS::Entity* monkeyEntity = ecs.createEntity<TransformComponent>(&t);
 
 	//create material
-	const Maths::Vector3 mEC = Maths::Vector3(0.0f, 0.0f, 0.0f);
-	const Maths::Vector3 mAC = Maths::Vector3(1, 1, 1);
-	const Maths::Vector4 mDC = Maths::Vector4(1, 1, 1, 1);
-	const Maths::Vector3 mSC = Maths::Vector3(1, 1, 1);
-	const float mSE = 80.0f;
-	const Maths::Vector3 lADS = Maths::Vector3(1, 1, 1);
-	Material *material = new Material(mEC, mAC, mDC, mSC, mSE, lADS);
+	Material* mat = new Material();
+	mat->mEC = Maths::Vector3(0.0f, 0.0f, 0.0f);
+	mat->mAC = Maths::Vector3(1, 1, 1);
+	mat->mDC = Maths::Vector4(1, 1, 1, 1);
+	mat->mSC = Maths::Vector3(1, 1, 1);
+	mat->mSE = 80.0f;
+	mat->lADS = Maths::Vector3(1, 1, 1);
 
 	//Load Models
 	Model *monkey = new Model("Assets/Model/MonkeySmooth.obj");
@@ -172,7 +221,6 @@ int main(void)
 	Model *ground = new Model("Assets/Model/Floor.obj");
 
 	//Shader
-	// Shader geomShader("Assets/Shader/vertex.glsl", "Assets/Shader/fragment.glsl", 1,2,1);
 	Shader *geomShader = new Shader("Assets/Shader/vertexdef.glsl", "Assets/Shader/fragmentdef.glsl", 0, 0, 0);
 	Shader *lightShader = new Shader("Assets/Shader/vertexdeflight.glsl", "Assets/Shader/fragmentdeflight.glsl", 1, 2, 1);
 
@@ -190,16 +238,18 @@ int main(void)
 	SpotLight *spotlight = new SpotLight(1.0f, Maths::Vector3(1, 0.5f, 0.2f), Maths::Vector3(0, 0.1f, 0.1f), Maths::Vector3(0, 0, -1), 0.5f, 40.0f);
 	camera->addChild(*spotlight);
 
-	//Objects
-	Object *monkeyObj = new Object();
-	ModelRenderer *renderer = new ModelRenderer(*monkey, *material, *geomShader);
-	monkeyObj->addComponent(*renderer);
-	monkeyObj->translate(Maths::Vector3(0, 3, 0), true);
+	TransformComponent t1;
+	t1.transform.scale(Maths::Vector3(100,1,100), true);
+	TransformComponent t2;
+	t2.transform.translate(0,3,0,true);
+	rotateFlag r;
+	r.speed = 10.0f;
+	RenderComponent rend1;
+	rend1.mat = mat;
+	rend1.shader = geomShader;
 
-	Object *groundObj = new Object();
-	ModelRenderer *renderer2 = new ModelRenderer(*ground, *material, *geomShader);
-	groundObj->addComponent(*renderer2);
-	groundObj->scale(Maths::Vector3(100, 1, 100));
+	ECS::Entity* groundEntity = ecs.createEntity(ground, &rend1, &t1);
+	ECS::Entity* monkeyEntity = ecs.createEntity(monkey, &rend1, &t2, &r);
 
 	//FrameBuffer
 	FrameBuffer gBuffer(WIDTH, HEIGHT);
@@ -225,21 +275,9 @@ int main(void)
 		geomShader->use();
 		geomShader->setMat4("view_matrix", camera->Transform());
 		geomShader->setMat4("proj_matrix", camera->Projection());
-
 		gBuffer.bind();
 		window.clear();
-		monkey->bind();
-		material->setShader(*geomShader);
-		auto model = ecs.getComponent<TransformComponent>(monkeyEntity);
-		std::cout << model->transform.Matrix() << std::endl;
-		geomShader->setMat4("model_matrix", model->transform.Matrix());
-		glDrawElements(GL_TRIANGLES, monkey->ElementCount(), GL_UNSIGNED_INT, 0);
-
-		ground->bind();
-		material->setShader(*geomShader);
-		geomShader->setMat4("model_matrix", Maths::Matrix4::scale(100,1,100));
-		glDrawElements(GL_TRIANGLES, ground->ElementCount(), GL_UNSIGNED_INT, 0);
-
+		ecs.updateSystems(Time::deltatime(), renderGroup);
 		gBuffer.unbind();
 		
 		//LIGHTINGPASS

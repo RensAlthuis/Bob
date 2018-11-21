@@ -17,6 +17,7 @@ public:
 	const static Vector4 Zero;
 
 public:
+	Vector4();
 	Vector4(float x, float y, float z, float w);
 	~Vector4();
 

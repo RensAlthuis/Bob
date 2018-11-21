@@ -9,10 +9,11 @@
 #include "Buffer/VertexBuffer.h"
 #include "Buffer/ElementBuffer.h"
 #include "Buffer/VertexArray.h"
+#include "ECS/Component.h"
 
 namespace Engine
 {
-class Model
+class Model : public ECS::Component<Model>
 {
   private:
 	struct indexStruct

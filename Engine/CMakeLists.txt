@@ -21,7 +21,6 @@ Texture.cpp
 Model.cpp
 Camera.cpp
 Object.cpp
-Material.cpp
 ModelRenderer.cpp
 DirectionalLight.cpp
 PointLight.cpp
