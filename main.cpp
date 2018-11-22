@@ -13,10 +13,10 @@
 #include "Engine/PointLight.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/SpotLight.h"
+#include "Engine/Model.h"
+#include "Engine/Material.h"
 
 #include "Engine/ECS/ECSManager.h"
-#include "Engine/Material.h"
-#include "Engine/Model.h"
 #include "Engine/Transform.h"
 
 #define WIDTH 1280.0f
@@ -127,6 +127,11 @@ struct TransformComponent : public ECS::Component<TransformComponent>
 	Transform transform;
 };
 
+struct ModelComponent: public ECS::Component<ModelComponent>
+{
+	Model* model;
+};
+
 struct RenderComponent : public ECS::Component<RenderComponent>
 {
 	Material* mat;
@@ -160,7 +165,7 @@ class RenderSystem : public ECS::System
 	{
 		addComponentType(TransformComponent::TYPE);
 		addComponentType(RenderComponent::TYPE);
-		addComponentType(Model::TYPE);
+		addComponentType(ModelComponent::TYPE);
 	}
 
 	void update(float deltaTime, ECS::IComponent **components) const override
@@ -168,12 +173,12 @@ class RenderSystem : public ECS::System
 		//transform
 		TransformComponent *transform = (TransformComponent*)components[0];
 		RenderComponent *render = (RenderComponent*)components[1];
-		Model *model= (Model*)components[2];
+		ModelComponent *model= (ModelComponent*)components[2];
 
-		model->bind();
+		model->model->bind();
 		render->shader->setMat4("model_matrix", transform->transform.Matrix());
 		setMaterial(render);
-		glDrawElements(GL_TRIANGLES, model->ElementCount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, model->model->ElementCount(), GL_UNSIGNED_INT, 0);
 	}
 
 	void setMaterial(RenderComponent* render) const
@@ -248,9 +253,13 @@ int main(void)
 	RenderComponent rend1;
 	rend1.mat = mat;
 	rend1.shader = geomShader;
+	ModelComponent monkeyComp;
+	monkeyComp.model = monkey;
+	ModelComponent groundComp;
+	groundComp.model = ground;
 
-	ECS::Entity* groundEntity = ecs.createEntity(ground, &rend1, &t1);
-	ECS::Entity* monkeyEntity = ecs.createEntity(monkey, &rend1, &t2, &r);
+	ECS::Entity* groundEntity = ecs.createEntity(&groundComp, &rend1, &t1);
+	ECS::Entity* monkeyEntity = ecs.createEntity(&monkeyComp, &rend1, &t2, &r);
 
 	//FrameBuffer
 	FrameBuffer gBuffer(WIDTH, HEIGHT);

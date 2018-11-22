@@ -13,7 +13,7 @@
 
 namespace Engine
 {
-class Model : public ECS::Component<Model>
+class Model
 {
 private:
 	struct indexStruct

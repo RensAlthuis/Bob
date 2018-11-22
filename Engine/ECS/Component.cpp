@@ -14,10 +14,10 @@ std::vector<TypeData> &IComponent::typeInfo()
     return typeinfo;
 }
 
-int IComponent::registerComponentType(size_t size, createFunc cf, freeFunc ff)
+int IComponent::registerComponentType(size_t size, createFunc cf, copyCreateFunc cff, freeFunc ff)
 {
     int index = IComponent::typeInfo().size();
-    IComponent::typeInfo().push_back(TypeData(size, cf, ff));
+    IComponent::typeInfo().push_back(TypeData(size, cf, cff, ff));
     return index;
 }
 }; // namespace ECS
