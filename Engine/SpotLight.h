@@ -23,7 +23,7 @@ public:
             Maths::Vector3 direction,
             float angle,
             float exponent);
-  void setShader(Shader *shader, const Camera &cam, int index);
+  void setShader(Shader *shader, Camera &cam, int index);
   ~SpotLight();
 };
 }; // namespace Engine

@@ -30,6 +30,7 @@ Buffer/VertexArray.cpp
 Buffer/VertexBuffer.cpp
 Buffer/FrameBuffer.cpp
 Transform.cpp
+RenderSystem.cpp
 )
 
 include_directories(

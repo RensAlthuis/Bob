@@ -19,7 +19,6 @@
             "includePath": [
                 "${workspaceFolder}",
                 "${workspaceFolder}/Engine",
-                "${workspaceFolder}/Engine/Libraries/include",
                 "${workspaceFolder}/Engine/Libraries/include"
             ],
             "defines": [],

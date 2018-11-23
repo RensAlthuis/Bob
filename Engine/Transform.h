@@ -7,7 +7,7 @@ namespace Engine
 class Transform
 {
 
-   private:
+   public:
      Maths::Vector3 scaling;
      Maths::Matrix4 transform;
      Maths::Matrix4 modelMatrix;

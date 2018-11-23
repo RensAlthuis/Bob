@@ -12,7 +12,7 @@ SpotLight::SpotLight(float intensity,
 {
 }
 
-void SpotLight::setShader(Shader *shader, const Camera &cam, int index)
+void SpotLight::setShader(Shader *shader, Camera &cam, int index)
 {
     char num[10];
     sprintf(num, "[%d]", index);
@@ -21,7 +21,8 @@ void SpotLight::setShader(Shader *shader, const Camera &cam, int index)
     memset(string, 0, 256);
     strcpy(string, "spotLightPos");
     strcat(string, num);
-    shader->setVec3(string, (translation + (parent != nullptr ? parent->translation : Maths::Vector3::Zero)) * cam.Transform());
+    const Maths::Vector3 pos = cam.getTransform().translation;
+    shader->setVec3(string, (translation + (parent != nullptr ? parent->translation : Maths::Vector3::Zero)) - pos);
 
     memset(string, 0, 256);
     strcpy(string, "spotLightIntensity");
@@ -41,7 +42,8 @@ void SpotLight::setShader(Shader *shader, const Camera &cam, int index)
     memset(string, 0, 256);
     strcpy(string, "spotLightDir");
     strcat(string, num);
-    shader->setVec3(string, -Front().rotate(cam.rotation.inverse()));
+    const Maths::Quaternion rot = cam.getTransform().rotation;
+    shader->setVec3(string, -Front().rotate(rot.inverse()));
 
     memset(string, 0, 256);
     strcpy(string, "spotLightAngle");

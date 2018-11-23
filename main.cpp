@@ -1,29 +1,27 @@
 #define FREEIMAGE_LIB
 #include <stdlib.h>
 #include <assert.h>
+
 #include "Engine/Maths/Maths.h"
 #include "Engine/Window.h"
-#include "Engine/Shader.h"
 #include "Engine/Camera.h"
 #include "Engine/Texture.h"
 #include "Engine/Time.h"
-#include "Engine/ModelRenderer.h"
 #include "Engine/Buffer/FrameBuffer.h"
 
 #include "Engine/PointLight.h"
 #include "Engine/DirectionalLight.h"
 #include "Engine/SpotLight.h"
-#include "Engine/Model.h"
-#include "Engine/Material.h"
 
 #include "Engine/ECS/ECSManager.h"
-#include "Engine/Transform.h"
+#include "Engine/RenderSystem.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
 
 using namespace Engine;
 
+#pragma region RenderQuad
 unsigned int quadVAO = 0;
 unsigned int quadVBO;
 void renderQuad()
@@ -69,6 +67,7 @@ void renderQuad()
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glBindVertexArray(0);
 }
+#pragma endregion
 
 bool checkGLError()
 {
@@ -82,62 +81,46 @@ bool checkGLError()
 	return false;
 }
 
-void handleInput(Window &window, Camera &camera)
-{
-	if (Input::isKeyPressed(GLFW_KEY_ESCAPE))
-		window.close();
-	if (Input::isKeyDown(GLFW_KEY_W))
-	{
-		camera.translate(Maths::Vector3(0, 0, -10) * Time::deltatime(), false);
-	}
-	if (Input::isKeyDown(GLFW_KEY_A))
-	{
-		camera.translate(Maths::Vector3(-10, 0, 0) * Time::deltatime(), false);
-	}
-	if (Input::isKeyDown(GLFW_KEY_S))
-	{
-		camera.translate(Maths::Vector3(0, 0, 10) * Time::deltatime(), false);
-	}
-	if (Input::isKeyDown(GLFW_KEY_D))
-	{
-		camera.translate(Maths::Vector3(10, 0, 0) * Time::deltatime(), false);
-	}
-	if (Input::isKeyDown(GLFW_KEY_SPACE))
-	{
-		camera.translate(Maths::Vector3(0, 10, 0) * Time::deltatime(), false);
-	}
-	if (Input::isKeyDown(GLFW_KEY_LEFT_SHIFT))
-	{
-		camera.translate(Maths::Vector3(0, -10, 0) * Time::deltatime(), false);
-	}
+// void handleInput(Window &window, Camera &camera)
+// {
+// 	if (Input::isKeyPressed(GLFW_KEY_ESCAPE))
+// 		window.close();
+// 	if (Input::isKeyDown(GLFW_KEY_W))
+// 	{
+// 		camera.translate(Maths::Vector3(0, 0, -10) * Time::deltatime(), false);
+// 	}
+// 	if (Input::isKeyDown(GLFW_KEY_A))
+// 	{
+// 		camera.translate(Maths::Vector3(-10, 0, 0) * Time::deltatime(), false);
+// 	}
+// 	if (Input::isKeyDown(GLFW_KEY_S))
+// 	{
+// 		camera.translate(Maths::Vector3(0, 0, 10) * Time::deltatime(), false);
+// 	}
+// 	if (Input::isKeyDown(GLFW_KEY_D))
+// 	{
+// 		camera.translate(Maths::Vector3(10, 0, 0) * Time::deltatime(), false);
+// 	}
+// 	if (Input::isKeyDown(GLFW_KEY_SPACE))
+// 	{
+// 		camera.translate(Maths::Vector3(0, 10, 0) * Time::deltatime(), false);
+// 	}
+// 	if (Input::isKeyDown(GLFW_KEY_LEFT_SHIFT))
+// 	{
+// 		camera.translate(Maths::Vector3(0, -10, 0) * Time::deltatime(), false);
+// 	}
 
-	if (Input::mouseDragged())
-		camera.turn(Input::mouseDragX() / 3.0f, Input::mouseDragY() / 3.0f);
+// 	if (Input::mouseDragged())
+// 		camera.turn(Input::mouseDragX() / 3.0f, Input::mouseDragY() / 3.0f);
 
-	if (Input::isKeyPressed(GLFW_KEY_F11))
-	{
-		std::cout << "Switch fullscreen" << std::endl;
-		window.fullscreen(!window.isFullscreen());
-	}
-}
+// 	if (Input::isKeyPressed(GLFW_KEY_F11))
+// 	{
+// 		std::cout << "Switch fullscreen" << std::endl;
+// 		window.fullscreen(!window.isFullscreen());
+// 	}
+// }
 
-struct TransformComponent : public ECS::Component<TransformComponent>
-{
-	TransformComponent *Parent;
-	Transform transform;
-};
-
-struct ModelComponent: public ECS::Component<ModelComponent>
-{
-	Model* model;
-};
-
-struct RenderComponent : public ECS::Component<RenderComponent>
-{
-	Material* mat;
-	Shader* shader;
-};
-
+#pragma region TestSystem
 struct rotateFlag: public ECS::Component<rotateFlag> {
 	float speed;
 };
@@ -157,42 +140,7 @@ class TestSystem : public ECS::System
 		comp0->transform.rotate(Maths::Quaternion::fromAxisAngle(deltaTime * comp1->speed, 0, 1, 0));
 	};
 };
-
-class RenderSystem : public ECS::System
-{
-	public:
-	RenderSystem() : System()
-	{
-		addComponentType(TransformComponent::TYPE);
-		addComponentType(RenderComponent::TYPE);
-		addComponentType(ModelComponent::TYPE);
-	}
-
-	void update(float deltaTime, ECS::IComponent **components) const override
-	{
-		//transform
-		TransformComponent *transform = (TransformComponent*)components[0];
-		RenderComponent *render = (RenderComponent*)components[1];
-		ModelComponent *model= (ModelComponent*)components[2];
-
-		model->model->bind();
-		render->shader->setMat4("model_matrix", transform->transform.Matrix());
-		setMaterial(render);
-		glDrawElements(GL_TRIANGLES, model->model->ElementCount(), GL_UNSIGNED_INT, 0);
-	}
-
-	void setMaterial(RenderComponent* render) const
-	{
-		Shader* shader = render->shader;
-		Material* mat = render->mat;
-		shader->setVec3("matEmissiveColour", mat->mEC);
-		shader->setVec3("matAmbiantColour", mat->mAC);
-		shader->setVec3("matDiffuseColour", Maths::Vector3(mat->mDC.x, mat->mDC.y, mat->mDC.z));
-		shader->setVec3("matSpecularColour", mat->mSC);
-		shader->setFloat("matSpecularExp", mat->mSE);
-		shader->setVec3("lightAmbDiffSpec", mat->lADS);
-	}
-};
+#pragma endregion
 
 int main(void)
 {
@@ -202,7 +150,6 @@ int main(void)
 	if (!window.init())
 		return -1;
 
-
 	ECS::ECSManager ecs;
 	TestSystem sys;
 	RenderSystem rendersys;
@@ -210,7 +157,6 @@ int main(void)
 	ECS::SystemGroup renderGroup;
 	testGroup.addSystem(&sys);
 	renderGroup.addSystem(&rendersys);
-
 
 	//create material
 	Material* mat = new Material();
@@ -232,7 +178,7 @@ int main(void)
 
 	//Camera
 	Camera* camera = new Camera(60, WIDTH / HEIGHT, 0.1f, 100);
-	camera->translate(0, 10, 20, false);
+	camera->getTransform().translate(0, 10, 20, false);
 
 	//Lights
 	PointLight *light = new PointLight(1.0f, Maths::Vector3(1, 1, 1), Maths::Vector3(0, 0, 0.1f));
@@ -242,7 +188,6 @@ int main(void)
 	DirectionalLight *dirlight = new DirectionalLight(0.1f, Maths::Vector3(1, 1, 1));
 	dirlight->translate(0, 0, 1, true);
 	SpotLight *spotlight = new SpotLight(1.0f, Maths::Vector3(1, 0.5f, 0.2f), Maths::Vector3(0, 0.1f, 0.1f), Maths::Vector3(0, 0, -1), 0.5f, 40.0f);
-	camera->addChild(*spotlight);
 
 	TransformComponent t1;
 	t1.transform.scale(Maths::Vector3(100,1,100), true);
@@ -283,7 +228,7 @@ int main(void)
 
 		//GEOMETRY PASS
 		geomShader->use();
-		geomShader->setMat4("view_matrix", camera->Transform());
+		geomShader->setMat4("view_matrix", camera->getTransform().Matrix());
 		geomShader->setMat4("proj_matrix", camera->Projection());
 		gBuffer.bind();
 		window.clear();
@@ -300,7 +245,7 @@ int main(void)
 		gBuffer.bindTextures();
 		renderQuad();
 
-		handleInput(window, *camera);
+		// handleInput(window, *camera);
 
 		//update lights
 		light->translate(Maths::Vector3(5.0f * Time::deltatime(), 0, 0), false);
