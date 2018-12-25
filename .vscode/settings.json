@@ -55,7 +55,11 @@
         "tuple": "cpp",
         "chrono": "cpp",
         "ratio": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "optional": "cpp",
+        "string_view": "cpp",
+        "__config": "cpp",
+        "__nullptr": "cpp"
     },
     "C_Cpp.configurationWarnings": "Disabled"
 }

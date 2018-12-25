@@ -1,6 +1,7 @@
 #define FREEIMAGE_LIB
 #include <stdlib.h>
 #include <assert.h>
+#include <functional>
 
 #include "Engine/Maths/Maths.h"
 #include "Engine/Window.h"
@@ -15,6 +16,8 @@
 
 #include "Engine/ECS/ECSManager.h"
 #include "Engine/RenderSystem.h"
+
+#include "Engine/Event.h"
 
 #define WIDTH 1280.0f
 #define HEIGHT 720.0f
@@ -142,8 +145,26 @@ class TestSystem : public ECS::System
 };
 #pragma endregion
 
+void func(int i){
+	std::cout << "test: " << i << std::endl;
+}
+
+void func2(int i){
+	std::cout << "test2: " << i*2 << std::endl;
+}
+
 int main(void)
 {
+
+	Event<int> testEvent;
+	testEvent += func;
+	testEvent += func2;
+
+	testEvent.emit(4);
+	testEvent -= func2;
+	testEvent.emit(3);
+
+	return 0;
 
 	// FreeImage_Initialise();
 	Window window("Engine", WIDTH, HEIGHT, false);

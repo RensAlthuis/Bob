@@ -31,6 +31,7 @@ Buffer/VertexBuffer.cpp
 Buffer/FrameBuffer.cpp
 Transform.cpp
 RenderSystem.cpp
+Event.h
 )
 
 include_directories(
